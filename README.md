@@ -1,2 +1,3 @@
-# hybrid-module-template
-Template repository for a hybrid ESM / CommonJS module.
+# Parlay
+
+Parlay ("parsing + layout") is an editor engine based on parsing.
