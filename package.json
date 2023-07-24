@@ -13,8 +13,8 @@
   },
   "scripts": {
     "build": "rm -fr dist/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./fixup",
-    "bundle": "./node_modules/.bin/esbuild src/index.ts --bundle --outdir=web",
-    "web": "esbuild src/index.ts --bundle --outdir=web --servedir=web --watch",
+    "bundle": "./node_modules/.bin/esbuild src/index.ts --bundle --minify --outdir=web",
+    "server": "esbuild src/index.ts --bundle --outdir=web --servedir=web --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -29,9 +29,11 @@
   "homepage": "https://github.com/phlegmaticprogrammer/hybrid-module-template#readme",
   "devDependencies": {
     "@types/node": "^18.15.11",
+    "esbuild": "0.18.15",
     "typescript": "^5.0.3"
   },
   "dependencies": {
-    "esbuild": "0.18.15"
+    "@practal/parsing": "file:../parsing",
+    "alogic": "file:../alogic"
   }
 }
