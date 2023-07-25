@@ -1,5 +1,8 @@
-import { createTextLines } from "@practal/parsing";
+import { TLPos, TLPosT, TextLines, copySliceOfTextLines, createTextLines, textOfTextLines } from "@practal/parsing";
+import { ParseResult, SectionKind } from "alogic";
 import { parseSyntax } from "alogic";
+import { Relation } from "things";
+//import type { Relation } from "things";
 
 export class ParlayEditor { 
     
@@ -21,6 +24,7 @@ export class ParlayEditor {
         style.height = "100px";
         style.border = "2px solid violet";
         style.padding = "5px";
+        style.fontFamily = "stixtwotext";
         //style.margin = "10px";
         this.root.innerText = "Parlay-Editor!";
         this.startObserving();
@@ -65,6 +69,7 @@ export class ParlayEditor {
     stopObserving() {
         if (this.observer) {
             this.observer.disconnect();
+            this.observer = undefined;
         }
     }
 
@@ -73,14 +78,18 @@ export class ParlayEditor {
         //this.stopObserving();
         //this.root.innerHTML = text;
         //this.startObserving();
-        //console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
-        //console.log(text);
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
+        console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         const lines = createTextLines(text);
         const [env, syntax] = parseSyntax(lines);
         this.log("parsed until " + syntax.endLine + ":" + syntax.endColumn);
         env.displayResult(syntax, (line:string) => this.log(line));
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>");
+        this.stopObserving();
+        removeAllChildren(this.root);
+        generateHTML(lines, syntax, this.root);
+        this.startObserving();
     }
 
     mutationsObserved(mutations : MutationRecord[]) {
@@ -95,6 +104,14 @@ export class ParlayEditor {
         console.log("* " + msg);
     }
 
+}
+
+function removeAllChildren(node : Node) {
+    while (true) {
+        const child = node.firstChild;
+        if (child === null) break;
+        node.removeChild(child);
+    }
 }
 
 function extractText(node : Node) : string {
@@ -169,4 +186,106 @@ function extractText(node : Node) : string {
     extractFromNode(node);
 
     return text;
+}
+
+function startOfResult(result : ParseResult) : TLPos {
+    return TLPos(result.startLine, result.startColumn);
+}
+
+function endOfResult(result : ParseResult) : TLPos {
+    return TLPos(result.endLine, result.endColumn);
+}
+
+function generateHTML(lines : TextLines, result : ParseResult, parent : Node) {
+    
+    function createTextNode(result : ParseResult) : Text {
+        const slice = copySliceOfTextLines(lines, result.startLine, result.startColumn, 
+            result.endLine, result.endColumn);
+        const text = textOfTextLines(slice).toString();
+        return document.createTextNode(text);
+    }
+
+    function tokenClass(kind : SectionKind) : string | undefined {
+        switch (kind) {
+            case SectionKind.absname: return "absname";
+            case SectionKind.label: return "label";
+            case SectionKind.varname:
+            case SectionKind.varname_plus:
+            case SectionKind.varname_star:
+                return "varname";
+            case SectionKind.identifier:
+                return "identifier";
+            case SectionKind.whitespace:
+                return "whitespace";
+            case SectionKind.invalid: return "invalid";
+            default: return undefined;
+        }
+    }
+
+    function nestedClass(kind : SectionKind) : string | undefined {
+        switch (kind) {
+            /*case SectionKind.block: return null; //return "block";
+            case SectionKind.entry: return null; //return "entry";
+            case SectionKind.invalid_entry: return null; // return "invalid-entry";
+            case SectionKind.absapp: return null;*/
+            default: return undefined;
+        }
+    }
+
+    function createTokenNode(tclass : string, result : ParseResult) : Node {
+        const text = createTextNode(result);
+        const span = document.createElement("span");
+        span.setAttribute("class", "token-" + tclass);
+        span.appendChild(text);
+        return span;
+    }
+
+    function fill(from : TLPos, to : TLPos, parent : Node) {
+        if (TLPosT.compare(from, to) === Relation.LESS) {
+            //console.log("** fill needed from " + TLPosT.display(from) + " to " + TLPosT.display(to));
+            const slice = copySliceOfTextLines(lines, from.line, from.column, 
+                to.line, to.column);
+            const text = textOfTextLines(slice).toString();
+            parent.appendChild(document.createTextNode(text));    
+        }
+    }
+
+    function createNestedNode(nclass : string, result : ParseResult) : Node {
+        const div = document.createElement("div");
+        div.setAttribute("class", "nested-" + nclass);
+        console.log("number of children: " + result.children.length);
+        let pos = startOfResult(result);
+        for (const child of result.children) {
+            fill(pos, startOfResult(child), div);
+            generate(child, div);
+            pos = endOfResult(child);
+        }
+        fill(pos, endOfResult(result), div);
+        return div;
+    }
+
+    function generate(result : ParseResult, parent : Node) {
+        const kind = result.type?.kind;
+        if (kind !== undefined) {
+            const tclass = tokenClass(kind);
+            if (tclass) {
+                parent.appendChild(createTokenNode(tclass, result));
+                return;
+            }
+            const nclass = nestedClass(kind);
+            if (nclass) {
+                parent.appendChild(createNestedNode(nclass, result));
+                return;
+            } 
+        } 
+        let pos = startOfResult(result);
+        for (const child of result.children) {
+            fill(pos, startOfResult(child), parent);
+            generate(child, parent);
+            pos = endOfResult(child);
+        }
+        fill(pos, endOfResult(result), parent);
+    }
+
+    generate(result, parent);
 }

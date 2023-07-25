@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="310px" height="310px" viewBox="0 0 310 310" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
+    <defs>
+        <radialGradient cx="50%" cy="0%" fx="50%" fy="0%" r="100%" id="radialGradient-1">
+            <stop stop-color="#60D4F2" offset="0%"></stop>
+            <stop stop-color="#4E818E" offset="46.3226638%"></stop>
+            <stop stop-color="#012D36" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50%" cy="0%" fx="50%" fy="0%" r="100%" id="radialGradient-2">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#464848" offset="68.4459339%"></stop>
+            <stop stop-color="#858C8B" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50%" cy="0%" fx="50%" fy="0%" r="130.27027%" gradientTransform="translate(0.500000,0.000000),scale(1.000000,0.767635),rotate(90.000000),translate(-0.500000,-0.000000)" id="radialGradient-3">
+            <stop stop-color="#EFF7F8" offset="0%"></stop>
+            <stop stop-color="#56BED0" offset="100%"></stop>
+        </radialGradient>
+        <path d="M140.81,219 L140.81,168.06 L144.41,168.06 C166.73,168.06 180.05,164.46 190.67,155.64 C200.57,147.72 205.97,136.2 205.97,123.6 C205.97,107.94 198.23,95.7 185.99,91.56 C178.510899,89.1249438 176.578097,88.8747936 161.027874,88.86 L159.92064,88.86 C159.732338,88.86 159.542135,88.86 159.35,88.86 L106.07,88.86 L106.07,219 L140.81,219 Z M132.17,210.36 L114.71,210.36 L114.71,97.5 L132.17,97.5 L132.17,210.36 Z M142.79,159.42 L140.81,159.42 L140.81,97.5 L142.79,97.5 C159.89,97.5 171.23,109.38 171.23,127.56 C171.23,146.82 159.89,159.42 142.79,159.42 Z M166.91,157.8 C175.37,150.06 179.87,139.62 179.87,127.74 C179.87,113.88 175.01,103.98 164.93,97.5 L166.73,97.5 C186.71,97.5 197.33,106.32 197.33,123.24 C197.33,131.16 194.09,139.98 189.23,145.74 C184.19,151.5 178.61,154.56 166.91,157.8 Z" id="path-4"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(5.000000, 5.000000)">
+            <circle id="Oval" stroke="url(#radialGradient-2)" stroke-width="10" fill="url(#radialGradient-1)" cx="150" cy="150" r="150"></circle>
+            <g id="ℙ" fill-rule="nonzero">
+                <use fill="#F7F7FB" xlink:href="#path-4"></use>
+                <use fill="url(#radialGradient-3)" xlink:href="#path-4"></use>
+            </g>
+        </g>
+    </g>
+</svg>

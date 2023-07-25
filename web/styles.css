@@ -1,0 +1,23 @@
+.token-absname {
+    color: lightseagreen
+}
+
+.token-label {
+    font-weight: bold;
+}
+
+.token-varname {
+    font-style: italic;
+}
+
+.token-identifier {
+    font-style: normal;
+}
+
+.token-invalid {
+    color: red;
+}
+
+.token-whitespace {
+    text-decoration: underline;
+}

@@ -1,0 +1,251 @@
+@font-face {
+    font-family: 'mathjaxams';
+    src: url('mathjax/MathJax_AMS-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxmath';
+    src: url('mathjax/MathJax_Math-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxmain';
+    src: url('mathjax/MathJax_Main-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxsansserif';
+    src: url('mathjax/MathJax_SansSerif-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxscript';
+    src: url('mathjax/MathJax_Script-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxfraktur';
+    src: url('mathjax/MathJax_Fraktur-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxcaligraphic';
+    src: url('mathjax/MathJax_Caligraphic-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxvector';
+    src: url('mathjax/MathJax_Vector-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxsansserifbold';
+    src: url('mathjax/MathJax_SansSerif-Bold.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxmainbold';
+    src: url('mathjax/MathJax_Main-Bold.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxsize1';
+    src: url('mathjax/MathJax_Size1-Regular.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'mathjaxx';
+    src: url('experimental/MathJax_AMS-RegularX.woff') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'stixtwomath';
+    src: url('stix/STIXTwoMath-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-Italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-BoldItalic.woff2') format('woff2');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-SemiBoldItalic.woff2') format('woff2');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'stixtwotext';
+    src: url('stix/STIXTwoText-MediumItalic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'lucidamath';
+    src: url('lucida/LucidaBrightMathOT.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexams';
+    src: url('katex/KaTeX_AMS-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexmain';
+    src: url('katex/KaTeX_Main-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexmain';
+    src: url('katex/KaTeX_Main-Bold.woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexmath';
+    src: url('katex/KaTeX_Math-Italic.woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'katexmath';
+    src: url('katex/KaTeX_Math-BoldItalic.woff2');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'katextypewriter';
+    src: url('katex/KaTeX_Typewriter-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexscript';
+    src: url('katex/KaTeX_Script-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexsans';
+    src: url('katex/KaTeX_SansSerif-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexfraktur';
+    src: url('katex/KaTeX_Fraktur-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexsize1';
+    src: url('katex/KaTeX_Size1-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexsize2';
+    src: url('katex/KaTeX_Size2-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexsize3';
+    src: url('katex/KaTeX_Size3-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'katexsize4';
+    src: url('katex/KaTeX_Size4-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+ @font-face {
+    font-family: "fallback";
+    src: url('LastResortHE-Regular.ttf');
+ }
+
+
