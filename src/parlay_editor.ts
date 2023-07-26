@@ -229,9 +229,9 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
     function nestedClass(kind : SectionKind) : string | undefined {
         switch (kind) {
             case SectionKind.block: return "block";
-            /*case SectionKind.entry: return null; //return "entry";
-            case SectionKind.invalid_entry: return null; // return "invalid-entry";
-            case SectionKind.absapp: return null;*/
+            case SectionKind.entry: return "entry";
+            case SectionKind.invalid_entry: return "invalid-entry"; 
+            //case SectionKind.absapp: return null;
             default: return undefined;
         }
     }
