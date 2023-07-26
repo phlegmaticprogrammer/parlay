@@ -20,8 +20,8 @@ export class ParlayEditor {
         this.root.spellcheck = false;
         style.overflowX = "scroll";
         style.whiteSpace = "pre";
-        style.width = "400px";
-        style.height = "100px";
+        style.width = "600px";
+        style.height = "400px";
         style.border = "2px solid violet";
         style.padding = "5px";
         style.fontFamily = "stixtwotext";
@@ -88,7 +88,7 @@ export class ParlayEditor {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>");
         this.stopObserving();
         removeAllChildren(this.root);
-        generateHTML(lines, syntax, this.root);
+        this.root.appendChild(generateNode(lines, syntax));
         this.startObserving();
     }
 
@@ -166,6 +166,7 @@ function extractText(node : Node) : string {
                 case "span":
                 case "b":
                 case "i":
+                case "font":
                     extractFromNodeList(elemNode.childNodes);
                     break;
                 default: 
@@ -196,7 +197,7 @@ function endOfResult(result : ParseResult) : TLPos {
     return TLPos(result.endLine, result.endColumn);
 }
 
-function generateHTML(lines : TextLines, result : ParseResult, parent : Node) {
+function generateNode(lines : TextLines, result : ParseResult) : Node {
     
     function createTextNode(result : ParseResult) : Text {
         const slice = copySliceOfTextLines(lines, result.startLine, result.startColumn, 
@@ -215,6 +216,8 @@ function generateHTML(lines : TextLines, result : ParseResult, parent : Node) {
                 return "varname";
             case SectionKind.identifier:
                 return "identifier";
+            case SectionKind.boundvar:
+                return "boundvar";
             case SectionKind.whitespace:
                 return "whitespace";
             case SectionKind.invalid: return "invalid";
@@ -287,5 +290,7 @@ function generateHTML(lines : TextLines, result : ParseResult, parent : Node) {
         fill(pos, endOfResult(result), parent);
     }
 
-    generate(result, parent);
+    const div = document.createElement("div");
+    generate(result, div);
+    return div;
 }
