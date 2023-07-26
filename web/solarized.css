@@ -1,0 +1,56 @@
+:root {
+    --solarized-base03:    #002b36;
+    --solarized-base02:    #073642;
+    --solarized-base01:    #586e75;
+    --solarized-base00:    #657b83;
+    --solarized-base0:     #839496;
+    --solarized-base1:     #93a1a1;
+    --solarized-base2:     #eee8d5;
+    --solarized-base3:     #fdf6e3;
+    --solarized-yellow:    #b58900;
+    --solarized-orange:    #cb4b16;
+    --solarized-red:       #dc322f;
+    --solarized-magenta:   #d33682;
+    --solarized-violet:    #6c71c4;
+    --solarized-blue:      #268bd2;
+    --solarized-cyan:      #2aa198;
+    --solarized-green:     #859900;    
+}
+
+.solarized-light {
+    --text-background: var(--solarized-base3);
+    --text-background-highlights: var(--solarized-base2);
+    --text-content-secondary: var(--solarized-base1);
+    --text-content-intermediate: var(--solarized-base0);
+    --text-content-primary: var(--solarized-base00);      
+    --text-content-emphasized: var(--solarized-base01);
+    --text-content-emphasized-more: var(--solarized-base02);
+    --text-content-emphasized-most: var(--solarized-base03);
+    --text-accent-yellow: var(--solarized-yellow);
+    --text-accent-orange: var(--solarized-orange);
+    --text-accent-red: var(--solarized-red);
+    --text-accent-magenta: var(--solarized-magenta);
+    --text-accent-violet: var(--solarized-violet);
+    --text-accent-blue: var(--solarized-blue);
+    --text-accent-cyan: var(--solarized-cyan);
+    --text-accent-green: var(--solarized-green);
+}
+
+.solarized-dark {
+    --text-background: var(--solarized-base03);
+    --text-background-highlights: var(--solarized-base02);
+    --text-content-secondary: var(--solarized-base01);
+    --text-content-intermediate: var(--solarized-base00);
+    --text-content-primary: var(--solarized-base0);      
+    --text-content-emphasized: var(--solarized-base1);
+    --text-content-emphasized-more: var(--solarized-base2);
+    --text-content-emphasized-most: var(--solarized-base3);
+    --text-accent-yellow: var(--solarized-yellow);
+    --text-accent-orange: var(--solarized-orange);
+    --text-accent-red: var(--solarized-red);
+    --text-accent-magenta: var(--solarized-magenta);
+    --text-accent-violet: var(--solarized-violet);
+    --text-accent-blue: var(--solarized-blue);
+    --text-accent-cyan: var(--solarized-cyan);
+    --text-accent-green: var(--solarized-green);
+}

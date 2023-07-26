@@ -2,6 +2,7 @@ import { TLPos, TLPosT, TextLines, copySliceOfTextLines, createTextLines, textOf
 import { ParseResult, SectionKind } from "alogic";
 import { parseSyntax } from "alogic";
 import { Relation } from "things";
+import { example } from "./example.js";
 //import type { Relation } from "things";
 
 export class ParlayEditor { 
@@ -18,15 +19,15 @@ export class ParlayEditor {
         let style = this.root.style;
         this.root.contentEditable = "true";
         this.root.spellcheck = false;
+        this.root.classList.add("parlay");
         style.overflowX = "scroll";
         style.whiteSpace = "pre";
         style.width = "600px";
         style.height = "400px";
-        style.border = "2px solid violet";
         style.padding = "5px";
         style.fontFamily = "stixtwotext";
-        //style.margin = "10px";
-        this.root.innerText = "Parlay-Editor!";
+        style.margin = "10px";
+        this.root.innerText = example;
         this.startObserving();
         this.parse();
         document.addEventListener("selectionchange", () => {
@@ -227,8 +228,8 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
 
     function nestedClass(kind : SectionKind) : string | undefined {
         switch (kind) {
-            /*case SectionKind.block: return null; //return "block";
-            case SectionKind.entry: return null; //return "entry";
+            case SectionKind.block: return "block";
+            /*case SectionKind.entry: return null; //return "entry";
             case SectionKind.invalid_entry: return null; // return "invalid-entry";
             case SectionKind.absapp: return null;*/
             default: return undefined;
@@ -256,7 +257,6 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
     function createNestedNode(nclass : string, result : ParseResult) : Node {
         const div = document.createElement("div");
         div.setAttribute("class", "nested-" + nclass);
-        console.log("number of children: " + result.children.length);
         let pos = startOfResult(result);
         for (const child of result.children) {
             fill(pos, startOfResult(child), div);
