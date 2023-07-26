@@ -3,6 +3,9 @@
     color: var(--text-content-primary);
 }
 
+.token--fill {
+}
+
 .token-absname {
     color: var(--text-accent-violet);
 }
@@ -23,7 +26,7 @@
 }
 
 .token-identifier {
-    font-style: italic;
+    font-style: normal;
     color: var(--text-content-primary);
 }
 

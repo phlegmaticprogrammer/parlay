@@ -27,9 +27,7 @@ export class ParlayEditor {
         style.padding = "5px";
         style.fontFamily = "stixtwotext";
         style.margin = "10px";
-        this.root.innerText = example;
-        this.startObserving();
-        this.parse();
+        this.view(example);
         document.addEventListener("selectionchange", () => {
             const selection = document.getSelection();
             this.selectionChanged(selection);
@@ -63,8 +61,8 @@ export class ParlayEditor {
     startObserving() {
         if (!this.observer) {
             this.observer = new MutationObserver(mutations => this.mutationsObserved(mutations));            
+            this.observer.observe(this.root, { childList: true, characterData: true, subtree: true });
         }
-        this.observer.observe(this.root, { childList: true, characterData: true, subtree: true });
     }
 
     stopObserving() {
@@ -74,11 +72,7 @@ export class ParlayEditor {
         }
     }
 
-    parse() {
-        const text = extractText(this.root);
-        //this.stopObserving();
-        //this.root.innerHTML = text;
-        //this.startObserving();
+    view(text : string) {
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -90,7 +84,13 @@ export class ParlayEditor {
         this.stopObserving();
         removeAllChildren(this.root);
         this.root.appendChild(generateNode(lines, syntax));
-        this.startObserving();
+        this.startObserving();    
+    }
+
+    parse() {
+        //console.log("*** PARSE");
+        //const text = extractText(this.root);
+        //this.view(text);
     }
 
     mutationsObserved(mutations : MutationRecord[]) {
@@ -250,7 +250,11 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
             const slice = copySliceOfTextLines(lines, from.line, from.column, 
                 to.line, to.column);
             const text = textOfTextLines(slice).toString();
-            parent.appendChild(document.createTextNode(text));    
+            const textnode = document.createTextNode(text);
+            const span = document.createElement("span");
+            span.setAttribute("class", "token--fill");
+            span.appendChild(textnode);
+            parent.appendChild(span);    
         }
     }
 
