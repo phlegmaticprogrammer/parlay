@@ -26,7 +26,7 @@
 }
 
 .token-identifier {
-    font-style: normal;
+    font-style: oblique;
     color: var(--text-content-primary);
 }
 
@@ -41,6 +41,12 @@
 }
 
 .nested-entry {
+    border-top: 2px dotted var(--text-background-highlights);
+    padding-top: 5px;
+    display:block;
+}
+
+.nested-invalid-entry {
     border-top: 2px dotted var(--text-background-highlights);
     padding-top: 5px;
     display:block;

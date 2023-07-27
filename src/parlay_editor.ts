@@ -27,6 +27,7 @@ export class ParlayEditor {
         style.padding = "5px";
         style.fontFamily = "stixtwotext";
         style.margin = "10px";
+        style.border = "2px solid var(--text-background-highlights)";
         this.view(example);
         document.addEventListener("selectionchange", () => {
             const selection = document.getSelection();
