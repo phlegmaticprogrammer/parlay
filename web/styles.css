@@ -4,10 +4,16 @@
 }
 
 .token--fill {
+    font-style: normal;
 }
 
 .token-absname {
     color: var(--text-accent-violet);
+}
+
+.token-open-abs, .token-close-abs {
+    color: var(--text-accent-violet);
+    opacity: 50%;
 }
 
 .token-label {
@@ -33,6 +39,7 @@
 .token-invalid {
     color: var(--text-accent-red);
 }
+
 
 .nested-block {
     border-left: 2px solid var(--text-background-highlights);

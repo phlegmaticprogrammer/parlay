@@ -1,5 +1,5 @@
 import { TLPos, TLPosT, TextLines, copySliceOfTextLines, createTextLines, textOfTextLines } from "@practal/parsing";
-import { ParseResult, SectionKind } from "alogic";
+import { ParseResult, Tag } from "alogic";
 import { parseSyntax } from "alogic";
 import { Relation } from "things";
 import { example } from "./example.js";
@@ -208,31 +208,34 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
         return document.createTextNode(text);
     }
 
-    function tokenClass(kind : SectionKind) : string | undefined {
+    function tokenClass(kind : Tag) : string | undefined {
         switch (kind) {
-            case SectionKind.absname: return "absname";
-            case SectionKind.label: return "label";
-            case SectionKind.varname:
-            case SectionKind.varname_plus:
-            case SectionKind.varname_star:
+            case Tag.absname: return "absname";
+            case Tag.label: return "label";
+            case Tag.varname:
+            case Tag.varname_plus:
+            case Tag.varname_star:
                 return "varname";
-            case SectionKind.identifier:
+            case Tag.identifier:
                 return "identifier";
-            case SectionKind.boundvar:
+            case Tag.boundvar:
                 return "boundvar";
-            case SectionKind.whitespace:
+            case Tag.whitespace:
                 return "whitespace";
-            case SectionKind.invalid: return "invalid";
+            case Tag.close_abs:
+                return "close-abs";
+            case Tag.open_abs:
+                return "open-abs";
+            case Tag.invalid: return "invalid";
             default: return undefined;
         }
     }
 
-    function nestedClass(kind : SectionKind) : string | undefined {
+    function nestedClass(kind : Tag) : string | undefined {
         switch (kind) {
-            case SectionKind.block: return "block";
-            case SectionKind.entry: return "entry";
-            case SectionKind.invalid_entry: return "invalid-entry"; 
-            //case SectionKind.absapp: return null;
+            case Tag.block: return "block";
+            case Tag.entry: return "entry";
+            case Tag.invalid_entry: return "invalid-entry"; 
             default: return undefined;
         }
     }
@@ -273,8 +276,8 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
     }
 
     function generate(result : ParseResult, parent : Node) {
-        const kind = result.type?.kind;
-        if (kind !== undefined) {
+        const kind = result.type;
+        if (kind !== undefined && kind !== null) {
             const tclass = tokenClass(kind);
             if (tclass) {
                 parent.appendChild(createTokenNode(tclass, result));
