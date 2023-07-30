@@ -25,13 +25,18 @@ for-all x. P[x]
 `;
 
 export const example2 = `
-theorem(Modus-Ponens: B)
-  premise: implies(A, B)
-  premise: A
+theorem(Modus-Ponens: B,
+    w,
+  q)  premise: implies(A, B)
+    )
+    premise: A(
+        B)
+          premise:
+      Q
 
 theorem(Universal-Introduction: 
   for-all(x. P[x]))
-  premise: x. P[x]
+    premise: x. P[x]
 
 lambda(domain: D, E body: u. B[u], x y. x)
 lambda(domain: body:)
@@ -52,9 +57,25 @@ lambda: x y z.
 `;
 
 export const example3 = `
-theorem Modus-Ponens: ?x !lambda 1 2 3 rgb: 255, _. 12, 25)
+theorem(Modus-Ponens: B,
+       (C
+    cool: g
+  ))
+    premise: implies(A, B)
 `;
 
-export const example = example2.trim();
+export const example4 = `
+lambda(domain: R)
+    B()
+        C
+    hey: L(a, b,
+      c)
+        Q  
+        D
+            s:
+    E
+`;
+
+export const example = example4.trim();
 
   
