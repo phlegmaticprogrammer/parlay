@@ -57,4 +57,5 @@
     border-top: 2px dotted var(--text-background-highlights);
     padding-top: 5px;
     display:block;
+    color: var(--text-accent-red);
 }
