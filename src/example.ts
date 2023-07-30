@@ -66,7 +66,7 @@ theorem(Modus-Ponens: B,
 
 export const example4 = `
 lambda(domain: R)
-    B()
+    B
         C
     hey: L(a, b,
       c)
