@@ -66,8 +66,9 @@ theorem(Modus-Ponens: B,
 
 export const example4 = `
 lambda(domain: R)
+      R
     B
- C
+   C
     hey: L(a, b,
       c)
         Q  
@@ -77,6 +78,14 @@ lambda(domain: R)
 grunch
 `;
 
-export const example = example4.trim();
+export const example5 = `
+lambda(domain: R,
+  R
+    B
+  C
+next
+`;
+
+export const example = example5.trim();
 
   

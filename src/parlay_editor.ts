@@ -234,6 +234,7 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
     function nestedClass(kind : Tag) : string | undefined {
         //return undefined;
         switch (kind) {
+            case Tag.param_block: return "block";
             case Tag.block: return "block";
             case Tag.entry: return "entry";
             case Tag.invalid_entry: return "invalid-entry"; 
