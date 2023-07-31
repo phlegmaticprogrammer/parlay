@@ -80,10 +80,12 @@ grunch
 
 export const example5 = `
 lambda(domain: R,
-  R
+  R  
     B
-  C
-next
+  C)
+    next, e, o, ..x, ...y, q.y
+    wow
+    u v. P[x, y]
 `;
 
 export const example = example5.trim();

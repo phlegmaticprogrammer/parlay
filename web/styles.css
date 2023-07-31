@@ -17,8 +17,12 @@
 }
 
 .token-label {
-    color: var(--text-content-primary);
+    color: var(--text-accent-yellow);
     font-variant: small-caps;
+}
+
+.token-param-block-start {
+    color: var(--text-accent-violet);
 }
 
 .token-varname {

@@ -224,6 +224,8 @@ function generateNode(lines : TextLines, result : ParseResult) : Node {
                 return "whitespace";
             case Tag.close_abs:
                 return "close-abs";
+            case Tag.param_block_start:
+                return "param-block-start";
             case Tag.open_abs:
                 return "open-abs";
             case Tag.invalid: return "invalid";
