@@ -1,0 +1,198 @@
+{
+  "main": {
+    "id": "4626e8721afe8d95",
+    "type": "split",
+    "children": [
+      {
+        "id": "96da9310e6476dd6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1526918c422c4ef5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Block-Based Editing.md",
+                "mode": "source",
+                "source": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "fcdb5e8f91101f1c",
+    "type": "split",
+    "children": [
+      {
+        "id": "607d25622379aa24",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1c14b8ba44732554",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "2e3806837125c88b",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "5413ea00dda4e6a0",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          },
+          {
+            "id": "b107557e6459f45c",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 371.5
+  },
+  "right": {
+    "id": "bd8518d33ec6b0a0",
+    "type": "split",
+    "children": [
+      {
+        "id": "a3f496665cc5cb16",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "46bf1c2a6cda2480",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Block-Based Editing.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "3bf01ce14815256c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Block-Based Editing.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "b9e54f42df45209e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "136b282cb2600910",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Block-Based Editing.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "1526918c422c4ef5",
+  "lastOpenFiles": [
+    "Repository/Identifiers.md",
+    "Abstraction Logic/2-Space Indentation.md",
+    "Abstraction Logic/Indentation Syntax.md",
+    "Abstraction Logic/Syntax I - LISP-like.md",
+    "Abstraction Logic/What is Abstraction Logic? (Claude).md",
+    "Abstraction Logic/Abstraction Application.md",
+    "Abstraction Logic/Evolving Syntax I.md",
+    "Abstraction Logic/Syntax Requirements and Considerations.md",
+    "LLM/Abstraction Applications.md",
+    "LLM/Term Analysis Objective.md",
+    "Block-Based Editing.md",
+    "Abstraction Logic",
+    "LLM/What is a Term?.md",
+    "LLM",
+    "Progress Tracking/Getting Started Version.md",
+    "How To/How to import my own packages into Remix?.md",
+    "How To/How to import my own components into Remix?.md",
+    "Metering.md",
+    "How To",
+    "Repository/Sources and Builds.md",
+    "Progress Tracking",
+    "Repository/Realm.md",
+    "Repository/Peers and Logins.md",
+    "Repository/Versions.md",
+    "Repository",
+    "Workbench/The Workbench as an Interactive Environment.md",
+    "ALAI/First Steps.md",
+    "Proofs.md",
+    "Packages.md",
+    "Alternative Formats to Latex and Markdown.md",
+    "ALogic/Term Syntax.md",
+    "Workbench",
+    "Parsing",
+    "ALogic",
+    "ALAI",
+    "Articles and Blog Posts/Why Abstraction Logic?",
+    "Business/Products.canvas",
+    "Recipes/Pasted image 20230228205620.png"
+  ]
+}

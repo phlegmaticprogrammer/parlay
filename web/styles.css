@@ -48,6 +48,7 @@
 .nested-block {
     border-left: 2px solid var(--text-background-highlights);
     padding-left: 5px;
+    margin-left: 10px;
     display:block;
 }
 
@@ -58,8 +59,8 @@
 }
 
 .nested-invalid-entry {
-    border-top: 2px dotted var(--text-background-highlights);
-    padding-top: 5px;
-    display:block;
+    /* border-top: 2px dotted var(--text-background-highlights); 
+    padding-top: 5px;*/
+    display:span;
     color: var(--text-accent-red);
 }

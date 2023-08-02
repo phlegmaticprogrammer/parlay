@@ -86,8 +86,14 @@ lambda(domain: R,
     next, e, o, ..x, ...y, q.y
     wow
     u v. P[x, y]
+   were
 `;
 
-export const example = example5.trim();
+export const example6 = `
+key: lambda
+  x
+`;
+
+export const example = example6;
 
   
