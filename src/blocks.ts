@@ -36,7 +36,7 @@ export enum TextClass {
     FREE_ID,
     BOUND_ID,
     ABS_ID,
-    ABS_DOT,
+    DOT,
     LABEL
 }
 
@@ -130,11 +130,8 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
     function fillWithTextLineFragment(line : nat, fromColumn : nat, toColumn : nat,
         classes : TextClass[], entry : EntryBlock)
     {
-        console.log("fillWithTextLineFragment(line " + line + ", from " + fromColumn + 
-            ", to " + toColumn + ")");
         if (fromColumn < toColumn) {
             const text = lines.lineAt(line).slice(fromColumn, toColumn);
-            console.log("text = " + text);
             const textblock = mkTextBlock(text);
             textblock.textClasses.push(...classes);
             entry.children.push(textblock);
@@ -145,8 +142,6 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         classes : TextClass[], entry : EntryBlock) 
     { 
         if (TLPosT.equal(from, to)) return;
-        console.log("fillWithText(" + indentationNext + ", " + TLPosT.display(from) +
-            ", " + TLPosT.display(to) + ", [" + classes.map(c => TextClass[c]).join(", ") + "]");
         if (from.line > to.line) throw new Error("fillWithText: from > to");
         let start = from.column;
         for (let i = from.line; i < to.line; i++) {
@@ -174,7 +169,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             case Tag.comma:
                 return TextClass.PUNCTUATION;
             case Tag.dot:
-                return TextClass.ABS_DOT;
+                return TextClass.DOT;
             case Tag.label:
                 return TextClass.LABEL;
             case Tag.open_abs:
@@ -198,14 +193,16 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             fillWithText(indentationNext, start, to, [textclass], entry);
         } else if (child.type === Tag.block || child.type === Tag.param_block) {
             entry.children.push(generateBlock(child));
+        } else if (child.type === Tag.spurious_linebreak) {
+            //throw new Error("Hey there :-)");
+            // put a linebreak in front of the block
+            fillEntry(indentationNext, child, entry);
         } else {
             fillEntry(indentationNext, child, entry);
         }
     }
 
     function fillEntry(indentationNext : nat, result : ParseResult, entry : EntryBlock) {
-        console.log("fillEntry(from " + TLPosT.display(startOfResult(result)) + ")");
-        console.log("indentationNext = " + indentationNext);
         let pos = startOfResult(result);
         for (const child of result.children) {
             fillWithText(indentationNext, pos, startOfResult(child), [], entry);
@@ -216,8 +213,6 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
     }
 
     function generateEntry(line : nat, result : ParseResult) : EntryBlock {
-        console.log("generateEntry(line " + line + ", from " + TLPosT.display(
-            TLPos(result.startLine, result.startColumn)) + ")");
         checkTag(result.type, Tag.entry, Tag.invalid_entry);
         const entry = mkEntryBlock();
         let diff = result.startLine - line;
@@ -237,11 +232,20 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         const block = mkBlockBlock();
         let line = result.startLine;
         for (const child of result.children) {
-            block.children.push(generateEntry(line, child));
-            line = child.endLine;
+            if (child.type === Tag.spurious_linebreak) {
+                line = child.endLine + 1;
+            } else {
+                block.children.push(generateEntry(line, child));
+                line = child.endLine;
+            }
         }
         return block;
     }
+
+    // top block
+    // param block
+    // label block
+
 
     return generateBlock(result);
 }
@@ -282,6 +286,91 @@ export function printBlock(block : Block, pr : (s : string) => void = debug) {
     }
     print("", block);
     pr(output);
+}
+
+export function generateNodeFromBlock(block : Block) : Node {
+
+    function generateFromBlock(indented : boolean, block : BlockBlock) : Node {
+        const div = document.createElement("div");
+        div.setAttribute("class", indented ? "parlay-indented-block" : "parlay-block");
+        for (const child of block.children) {
+            div.appendChild(generateFromEntry(child));
+        }
+        return div;
+    }
+
+    function generateFromEntry(entry : EntryBlock) : Node {
+        const div = document.createElement("div");
+        div.setAttribute("class", "parlay-entry");
+        let row : Node[] = [];
+        function flushRow(indented : boolean) {
+            if (row.length === 0) row.push(linebreakNode());
+            const rownode = document.createElement("div");
+            rownode.setAttribute("class", indented ? "parlay-indented-entry-row" : "parlay-entry-row");
+            for (const node of row) rownode.appendChild(node);
+            div.appendChild(rownode);
+            row = [];
+        }
+        let indentNext = false;
+        for (const child of entry.children) {
+            const kind = child.kind;
+            switch (kind) {
+                case BlockKind.BLOCK:
+                    if (row.length !== 0) {
+                        flushRow(indentNext);
+                    }//throw new Error("In an entry, a block must always be after a linebreak.");
+                    div.appendChild(generateFromBlock(indentNext,child));
+                    break;
+                case BlockKind.LINEBREAK:
+                    flushRow(indentNext);
+                    indentNext = child.indent;
+                    break;
+                case BlockKind.TEXT:
+                    row.push(generateFromText(child));
+                    break;
+                default: assertNever(kind);
+            }
+        }
+        if (row.length !== 0) flushRow(indentNext);
+        return div;
+    }
+
+    function cssClassOf(textclass : TextClass) : string | undefined {
+        const name = TextClass[textclass].toLowerCase().replaceAll("_", "-");
+        return "parlay-token-" + name;
+    }
+
+    function generateFromText(textblock : TextBlock) : Node {
+        const text = document.createTextNode(textblock.content.toString());
+        const classes : string[] = [];
+        for (const textclass of textblock.textClasses) {
+            const c = cssClassOf(textclass);
+            if (c) classes.push(c);
+        }
+        if (classes.length === 0) return text;
+        const span = document.createElement("span");
+        span.appendChild(text);
+        const cl = span.classList;
+        cl.add(...classes);
+        return span;
+    }
+
+    function linebreakNode() : Node {
+        return document.createElement("br");        
+    }
+
+    function generate(block : Block) : Node {
+        const kind = block.kind;
+        switch (kind) {
+            case BlockKind.BLOCK:
+                return generateFromBlock(false, block);
+            case BlockKind.ENTRY:
+                return generateFromEntry(block);
+            default: throw new Error("Can only generate node for blocks and entries.");
+        }
+    }
+
+    return generate(block);
 }
 
 

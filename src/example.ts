@@ -100,6 +100,13 @@ C
 D
 `;
 
-export const example = example6;
+export const example7 = `
+lambda(domain: R,
+  R  
+    B
+  C)
+`;
+
+export const example = example7;
 
   

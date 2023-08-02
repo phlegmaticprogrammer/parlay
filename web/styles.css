@@ -7,40 +7,50 @@
     font-style: normal;
 }
 
-.token-absname {
+.parlay-token-abs-id {
     color: var(--text-accent-violet);
 }
 
-.token-open-abs, .token-close-abs {
-    color: var(--text-accent-violet);
-    opacity: 50%;
+.parlay-token-dot {
+    color: var(--text-accent-green);
+    font-weight: bold;
 }
 
-.token-label {
+.parlay-token-punctuation-abs {
+    color: var(--text-accent-violet);
+    opacity: 60%;
+}
+
+.parlay-token-punctuation-var {
+    color: var(--text-accent-blue);
+    opacity: 60%;
+}
+
+.parlay-token-punctuation {
+    color: var(--text-content-secondary);
+}
+
+.parlay-token-label {
     color: var(--text-accent-yellow);
     font-variant: small-caps;
 }
 
-.token-param-block-start {
-    color: var(--text-accent-violet);
-}
-
-.token-varname {
+.parlay-token-free-id {
     font-style: italic;
     color: var(--text-accent-blue);
 }
 
-.token-boundvar {
+.parlay-token-bound-id {
     font-style: italic;
     color: var(--text-accent-green);
 }
 
-.token-identifier {
+.parlay-token-id {
     font-style: oblique;
     color: var(--text-content-primary);
 }
 
-.token-invalid {
+.parlay-token-invalid {
     color: var(--text-accent-red);
 }
 
