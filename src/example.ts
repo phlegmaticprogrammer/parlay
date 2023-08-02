@@ -90,8 +90,14 @@ lambda(domain: R,
 `;
 
 export const example6 = `
-key: lambda
-  x
+A
+
+B
+
+C
+
+
+D
 `;
 
 export const example = example6;
