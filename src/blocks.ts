@@ -47,7 +47,8 @@ export type TextBlock = {
 }
 
 export type LinebreakBlock = {
-    kind : BlockKind.LINEBREAK
+    kind : BlockKind.LINEBREAK,
+    indent : boolean
 }
 
 export function mkBlockBlock() : BlockBlock {
@@ -72,9 +73,10 @@ export function mkTextBlock(content : TextChars) : TextBlock {
     };
 }
 
-export function mkLineBreakBlock() : LinebreakBlock {
+export function mkLineBreakBlock(indent : boolean) : LinebreakBlock {
     return {
-        kind : BlockKind.LINEBREAK
+        kind : BlockKind.LINEBREAK,
+        indent : indent
     };
 }
 
@@ -219,7 +221,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             textblock.textClasses.push(TextClass.INVALID);
             entry.children.push(textblock);
             if (i < result.endLine) {
-                entry.children.push(mkLineBreakBlock());
+                entry.children.push(mkLineBreakBlock(true));
             }
             indentation = result.startColumn + 2;
         }
@@ -251,7 +253,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             const end = lines.lineAt(i).count;
             fillWithTextLineFragment(i, start, end, classes, entry);
             start = indentationNext;
-            entry.children.push(mkLineBreakBlock());
+            entry.children.push(mkLineBreakBlock(true));
         }
         fillWithTextLineFragment(to.line, start, to.column, classes, entry);
     }
@@ -318,9 +320,9 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             TLPos(result.startLine, result.startColumn)) + ")");
         checkTag(result.type, Tag.entry, Tag.invalid_entry);
         const entry = mkEntryBlock();
-        let diff = result.startLine - (line + 1);
+        let diff = result.startLine - line;
         while (diff > 0) {
-            entry.children.push(mkLineBreakBlock());
+            entry.children.push(mkLineBreakBlock(false));
             diff -= 1;
         }
         if (result.type === Tag.invalid_entry) 
@@ -368,6 +370,8 @@ export function printBlock(block : Block, pr : (s : string) => void = debug) {
             const classes = block.textClasses.map(c => TextClass[c]).join(", ");
             writeln(indentation + BlockKind[block.kind] + "[" + classes + "]: " +
                 " '" + block.content.toString() + "'");
+        } else if (block.kind === BlockKind.LINEBREAK) {
+            writeln(indentation + BlockKind[block.kind] + (block.indent ? " (INDENT)" : ""));
         } else {
             writeln(indentation + BlockKind[block.kind]);
         }
