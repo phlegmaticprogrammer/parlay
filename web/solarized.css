@@ -34,6 +34,8 @@
     --text-accent-blue: var(--solarized-blue);
     --text-accent-cyan: var(--solarized-cyan);
     --text-accent-green: var(--solarized-green);
+    --ui-background: white;
+    --ui-content: black;
 }
 
 .solarized-dark {
@@ -53,4 +55,6 @@
     --text-accent-blue: var(--solarized-blue);
     --text-accent-cyan: var(--solarized-cyan);
     --text-accent-green: var(--solarized-green);
+    --ui-background: black;
+    --ui-content: white;
 }

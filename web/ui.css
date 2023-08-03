@@ -1,0 +1,22 @@
+.parlay-button {
+    padding: 1ch;
+    margin: 1ch;
+    border: solid 1px var(--text-accent-yellow);
+    border-radius: 1ch;
+    color: var(--text-accent-yellow);
+    background-color: var(--text-background);
+}
+
+.parlay-button:hover {
+    background-color: var(--text-background-highlights);
+}
+
+.parlay-button:active {
+    background-color: var(--text-accent-yellow);
+    color: var(--text-background);
+}
+
+.parlay-body {
+    background-color: var(--ui-background);
+    color: var(--ui-content);
+}

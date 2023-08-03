@@ -74,7 +74,7 @@ export class ParlayEditor {
         }
     }
 
-    view(text : string) {
+    view(text : string, structure : boolean = true) {
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -87,7 +87,8 @@ export class ParlayEditor {
         removeAllChildren(this.root);
         const block = generateBlockFromSource(lines, syntax);
         printBlock(block, s => console.log(s));
-        this.root.appendChild(generateNodeFromBlock(block));
+        const prefix = structure ? "parlay" : "parlay-raw";
+        this.root.appendChild(generateNodeFromBlock(block, prefix, "parlay-token"));
         console.log("~~~~~~~~~~~~~~~~~~~~");
         this.startObserving();  
     }

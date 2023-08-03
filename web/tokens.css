@@ -1,0 +1,46 @@
+.parlay-token-abs-id {
+    color: var(--text-accent-violet);
+}
+
+.parlay-token-dot {
+    color: var(--text-accent-green);
+    font-weight: bold;
+}
+
+.parlay-token-punctuation-abs {
+    color: var(--text-accent-violet);
+    opacity: 60%;
+}
+
+.parlay-token-punctuation-var {
+    color: var(--text-accent-blue);
+    opacity: 60%;
+}
+
+.parlay-token-punctuation {
+    color: var(--text-content-secondary);
+}
+
+.parlay-token-label {
+    color: var(--text-accent-yellow);
+    font-variant: small-caps;
+}
+
+.parlay-token-free-id {
+    font-style: italic;
+    color: var(--text-accent-blue);
+}
+
+.parlay-token-bound-id {
+    font-style: italic;
+    color: var(--text-accent-green);
+}
+
+.parlay-token-id {
+    font-style: oblique;
+    color: var(--text-content-primary);
+}
+
+.parlay-token-invalid {
+    color: var(--text-accent-red);
+}
