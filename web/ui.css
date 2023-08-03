@@ -17,6 +17,6 @@
 }
 
 .parlay-body {
-    background-color: var(--text-background-highlights);
+    background-color: var(--text-background);
     color: var(--text-content-primary);
 }
