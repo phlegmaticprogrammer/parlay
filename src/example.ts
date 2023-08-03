@@ -104,9 +104,19 @@ export const example7 = `
 lambda(domain: R,
   R  
     B
+
   C)
 `;
 
-export const example = example7;
+export const example8 = `
+lambda(domain: R,
+  R  
+    B
+
+
+  C)
+`;
+
+export const example = example2;
 
   

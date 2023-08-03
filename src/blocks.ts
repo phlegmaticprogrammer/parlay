@@ -89,6 +89,16 @@ function endOfResult(result : ParseResult) : TLPos {
 }
 
 export function generateBlockFromSource(lines : TextLines, result : ParseResult) : BlockBlock {
+
+    let last_spurious = -1;
+
+    function isSpurious(line : nat) : boolean {
+        return last_spurious === line;
+    }
+
+    function markSpurious(line : nat) {
+        if (line > last_spurious) last_spurious = line;
+    }
     
     function checkTag(tag : Tag | null | undefined, ...options : Tag[]) {
         if (tag === null || tag === undefined) 
@@ -120,7 +130,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             const textblock = mkTextBlock(text);
             textblock.textClasses.push(TextClass.INVALID);
             entry.children.push(textblock);
-            if (i < result.endLine) {
+            if (i < result.endLine && !isSpurious(i)) {
                 entry.children.push(mkLineBreakBlock(true));
             }
             indentation = result.startColumn + 2;
@@ -148,7 +158,8 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             const end = lines.lineAt(i).count;
             fillWithTextLineFragment(i, start, end, classes, entry);
             start = indentationNext;
-            entry.children.push(mkLineBreakBlock(true));
+            if (!isSpurious(i))
+                entry.children.push(mkLineBreakBlock(true));
         }
         fillWithTextLineFragment(to.line, start, to.column, classes, entry);
     }
@@ -194,9 +205,10 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         } else if (child.type === Tag.block || child.type === Tag.param_block) {
             entry.children.push(generateBlock(child));
         } else if (child.type === Tag.spurious_linebreak) {
+            markSpurious(child.startLine);
             //throw new Error("Hey there :-)");
             // put a linebreak in front of the block
-            fillEntry(indentationNext, child, entry);
+            //fillEntry(indentationNext, child, entry);
         } else {
             fillEntry(indentationNext, child, entry);
         }
@@ -215,10 +227,10 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
     function generateEntry(line : nat, result : ParseResult) : EntryBlock {
         checkTag(result.type, Tag.entry, Tag.invalid_entry);
         const entry = mkEntryBlock();
-        let diff = result.startLine - line;
-        while (diff > 0) {
-            entry.children.push(mkLineBreakBlock(false));
-            diff -= 1;
+        while (line < result.startLine) {
+            if (!isSpurious(line))
+                entry.children.push(mkLineBreakBlock(false));
+            line += 1;
         }
         if (result.type === Tag.invalid_entry) 
             generateInvalidLines(result, entry);
@@ -233,7 +245,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         let line = result.startLine;
         for (const child of result.children) {
             if (child.type === Tag.spurious_linebreak) {
-                line = child.endLine + 1;
+                markSpurious(child.startLine);
             } else {
                 block.children.push(generateEntry(line, child));
                 line = child.endLine;
@@ -241,11 +253,6 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         }
         return block;
     }
-
-    // top block
-    // param block
-    // label block
-
 
     return generateBlock(result);
 }
@@ -302,36 +309,42 @@ export function generateNodeFromBlock(block : Block) : Node {
     function generateFromEntry(entry : EntryBlock) : Node {
         const div = document.createElement("div");
         div.setAttribute("class", "parlay-entry");
-        let row : Node[] = [];
-        function flushRow(indented : boolean) {
-            if (row.length === 0) row.push(linebreakNode());
+        function writeRow(indented : boolean, row : Node[]) {
             const rownode = document.createElement("div");
             rownode.setAttribute("class", indented ? "parlay-indented-entry-row" : "parlay-entry-row");
             for (const node of row) rownode.appendChild(node);
+            if (row.length === 0) rownode.appendChild(linebreakNode());
             div.appendChild(rownode);
-            row = [];
         }
-        let indentNext = false;
+        let indent = false;
+        let row : Node[] | null = null;
         for (const child of entry.children) {
             const kind = child.kind;
             switch (kind) {
                 case BlockKind.BLOCK:
-                    if (row.length !== 0) {
-                        flushRow(indentNext);
-                    }//throw new Error("In an entry, a block must always be after a linebreak.");
-                    div.appendChild(generateFromBlock(indentNext,child));
+                    if (row !== null) {
+                        writeRow(indent, row);
+                        row = null;
+                    }
+                    div.appendChild(generateFromBlock(indent,child));
                     break;
                 case BlockKind.LINEBREAK:
-                    flushRow(indentNext);
-                    indentNext = child.indent;
+                    if (row !== null) {
+                        writeRow(indent, row);
+                    }
+                    indent = child.indent;
+                    row = [];
                     break;
                 case BlockKind.TEXT:
+                    if (row === null) row = [];
                     row.push(generateFromText(child));
                     break;
                 default: assertNever(kind);
             }
         }
-        if (row.length !== 0) flushRow(indentNext);
+        if (row) {
+            writeRow(indent, row);
+        }
         return div;
     }
 
