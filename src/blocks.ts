@@ -295,11 +295,18 @@ export function printBlock(block : Block, pr : (s : string) => void = debug) {
     pr(output);
 }
 
-export function generateNodeFromBlock(block : Block) : Node {
+export function generateNodeFromBlock(block : Block, 
+    prefix : string = "parlay", 
+    prefix_token : string | undefined = undefined) : Node 
+{
+
+    function cl(css_class : string) : string {
+        return prefix + "-" + css_class;
+    }
 
     function generateFromBlock(indented : boolean, block : BlockBlock) : Node {
         const div = document.createElement("div");
-        div.setAttribute("class", indented ? "parlay-indented-block" : "parlay-block");
+        div.setAttribute("class", indented ? cl("indented-block") : cl("block"));
         for (const child of block.children) {
             div.appendChild(generateFromEntry(child));
         }
@@ -308,10 +315,10 @@ export function generateNodeFromBlock(block : Block) : Node {
 
     function generateFromEntry(entry : EntryBlock) : Node {
         const div = document.createElement("div");
-        div.setAttribute("class", "parlay-entry");
+        div.setAttribute("class", cl("entry"));
         function writeRow(indented : boolean, row : Node[]) {
             const rownode = document.createElement("div");
-            rownode.setAttribute("class", indented ? "parlay-indented-entry-row" : "parlay-entry-row");
+            rownode.setAttribute("class", indented ? cl("indented-entry-row") : cl("entry-row"));
             for (const node of row) rownode.appendChild(node);
             if (row.length === 0) rownode.appendChild(linebreakNode());
             div.appendChild(rownode);
@@ -350,7 +357,10 @@ export function generateNodeFromBlock(block : Block) : Node {
 
     function cssClassOf(textclass : TextClass) : string | undefined {
         const name = TextClass[textclass].toLowerCase().replaceAll("_", "-");
-        return "parlay-token-" + name;
+        if (prefix_token === undefined)
+            return cl("token-" + name);
+        else 
+            return prefix_token + "-" + name;
     }
 
     function generateFromText(textblock : TextBlock) : Node {
