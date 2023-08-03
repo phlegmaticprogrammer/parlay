@@ -3,7 +3,7 @@ import { ParseResult, Tag } from "alogic";
 import { parseSyntax } from "alogic";
 import { Relation } from "things";
 import { example } from "./example.js";
-import { generateBlockFromSource, generateNodeFromBlock, printBlock } from "./blocks.js";
+import { generateBlockFromSource, generateFlatEntryFromSource, generateNodeFromBlock, printBlock } from "./blocks.js";
 //import type { Relation } from "things";
 
 export class ParlayEditor { 
@@ -85,7 +85,8 @@ export class ParlayEditor {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>");
         this.stopObserving();
         removeAllChildren(this.root);
-        const block = generateBlockFromSource(lines, syntax);
+        const block = structure ? generateBlockFromSource(lines, syntax) : 
+            generateFlatEntryFromSource(lines, syntax);
         printBlock(block, s => console.log(s));
         const prefix = structure ? "parlay" : "parlay-raw";
         this.root.appendChild(generateNodeFromBlock(block, prefix, "parlay-token"));

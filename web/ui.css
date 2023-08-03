@@ -17,6 +17,6 @@
 }
 
 .parlay-body {
-    background-color: var(--ui-background);
-    color: var(--ui-content);
+    background-color: var(--text-background-highlights);
+    color: var(--text-content-primary);
 }

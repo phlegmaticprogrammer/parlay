@@ -22,8 +22,14 @@ export type BlockBlock = {
     children : EntryBlock[]
 }
 
+export enum Representation {
+    linear,
+    structured
+}
+
 export type EntryBlock = {
     kind : BlockKind.ENTRY,
+    representation : Representation,
     children : (BlockBlock | TextBlock | LinebreakBlock)[]
 }
 
@@ -58,9 +64,10 @@ export function mkBlockBlock() : BlockBlock {
     };
 }
 
-export function mkEntryBlock() : EntryBlock {
+export function mkEntryBlock(representation : Representation) : EntryBlock {
     return {
         kind : BlockKind.ENTRY,
+        representation : representation,
         children : []
     };
 }
@@ -87,6 +94,39 @@ function startOfResult(result : ParseResult) : TLPos {
 function endOfResult(result : ParseResult) : TLPos {
     return TLPos(result.endLine, result.endColumn);
 }
+
+function tokenClassOf(tag : Tag | undefined | null) : TextClass | undefined {
+    if (tag === undefined || tag === null) return undefined;
+    switch (tag) {
+        case Tag.invalid: return TextClass.INVALID;
+        case Tag.absname: return TextClass.ABS_ID;
+        case Tag.identifier: return TextClass.ID;
+        case Tag.qualified_identifier: return TextClass.ABS_ID;
+        case Tag.boundvar: return TextClass.BOUND_ID;
+        case Tag.varname: return TextClass.FREE_ID;
+        case Tag.varname_plus: return TextClass.ID;
+        case Tag.varname_star: return TextClass.ID;
+        case Tag.open_round:
+        case Tag.close_round:
+        case Tag.comma:
+            return TextClass.PUNCTUATION;
+        case Tag.dot:
+            return TextClass.DOT;
+        case Tag.label:
+            return TextClass.LABEL;
+        case Tag.open_abs:
+        case Tag.close_abs:
+        case Tag.comma_abs:
+            return TextClass.PUNCTUATION_ABS;
+        case Tag.open_var:
+        case Tag.close_var:
+        case Tag.comma_var:
+            return TextClass.PUNCTUATION_VAR;
+        default:
+            return undefined;
+    }
+}
+
 
 export function generateBlockFromSource(lines : TextLines, result : ParseResult) : BlockBlock {
 
@@ -164,38 +204,6 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         fillWithTextLineFragment(to.line, start, to.column, classes, entry);
     }
 
-    function tokenClassOf(tag : Tag | undefined | null) : TextClass | undefined {
-        if (tag === undefined || tag === null) return undefined;
-        switch (tag) {
-            case Tag.invalid: return TextClass.INVALID;
-            case Tag.absname: return TextClass.ABS_ID;
-            case Tag.identifier: return TextClass.ID;
-            case Tag.qualified_identifier: return TextClass.ABS_ID;
-            case Tag.boundvar: return TextClass.BOUND_ID;
-            case Tag.varname: return TextClass.FREE_ID;
-            case Tag.varname_plus: return TextClass.ID;
-            case Tag.varname_star: return TextClass.ID;
-            case Tag.open_round:
-            case Tag.close_round:
-            case Tag.comma:
-                return TextClass.PUNCTUATION;
-            case Tag.dot:
-                return TextClass.DOT;
-            case Tag.label:
-                return TextClass.LABEL;
-            case Tag.open_abs:
-            case Tag.close_abs:
-            case Tag.comma_abs:
-                return TextClass.PUNCTUATION_ABS;
-            case Tag.open_var:
-            case Tag.close_var:
-            case Tag.comma_var:
-                return TextClass.PUNCTUATION_VAR;
-            default:
-                return undefined;
-        }
-    }
-
     function generateChildOfEntry(indentationNext : nat, child : ParseResult, entry : EntryBlock) {
         const textclass = tokenClassOf(child.type);
         if (textclass !== undefined) {
@@ -226,7 +234,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
 
     function generateEntry(line : nat, result : ParseResult) : EntryBlock {
         checkTag(result.type, Tag.entry, Tag.invalid_entry);
-        const entry = mkEntryBlock();
+        const entry = mkEntryBlock(Representation.structured);
         while (line < result.startLine) {
             if (!isSpurious(line))
                 entry.children.push(mkLineBreakBlock(false));
@@ -255,6 +263,76 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
     }
 
     return generateBlock(result);
+}
+
+export function generateFlatEntryFromSource(lines : TextLines, result : ParseResult) : EntryBlock {
+    
+    function copy(indentation : nat, text : TextChars) : TextChars {
+        let i = 0;
+        const count = text.count;
+        while (i < indentation && i < count && text.charAt(i) === " ") 
+            i += 1;
+        if (i < indentation && i < count) 
+            throw new Error("missing indentation, expected " + indentation + ", found " + i);
+        if (i < indentation) return textOfChars([]);
+        return text.slice(indentation);
+    }
+
+    function generateInvalidLines(result : ParseResult, entry : EntryBlock) {
+        fillWithText(startOfResult(result), endOfResult(result), [TextClass.INVALID], entry);
+    }
+
+    function fillWithTextLineFragment(line : nat, fromColumn : nat, toColumn : nat,
+        classes : TextClass[], entry : EntryBlock)
+    {
+        if (fromColumn < toColumn) {
+            const text = lines.lineAt(line).slice(fromColumn, toColumn);
+            const textblock = mkTextBlock(text);
+            textblock.textClasses.push(...classes);
+            entry.children.push(textblock);
+        }
+    }
+
+    function fillWithText(from : TLPos, to : TLPos, 
+        classes : TextClass[], entry : EntryBlock) 
+    { 
+        if (TLPosT.equal(from, to)) return;
+        if (from.line > to.line) throw new Error("fillWithText: from > to");
+        let start = from.column;
+        for (let i = from.line; i < to.line; i++) {
+            const end = lines.lineAt(i).count;
+            fillWithTextLineFragment(i, start, end, classes, entry);
+            start = 0;
+            entry.children.push(mkLineBreakBlock(false));
+        }
+        fillWithTextLineFragment(to.line, start, to.column, classes, entry);
+    }
+
+    function generateChildOfEntry(child : ParseResult, entry : EntryBlock) {
+        let textclass = tokenClassOf(child.type);
+        if (child.type === Tag.invalid_entry) textclass = TextClass.INVALID;
+        if (textclass !== undefined) {
+            const start = TLPos(child.startLine, child.startColumn);
+            const to = TLPos(child.endLine, child.endColumn);
+            fillWithText(start, to, [textclass], entry);
+        } else {
+            fillEntry(child, entry);
+        }
+    }
+
+    function fillEntry(result : ParseResult, entry : EntryBlock) {
+        let pos = startOfResult(result);
+        for (const child of result.children) {
+            fillWithText(pos, startOfResult(child), [], entry);
+            generateChildOfEntry(child, entry);
+            pos = endOfResult(child);
+        }
+        fillWithText(pos, endOfResult(result), [], entry);
+    }
+
+    const entry = mkEntryBlock(Representation.linear);
+    fillEntry(result, entry);
+    return entry;
 }
 
 export function childrenOfBlock(block : Block) : Block[] {
