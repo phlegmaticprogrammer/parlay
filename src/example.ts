@@ -104,6 +104,7 @@ export const example7 = `
 lambda(domain: R,
   R  
     B
+    premise: K
 
   C)
 `;
@@ -112,11 +113,18 @@ export const example8 = `
 lambda(domain: R,
   R  
     B
-
+    premise: K
+    4: w
 
   C)
+    key: super
+        great: box
+        weird: show
+    key: 
+        great: box
+        weird: show
 `;
 
-export const example = example2;
+export const example = example8;
 
   
