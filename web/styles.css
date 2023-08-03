@@ -24,6 +24,16 @@
     display: block;
 }
 
+.parlay-block {
+    border-left: 1px solid var(--text-background-highlights);
+    padding-left: 0ch;
+    margin-left: 2ch; /* 4 * (width of space) */
+    margin-top: 0.0ex;
+    margin-bottom: 0.2ex;
+    /*border-bottom: 2px solid var(--text-background-highlights);*/
+    display: block;
+}
+
 .parlay-entry {
     border-top: 1px dotted var(--text-background-highlights);
     padding-top: 0.5ex;
