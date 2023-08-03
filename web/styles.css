@@ -7,30 +7,12 @@
     font-style: normal;
 }
 
-/*.parlay-block {
-    border-left: 2px solid var(--text-background-highlights);
-    padding-left: 0ch;
-    margin-left: 0px;
-    display: block;
-}*/
-
-.parlay-indented-block, .parlay-block {
+.parlay-block, .parlay-indented-block {
     border-left: 1px solid var(--text-background-highlights);
     padding-left: 0ch;
-    margin-left: 2ch; /* 4 * (width of space) */
+    margin-left: 2ch; /* width of 4 spaces */
     margin-top: 0.0ex;
     margin-bottom: 0.2ex;
-    /*border-bottom: 2px solid var(--text-background-highlights);*/
-    display: block;
-}
-
-.parlay-block {
-    border-left: 1px solid var(--text-background-highlights);
-    padding-left: 0ch;
-    margin-left: 2ch; /* 4 * (width of space) */
-    margin-top: 0.0ex;
-    margin-bottom: 0.2ex;
-    /*border-bottom: 2px solid var(--text-background-highlights);*/
     display: block;
 }
 
