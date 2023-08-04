@@ -19,6 +19,7 @@ export type Block = BlockBlock | EntryBlock | TextBlock | LinebreakBlock
 
 export type BlockBlock = {
     kind : BlockKind.BLOCK,
+    indent : boolean,
     children : EntryBlock[]
 }
 
@@ -57,9 +58,10 @@ export type LinebreakBlock = {
     indent : boolean
 }
 
-export function mkBlockBlock() : BlockBlock {
+export function mkBlockBlock(indent : boolean) : BlockBlock {
     return {
         kind : BlockKind.BLOCK,
+        indent : indent,
         children : []
     };
 }
@@ -211,7 +213,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
             const to = TLPos(child.endLine, child.endColumn);
             fillWithText(indentationNext, start, to, [textclass], entry);
         } else if (child.type === Tag.block || child.type === Tag.param_block) {
-            entry.children.push(generateBlock(child));
+            entry.children.push(generateBlock(true, child));
         } else if (child.type === Tag.spurious_linebreak) {
             markSpurious(child.startLine);
             //throw new Error("Hey there :-)");
@@ -247,9 +249,9 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         return entry;
     }
 
-    function generateBlock(result : ParseResult) : BlockBlock {
+    function generateBlock(indent : boolean, result : ParseResult) : BlockBlock {
         checkTag(result.type, Tag.param_block, Tag.block);
-        const block = mkBlockBlock();
+        const block = mkBlockBlock(indent);
         let line = result.startLine;
         for (const child of result.children) {
             if (child.type === Tag.spurious_linebreak) {
@@ -262,25 +264,10 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
         return block;
     }
 
-    return generateBlock(result);
+    return generateBlock(false, result);
 }
 
 export function generateFlatEntryFromSource(lines : TextLines, result : ParseResult) : EntryBlock {
-    
-    function copy(indentation : nat, text : TextChars) : TextChars {
-        let i = 0;
-        const count = text.count;
-        while (i < indentation && i < count && text.charAt(i) === " ") 
-            i += 1;
-        if (i < indentation && i < count) 
-            throw new Error("missing indentation, expected " + indentation + ", found " + i);
-        if (i < indentation) return textOfChars([]);
-        return text.slice(indentation);
-    }
-
-    function generateInvalidLines(result : ParseResult, entry : EntryBlock) {
-        fillWithText(startOfResult(result), endOfResult(result), [TextClass.INVALID], entry);
-    }
 
     function fillWithTextLineFragment(line : nat, fromColumn : nat, toColumn : nat,
         classes : TextClass[], entry : EntryBlock)
@@ -359,7 +346,7 @@ export function printBlock(block : Block, pr : (s : string) => void = debug) {
             const classes = block.textClasses.map(c => TextClass[c]).join(", ");
             writeln(indentation + BlockKind[block.kind] + "[" + classes + "]: " +
                 " '" + block.content.toString() + "'");
-        } else if (block.kind === BlockKind.LINEBREAK) {
+        } else if (block.kind === BlockKind.LINEBREAK || block.kind === BlockKind.BLOCK) {
             writeln(indentation + BlockKind[block.kind] + (block.indent ? " (INDENT)" : ""));
         } else {
             writeln(indentation + BlockKind[block.kind]);
@@ -411,6 +398,7 @@ export function generateNodeFromBlock(block : Block,
                         writeRow(indent, row);
                         row = null;
                     }
+                    indent = child.indent;
                     div.appendChild(generateFromBlock(indent,child));
                     break;
                 case BlockKind.LINEBREAK:
