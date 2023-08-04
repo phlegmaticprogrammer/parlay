@@ -143,7 +143,7 @@ theorem(Implication-2: implies
   )
 theorem(Universal-1: implies(for-all(x. A[x]), A[x]))
 theorem(Universal-2: implies
-    for-all(_ _. implies(A, B[x]))
+    for-all(x. implies(A, B[x]))
     implies(A, for-all(x. B[x]))
   )  
 theorem(Equality-1: equals(x, x))
