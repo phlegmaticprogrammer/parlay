@@ -125,6 +125,31 @@ lambda(domain: R,
         weird: show
 `;
 
-export const example = example8;
+export const exampleBaseTheory = `
+theorem(Modus-Ponens: B)
+    premise: implies(A, B)
+    premise: A
+theorem(Universal-Introduction: 
+  for-all(x. A[x]))
+    premise: x. A[x]
+theorem(Truth-1: true)
+theorem(Truth-2: implies(A, equals(A, true)))
+theorem(Implication-1: implies(A, implies(B, A)))
+theorem(Implication-2: implies
+    implies(A, implies(B, C)) 
+    implies
+        implies(A, B) 
+        implies(A, C)
+  )
+theorem(Universal-1: implies(for-all(x. A[x]), A[x]))
+theorem(Universal-2: implies
+    for-all(_ _. implies(A, B[x]))
+    implies(A, for-all(x. B[x]))
+  )  
+theorem(Equality-1: equals(x, x))
+theorem(Equality-2: implies(equals(x, y), implies(A[x], A[y])))
+`;
+
+export const example = exampleBaseTheory;
 
   

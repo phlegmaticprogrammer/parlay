@@ -1,6 +1,9 @@
 .parlay {
     background-color: var(--text-background);
     color: var(--text-content-primary);
+    width: 600px;
+    height: 800px;
+    padding: 5px;
 }
 
 .token--fill {
@@ -18,7 +21,7 @@
 
 .parlay-entry {
     border-top: 1px dotted var(--text-background-highlights);
-    padding-top: 0.5ex;
+    padding-top: 1ex;
     padding-left: 0.5ch;
     display: block;
 }

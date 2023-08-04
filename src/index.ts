@@ -34,12 +34,16 @@ function run() {
         const body = document.getElementsByTagName("body").item(0)!;
         body.classList.replace("solarized-light", "solarized-dark");
     }
+    function cmd_plain() {
+        editor.view(example, false, true);
+    }
     function cmd_text() {
         editor.view(example, false);
     }
     function cmd_structure() {
         editor.view(example, true);
     }
+    register("cmd-plain", cmd_plain);
     register("cmd-light", cmd_light);
     register("cmd-dark", cmd_dark);
     register("cmd-text", cmd_text);

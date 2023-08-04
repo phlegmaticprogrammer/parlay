@@ -23,9 +23,6 @@ export class ParlayEditor {
         this.root.classList.add("parlay");
         style.overflowX = "scroll";
         style.whiteSpace = "pre";
-        style.width = "600px";
-        style.height = "400px";
-        style.padding = "5px";
         style.fontFamily = "stixtwotext";
         style.margin = "10px";
         style.border = "2px solid var(--text-background-highlights)";
@@ -74,7 +71,7 @@ export class ParlayEditor {
         }
     }
 
-    view(text : string, structure : boolean = true) {
+    view(text : string, structure : boolean = true, plain : boolean = false) {
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -89,7 +86,8 @@ export class ParlayEditor {
             generateFlatEntryFromSource(lines, syntax);
         printBlock(block, s => console.log(s));
         const prefix = structure ? "parlay" : "parlay-raw";
-        this.root.appendChild(generateNodeFromBlock(block, prefix, "parlay-token"));
+        const prefix_token = !plain ? "parlay-token" : "parlay-plain-token";
+        this.root.appendChild(generateNodeFromBlock(block, prefix, prefix_token));
         console.log("~~~~~~~~~~~~~~~~~~~~");
         this.startObserving();  
     }
