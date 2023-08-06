@@ -389,35 +389,30 @@ export function generateNodeFromBlock(block : Block,
             div.appendChild(rownode);
         }
         let indent = false;
-        let row : Node[] | null = null;
+        let row : Node[] = [];
         for (const child of entry.children) {
             const kind = child.kind;
             switch (kind) {
                 case BlockKind.BLOCK:
-                    if (row !== null) {
+                    if (row.length !== 0) {
                         writeRow(indent, row);
-                        row = null;
+                        row = [];
                     }
                     indent = child.indent;
                     div.appendChild(generateFromBlock(indent,child));
                     break;
                 case BlockKind.LINEBREAK:
-                    if (row !== null) {
-                        writeRow(indent, row);
-                    }
+                    writeRow(indent, row);
                     indent = child.indent;
                     row = [];
                     break;
                 case BlockKind.TEXT:
-                    if (row === null) row = [];
                     row.push(generateFromText(child));
                     break;
                 default: assertNever(kind);
             }
         }
-        if (row) {
-            writeRow(indent, row);
-        }
+        if (row.length !== 0) writeRow(indent, row);
         return div;
     }
 

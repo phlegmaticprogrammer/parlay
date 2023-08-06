@@ -125,7 +125,7 @@ lambda(domain: R,
         weird: show
 `;
 
-export const exampleBaseTheory = `
+export const BaseTheory = `
 theorem(Modus-Ponens: B)
     premise: implies(A, B)
     premise: A
@@ -150,6 +150,63 @@ theorem(Equality-1: equals(x, x))
 theorem(Equality-2: implies(equals(x, y), implies(A[x], A[y])))
 `;
 
-export const example = exampleBaseTheory;
+export const BaseTheoryPretty = `
+theorem Modus-Ponens: B
+    premise: implies(A, B)
+    premise: A
+theorem Universal-Introduction: 
+  for-all(x. A[x])
+    premise: x. A[x]
+theorem Truth-1: true
+theorem Truth-2: implies(A, equals(A, true))
+theorem Implication-1: implies(A, implies(B, A))
+theorem Implication-2: implies
+    implies(A, implies(B, C)) 
+    implies
+        implies(A, B) 
+        implies(A, C)
+theorem Universal-1: implies(for-all(x. A[x]), A[x])
+theorem Universal-2: implies
+    for-all(x. implies(A, B[x]))
+    implies(A, for-all(x. B[x]))
+theorem Equality-1: equals(x, x)
+theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
+`;
+
+export const Implication2 = `
+theorem Implication-2: implies
+    implies(A cool: p, implies(B, C)) 
+    implies
+        implies(A, B) 
+        implies(A, C) 
+`;
+
+export const BindersBlock = `
+lambda body: x y z.
+    do something: .
+        great
+        cool
+
+`;
+
+export const Brackets = `
+()
+(a, b)
+(a)
+A()
+A[]
+A[x]
+A(x)
+premise: conclusion: a
+  b cool c
+`
+
+/*
+
+theorem(great: u theorem, Imp: a)
+
+*/
+
+export const example = BaseTheoryPretty;
 
   
