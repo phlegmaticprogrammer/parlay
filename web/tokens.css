@@ -1,4 +1,8 @@
 .parlay-token-abs-id {
+    color: var(--text-content-primary);
+}
+
+.parlay-token-special-abs-id {
     color: var(--text-accent-violet);
 }
 
@@ -8,11 +12,13 @@
 }
 
 .parlay-token-punctuation-abs {
-    color: var(--text-accent-violet);
+    color: var(--text-content-primary);
+    opacity: 50%;
 }
 
 .parlay-token-punctuation-var {
     color: var(--text-accent-blue);
+    opacity: 50%;
 }
 
 .parlay-token-punctuation {
@@ -21,6 +27,11 @@
 
 .parlay-token-label {
     color: var(--text-accent-yellow);
+    font-variant: small-caps;
+}
+
+.parlay-token-special-label {
+    color: var(--text-accent-cyan);
     font-variant: small-caps;
 }
 

@@ -6,7 +6,20 @@ import { example } from "./example.js";
 import { generateBlockFromSource, generateFlatEntryFromSource, generateNodeFromBlock, printBlock } from "./blocks.js";
 import { IdentifierClassification } from "alogic";
 import { IdentifierClass } from "alogic";
+import { AS } from "alogic";
 //import type { Relation } from "things";
+
+function special(absapp : AS.AbsApp) : { name : boolean, labels : boolean[] } | null {
+    if (absapp.name.name.toString() === "theorem") {
+        const labels : boolean[] = [];
+        for (const label of absapp.parameters.labels) {
+            const name = label.name.toString();
+            console.log("checking label '" + name + "'");
+            labels.push(name === "premise" || name === "conclusion");
+        }
+        return { name : true, labels : labels };
+    } else return null;
+}
 
 export class ParlayEditor { 
     
@@ -27,7 +40,7 @@ export class ParlayEditor {
         this.root.classList.add("parlay");
         style.overflowX = "scroll";
         style.whiteSpace = "pre";
-        style.fontFamily = "stixtwotext";
+        style.fontFamily = //"stixtwotext";
         style.margin = "10px";
         style.border = "2px solid var(--text-background-highlights)";
         this.view(example);
@@ -90,19 +103,23 @@ export class ParlayEditor {
         }
     }
 
+    /*advancedSyntaxColoring(abstractSyntax : AS.AbstractSyntax) {
+        function color(abstractSyntax : AS.AbstractSyntax
+    }*/
+
     view(text : string, structure : boolean = true, plain : boolean = false) {
         this.clearDebug();
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         const lines = createTextLines(text);
-        function classifier(s : string) : IdentifierClassification {
+        function classifier(s : string) : IdentifierClass {
             if (s === "true") return IdentifierClass.ABS;
             else return IdentifierClass.VAR;
         }
-        const [env, syntax] = parseSyntax(lines, classifier);
+        const [env, syntax, abstractSyntax] = parseSyntax(lines, classifier, special);
         this.printDebug("parsed until " + syntax.endLine + ":" + syntax.endColumn);
-        env.displayResult(syntax, (line:string) => this.printDebug(line));
+        env.displayResult(syntax, (line:string) => this.printDebug(line));        
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>");
         this.stopObserving();
         removeAllChildren(this.root);
@@ -113,6 +130,7 @@ export class ParlayEditor {
         const prefix_token = !plain ? "parlay-token" : "parlay-plain-token";
         this.root.appendChild(generateNodeFromBlock(block, prefix, prefix_token));
         console.log("~~~~~~~~~~~~~~~~~~~~");
+        AS.displayAbstractSyntax(abstractSyntax, (line:string) => this.printDebug(line));
         this.startObserving();  
     }
 

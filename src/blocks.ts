@@ -43,8 +43,10 @@ export enum TextClass {
     FREE_ID,
     BOUND_ID,
     ABS_ID,
+    SPECIAL_ABS_ID,
     DOT,
-    LABEL
+    LABEL,
+    SPECIAL_LABEL
 }
 
 export type TextBlock = {
@@ -102,6 +104,7 @@ function tokenClassOf(tag : Tag | undefined | null) : TextClass | undefined {
     switch (tag) {
         case Tag.invalid: return TextClass.INVALID;
         case Tag.absname: return TextClass.ABS_ID;
+        case Tag.absname_special: return TextClass.SPECIAL_ABS_ID;
         case Tag.identifier: return TextClass.ID;
         case Tag.qualified_identifier: return TextClass.ABS_ID;
         case Tag.boundvar: return TextClass.BOUND_ID;
@@ -116,6 +119,8 @@ function tokenClassOf(tag : Tag | undefined | null) : TextClass | undefined {
             return TextClass.DOT;
         case Tag.label:
             return TextClass.LABEL;
+        case Tag.label_special:
+            return TextClass.SPECIAL_LABEL;
         case Tag.open_abs:
         case Tag.close_abs:
         case Tag.comma_abs:

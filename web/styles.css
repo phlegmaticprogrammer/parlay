@@ -4,7 +4,7 @@
 }
 
 .parlay-block, .parlay-indented-block {
-    border-left: 1px solid var(--text-background-highlights);
+    border-left: 1px dashed var(--text-background-highlights);
     padding-left: 0ch;
     margin-left: 2ch; /* width of 4 spaces */
     margin-top: 0.0ex;
@@ -13,7 +13,7 @@
 }
 
 .parlay-entry {
-    border-top: 1px dotted var(--text-background-highlights);
+    border-top: 1px dashed var(--text-background-highlights);
     padding-top: 1ex;
     padding-left: 0.5ch;
     display: block;
