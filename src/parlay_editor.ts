@@ -4,6 +4,8 @@ import { parseSyntax } from "alogic";
 import { Relation } from "things";
 import { example } from "./example.js";
 import { generateBlockFromSource, generateFlatEntryFromSource, generateNodeFromBlock, printBlock } from "./blocks.js";
+import { IdentifierClassification } from "alogic";
+import { IdentifierClass } from "alogic";
 //import type { Relation } from "things";
 
 export class ParlayEditor { 
@@ -94,7 +96,11 @@ export class ParlayEditor {
         console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         const lines = createTextLines(text);
-        const [env, syntax] = parseSyntax(lines);
+        function classifier(s : string) : IdentifierClassification {
+            if (s === "true") return IdentifierClass.ABS;
+            else return IdentifierClass.VAR;
+        }
+        const [env, syntax] = parseSyntax(lines, classifier);
         this.printDebug("parsed until " + syntax.endLine + ":" + syntax.endColumn);
         env.displayResult(syntax, (line:string) => this.printDebug(line));
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>");

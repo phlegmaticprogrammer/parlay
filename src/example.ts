@@ -247,6 +247,6 @@ theorem(great: u theorem, Imp: a)
 
 */
 
-export const example = analyze.trim();
+export const example = BaseTheoryPretty.trim();
 
   

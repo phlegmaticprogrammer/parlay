@@ -9,16 +9,14 @@
 
 .parlay-token-punctuation-abs {
     color: var(--text-accent-violet);
-    opacity: 60%;
 }
 
 .parlay-token-punctuation-var {
     color: var(--text-accent-blue);
-    opacity: 60%;
 }
 
 .parlay-token-punctuation {
-    color: var(--text-content-secondary);
+    color: var(--text-content-primary);
 }
 
 .parlay-token-label {
