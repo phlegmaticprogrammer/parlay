@@ -25,7 +25,8 @@ function register(id : string, handler : (id : string) => void) {
 
 function run() {
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
-    const editor = new ParlayEditor(root);
+    const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);
+    const editor = new ParlayEditor(root, debugRoot);
     function cmd_light() {
         const body = document.getElementsByTagName("body").item(0)!;
         body.classList.replace("solarized-dark", "solarized-light");

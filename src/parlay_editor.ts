@@ -9,10 +9,12 @@ import { generateBlockFromSource, generateFlatEntryFromSource, generateNodeFromB
 export class ParlayEditor { 
     
     root : HTMLDivElement
+    debugRoot : HTMLDivElement | null
     observer : MutationObserver | undefined
 
-    constructor(root : HTMLDivElement) {
+    constructor(root : HTMLDivElement, debugRoot : HTMLDivElement | null) {
         this.root = root;
+        this.debugRoot = debugRoot;
         this.setup();
     }
 
@@ -71,14 +73,30 @@ export class ParlayEditor {
         }
     }
 
+    clearDebug() {
+        if (this.debugRoot !== null) {
+            removeAllChildren(this.debugRoot);
+        }
+    }
+
+    printDebug(s : string) {
+        if (this.debugRoot !== null) {
+            let node = document.createTextNode(s);
+            this.debugRoot.appendChild(node);
+            let br = document.createElement("br");
+            this.debugRoot.appendChild(br);
+        }
+    }
+
     view(text : string, structure : boolean = true, plain : boolean = false) {
+        this.clearDebug();
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         console.log(text);
         console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
         const lines = createTextLines(text);
         const [env, syntax] = parseSyntax(lines);
-        this.log("parsed until " + syntax.endLine + ":" + syntax.endColumn);
-        env.displayResult(syntax, (line:string) => this.log(line));
+        this.printDebug("parsed until " + syntax.endLine + ":" + syntax.endColumn);
+        env.displayResult(syntax, (line:string) => this.printDebug(line));
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>");
         this.stopObserving();
         removeAllChildren(this.root);

@@ -1,3 +1,26 @@
+.parlay {
+    background-color: var(--text-background);
+    color: var(--text-content-primary);
+    width: 45%;
+    height: 800px;
+    padding: 5px;
+    display: inline-block;
+    font-size: 14px;
+}
+
+#parlay-debug {
+    width: 45%;
+    height: 800px;
+    padding: 5px;
+    background-color: black;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    display: inline-block;
+    white-space: pre;
+    overflow: scroll;
+    font-size: 12px;
+}
+
 .parlay-button {
     padding: 1ch;
     margin: 1ch;
