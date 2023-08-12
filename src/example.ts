@@ -196,6 +196,8 @@ theorem Equality-1: equals(x, x)
 theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
 `;
 
+
+
 export const BaseTheoryNewlines = `
 theorem(Modus-Ponens: B)
     premise: implies(A, B)
@@ -264,12 +266,52 @@ Math.sin(x, P[x], y. Q[x, y], t cool: e)
 ()
 `
 
+export const test = `
+Modus-Ponens: B : u. P[u, v]
+`
+
+export const test2 = `
+A: B: E K: u v w.
+  C D
+    
+`;
+
+export const BaseTheoryNew = `
+theorem Modus-Ponens: B
+    premise: implies(A, B)
+    premise: A
+theorem Universal-Introduction: 
+  for-all(x. A[x])
+    premise: x. A[x]
+theorem Truth-1: true
+theorem Truth-2: implies(A, equals(A, true))
+theorem Implication-1: implies(A, implies(B, A))
+theorem Implication-2: 
+    implies
+        implies(A, implies(B, C))
+        implies(implies(A, B), implies(B, C))
+theorem Universal-1: implies(for-all(x. A[x]), A[x])
+theorem Universal-2: 
+    implies
+        for-all(x. implies(A, B[x]))
+        implies(A, for-all(x. B[x]))
+theorem Equality-1: equals(x, x)
+theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
+`;
+
+export const example9 = `
+theorem dummy: u v x.
+    P[x, u]
+    v u P[v]
+    premise: A
+`;
+
 /*
 
 theorem(great: u theorem, Imp: a)
 
 */
 
-export const example = BaseTheoryPrettyFixed.trim();
+export const example = BaseTheoryNew.trim();
 
   
