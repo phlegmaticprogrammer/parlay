@@ -6,7 +6,7 @@
     padding: 5px;
     display: inline-block;
     font-size: 14px;
-    font-family: stixtwotext;
+    font-family: stixtwotext, fallback;
 }
 
 #parlay-debug {

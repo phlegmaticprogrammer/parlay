@@ -277,25 +277,38 @@ A: B: E K: u v w.
 `;
 
 export const BaseTheoryNew = `
+% This is a comment.
+  This is the second line of the comment.
+  And here is the third one.
+
 theorem Modus-Ponens: B
     premise: implies(A, B)
     premise: A
+
 theorem Universal-Introduction: 
   for-all(x. A[x])
     premise: x. A[x]
+
 theorem Truth-1: true
+
 theorem Truth-2: implies(A, equals(A, true))
+
 theorem Implication-1: implies(A, implies(B, A))
+
 theorem Implication-2: 
     implies
         implies(A, implies(B, C))
         implies(implies(A, B), implies(B, C))
+
 theorem Universal-1: implies(for-all(x. A[x]), A[x])
+
 theorem Universal-2: 
     implies
         for-all(x. implies(A, B[x]))
         implies(A, for-all(x. B[x]))
+
 theorem Equality-1: equals(x, x)
+
 theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
 `;
 

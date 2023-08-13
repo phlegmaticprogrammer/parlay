@@ -248,4 +248,21 @@
     src: url('LastResortHE-Regular.ttf');
  }
 
+ @font-face {
+    font-family: 'JuliaMono';
+    src: url('JuliaMono/JuliaMono-Regular.woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'JuliaMono';
+    src: url('JuliaMono/JuliaMono-RegularItalic.woff2');
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+
+
 

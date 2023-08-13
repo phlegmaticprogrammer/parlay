@@ -46,7 +46,8 @@ export enum TextClass {
     SPECIAL_ABS_ID,
     DOT,
     LABEL,
-    SPECIAL_LABEL
+    SPECIAL_LABEL,
+    COMMENT
 }
 
 export type TextBlock = {
@@ -102,6 +103,7 @@ function endOfResult(result : ParseResult) : TLPos {
 function tokenClassOf(tag : Tag | undefined | null) : TextClass | undefined {
     if (tag === undefined || tag === null) return undefined;
     switch (tag) {
+        case Tag.comment: return TextClass.COMMENT;
         case Tag.invalid: return TextClass.INVALID;
         case Tag.absname: return TextClass.ABS_ID;
         case Tag.absname_special: return TextClass.SPECIAL_ABS_ID;

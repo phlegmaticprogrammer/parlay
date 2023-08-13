@@ -53,3 +53,7 @@
 .parlay-token-invalid {
     color: var(--text-accent-red);
 }
+
+.parlay-token-comment {
+    color: var(--text-content-secondary);
+}
