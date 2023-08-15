@@ -23,14 +23,8 @@ export type BlockBlock = {
     children : EntryBlock[]
 }
 
-export enum Representation {
-    linear,
-    structured
-}
-
 export type EntryBlock = {
     kind : BlockKind.ENTRY,
-    representation : Representation,
     children : (BlockBlock | TextBlock | LinebreakBlock)[]
 }
 
@@ -69,10 +63,9 @@ export function mkBlockBlock(indent : boolean) : BlockBlock {
     };
 }
 
-export function mkEntryBlock(representation : Representation) : EntryBlock {
+export function mkEntryBlock() : EntryBlock {
     return {
         kind : BlockKind.ENTRY,
-        representation : representation,
         children : []
     };
 }
@@ -243,7 +236,7 @@ export function generateBlockFromSource(lines : TextLines, result : ParseResult)
 
     function generateEntry(line : nat, result : ParseResult) : EntryBlock {
         checkTag(result.type, Tag.entry, Tag.invalid_entry);
-        const entry = mkEntryBlock(Representation.structured);
+        const entry = mkEntryBlock();
         while (line < result.startLine) {
             if (!isSpurious(line))
                 entry.children.push(mkLineBreakBlock(false));
@@ -324,7 +317,7 @@ export function generateFlatEntryFromSource(lines : TextLines, result : ParseRes
         fillWithText(pos, endOfResult(result), [], entry);
     }
 
-    const entry = mkEntryBlock(Representation.linear);
+    const entry = mkEntryBlock();
     fillEntry(result, entry);
     return entry;
 }

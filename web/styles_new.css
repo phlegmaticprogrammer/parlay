@@ -1,0 +1,49 @@
+
+.token--fill {
+    font-style: normal;
+}
+
+.parlay-block, .parlay-indented-block {
+    border-left: 1px dashed var(--text-background-highlights);
+    padding-left: 0ch;
+    margin-left: 2ch; /* width of 4 spaces */
+    margin-top: 0.0ex;
+    margin-bottom: 0.2ex;
+    display: block;
+}
+
+.parlay-entry {
+    border-top: 1px dashed var(--text-background-highlights);
+    padding-top: 1ex;
+    padding-left: 0.5ch;
+    display: block;
+}
+
+.parlay-entry-row {
+    padding-left: 0ch;
+    margin-left: 0px;    
+}
+
+.parlay-indented-entry-row {
+    padding-left: 0ch;
+    margin-left: 1ch; /* 2 * (width of space) */
+}
+
+
+
+/* Linear Representation Styling */
+
+.parlay-raw-entry {
+    border-top: 1px dotted var(--text-background);
+    padding-top: 5px;
+    border-left: 1px solid var(--text-background);
+    padding-left: 0.5ch;
+    margin-left: 0px;    
+    display: block;
+}
+
+.parlay-raw-entry-row {
+    padding-left: 0ch;
+    margin-left: 0px;    
+}
+

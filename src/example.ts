@@ -286,7 +286,7 @@ theorem Modus-Ponens: B
     premise: A
 
 theorem Universal-Introduction: 
-  for-all(x. A[x])
+    for-all(x. A[x()])
     premise: x. A[x]
 
 theorem Truth-1: true
@@ -319,12 +319,24 @@ theorem dummy: u v x.
     premise: A
 `;
 
+export const example10 = `
+% hey
+  there!
+theorem A:
+    premise: cool
+
+
+theorem B:
+    premise: now
+`;
+
+
 /*
 
 theorem(great: u theorem, Imp: a)
 
 */
 
-export const example = BaseTheoryNew.trim();
+export const example = example10.trim();
 
   

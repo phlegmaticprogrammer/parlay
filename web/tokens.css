@@ -46,8 +46,8 @@
 }
 
 .parlay-token-id {
-    font-style: oblique;
-    color: var(--text-content-primary);
+    font-style: normal;
+    color: var(--text-accent-orange);
 }
 
 .parlay-token-invalid {
