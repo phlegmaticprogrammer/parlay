@@ -196,9 +196,8 @@ theorem Equality-1: equals(x, x)
 theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
 `;
 
-
-
 export const BaseTheoryNewlines = `
+% Cool Theory!
 theorem(Modus-Ponens: B)
     premise: implies(A, B)
     premise: A
@@ -286,7 +285,7 @@ theorem Modus-Ponens: B
     premise: A
 
 theorem Universal-Introduction: 
-    for-all(x. A[x()])
+    for-all(x. A[x ()])
     premise: x. A[x]
 
 theorem Truth-1: true
@@ -330,6 +329,21 @@ theorem B:
     premise: now
 `;
 
+export const example11 = `
+theorem(Universal-Introduction:
+    cool: 
+    for-all(x. A[x()]),
+    premise: x. A[x])
+
+now(well~
+    done
+    yeah
+  , u)
+    
+weird ~
+  
+`;
+
 
 /*
 
@@ -337,6 +351,6 @@ theorem(great: u theorem, Imp: a)
 
 */
 
-export const example = example10.trim();
+export const example = BaseTheoryNew.trim();
 
   

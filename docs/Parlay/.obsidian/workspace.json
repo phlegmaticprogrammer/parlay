@@ -18,8 +18,33 @@
                 "source": true
               }
             }
+          },
+          {
+            "id": "51f93c298e1e629a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Context.md",
+                "mode": "source",
+                "source": true
+              }
+            }
+          },
+          {
+            "id": "d25a9a16cb9a0b70",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Context.md",
+                "mode": "preview",
+                "source": true
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -93,7 +118,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Block-Based Editing.md",
+                "file": "Context.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -110,7 +135,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Block-Based Editing.md",
+                "file": "Context.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,7 +158,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Block-Based Editing.md"
+                "file": "Context.md"
               }
             }
           }
@@ -154,8 +179,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "1526918c422c4ef5",
+  "active": "d25a9a16cb9a0b70",
   "lastOpenFiles": [
+    "Pasted image 20230920173122.png",
+    "Symbols.md",
+    "Context.md",
+    "Block-Based Editing.md",
     "Repository/Identifiers.md",
     "Abstraction Logic/2-Space Indentation.md",
     "Abstraction Logic/Indentation Syntax.md",
@@ -166,7 +195,6 @@
     "Abstraction Logic/Syntax Requirements and Considerations.md",
     "LLM/Abstraction Applications.md",
     "LLM/Term Analysis Objective.md",
-    "Block-Based Editing.md",
     "Abstraction Logic",
     "LLM/What is a Term?.md",
     "LLM",
@@ -184,9 +212,6 @@
     "Workbench/The Workbench as an Interactive Environment.md",
     "ALAI/First Steps.md",
     "Proofs.md",
-    "Packages.md",
-    "Alternative Formats to Latex and Markdown.md",
-    "ALogic/Term Syntax.md",
     "Workbench",
     "Parsing",
     "ALogic",
