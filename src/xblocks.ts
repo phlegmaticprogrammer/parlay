@@ -39,10 +39,33 @@ function spaces(num : nat) : string {
 
 export function writeDocument(document : Document, indent : nat) : string[] {
 
-    const prefix = spaces(indent);    
+    const prefix = spaces(indent);   
+    
+    function removeNewlines(text : string) : string {
+        let removing = false;
+        let result = "";
+        for (const c of text) {
+            if (c === LF || c === CR) {
+                if (!removing) {
+                    removing = true;
+                    result += " ";
+                }
+            } else {
+                removing = false;
+                result += c;
+            }
+        }
+        return result;
+    }    
 
     function wText(text : Text) : string {
-        return text.text;
+        let result = "";
+        for (const c of removeNewlines(text.text)) {
+            if (c === LEFT_SPAN) result += LEFT_SPAN_ALT;
+            else if (c === RIGHT_SPAN) result += RIGHT_SPAN_ALT;
+            else result += c;
+        }
+        return result;
     }
 
     function wSpan(span : Span) : string {
@@ -61,6 +84,8 @@ export function writeDocument(document : Document, indent : nat) : string[] {
             if (isSpan(fragment)) result += wSpan(fragment);
             else result += fragment.text;
         }
+        if (result.startsWith(SPACE)) 
+            result = SPACE_ALT + result.substring(SPACE.length);
         return result;
     }
 
@@ -170,7 +195,7 @@ const exampleDocument : Document = createDocument(
         line("theorem Truth-2: implies(A, equals(A, true))")
     ),
     block(
-        line("theorem Implication-1:  implies(A, implies(B, A))")
+        line("theorem Implication-1: implies(A, implies(B, A))")
     ),
     block(
         line("theorem Implication-2:"),
