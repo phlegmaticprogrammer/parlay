@@ -16,8 +16,8 @@
     "bundle": "./node_modules/.bin/esbuild src/index.ts --bundle --minify --outdir=web",
     "server": "esbuild src/index.ts --bundle --outdir=web --servedir=web --watch",
     "test": "tsc && node dist/esm/test.js",
-    "experimental": "tsc && node dist/esm/experimental_blocks.js"
-
+    "experimental": "tsc && node dist/esm/experimental_blocks.js",
+    "xblocks": "tsc && node dist/esm/xblocks.js"
   },
   "repository": {
     "type": "git",
