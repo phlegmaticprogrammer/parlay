@@ -15,7 +15,9 @@
     "build": "rm -fr dist/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./fixup",
     "bundle": "./node_modules/.bin/esbuild src/index.ts --bundle --minify --outdir=web",
     "server": "esbuild src/index.ts --bundle --outdir=web --servedir=web --watch",
-    "test": "tsc && node dist/esm/test.js"
+    "test": "tsc && node dist/esm/test.js",
+    "experimental": "tsc && node dist/esm/experimental_blocks.js"
+
   },
   "repository": {
     "type": "git",

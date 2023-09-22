@@ -6,19 +6,19 @@ export interface Ephemerals {
     [key : string] : unknown;
 }
 
-export type Block = { ephemerals : Ephemerals, first : Line, rest : Blocks }
-export type Blocks = (Line | Block)[]
-export type Line = { ephemerals : Ephemerals, fragments : Fragment[] }
+export type Block = { parts : Part[] }  
+export type Part = Line | Block
+export type Line = { fragments : Fragment[] }
 export type Fragment = Text | Span
-export type Span = { ephemerals : Ephemerals, fragments : (Text | Span)[] }
-export type Text = { ephemerals : Ephemerals, text : string }
+export type Span = { fragments : (Text | Span)[] }
+export type Text = { text : string }
 
-export function isLine(potentialLine : Line | Block) : potentialLine is Line {
-    return Object.hasOwn(potentialLine, 'fragments');
+export function isLine(part : Part) : part is Line {
+    return Object.hasOwn(part, 'fragments');
 }
 
-export function isSpan(potentialSpan : Text | Span) : potentialSpan is Span {
-    return Object.hasOwn(potentialSpan, 'fragments');
+export function isSpan(fragment : Fragment) : fragment is Span {
+    return Object.hasOwn(fragment, 'fragments');
 }
 
 export const LF = "\n";
@@ -37,77 +37,102 @@ function spaces(num : nat) : string {
 }
 
 export function writeBlock(block : Block, indent : nat) : string[] {
-    let lines : string[] = [];
-    function write(s : string) {
-        lines[lines.length - 1] += s;
+
+    function wText(text : Text) : string {
+        return text.text;
     }
-    function newline() {
-        lines.push("");
-    }
-    function prBlock(indentation : nat, block : Block) {
-        prLine(indentation, block.first);
-        indentation += indent;
-        for (const item of block.rest) {
-            if (isLine(item)) {
-                prLine(indentation, item);
-            } else {
-                prBlock(indentation + indent, item);
-            }
+
+    function wSpan(span : Span) : string {
+        let result = LEFT_SPAN;
+        for (const fragment of span.fragments) {
+            if (isSpan(fragment)) result += wSpan(fragment);
+            else result += wText(fragment);
         }
+        result += RIGHT_SPAN;
+        return result;
     }
-    function removeNewlines(text : string) : string {
-        let removing = false;
+
+    function wLine(line : Line) : string {
         let result = "";
-        for (const c of text) {
-            if (c === LF || c === CR) {
-                if (!removing) {
-                    removing = true;
-                    result += " ";
-                }
-            } else {
-                removing = false;
-                result += c;
-            }
+        for (const fragment of line.fragments) {
+            if (isSpan(fragment)) result += wSpan(fragment);
+            else result += fragment.text;
         }
         return result;
     }
-    function prText(text : string, alter_leading_space : boolean) {
-        text = removeNewlines(text);
-        let leading = true;
-        for (const c of text) {
-            if (leading && c === SPACE && alter_leading_space) write(SPACE_ALT);
-            else if (c === LEFT_SPAN) write(LEFT_SPAN_ALT);
-            else if (c === RIGHT_SPAN) write(RIGHT_SPAN_ALT);
-            else write(c);
-            leading = false;
+
+    function indentBlock(lines : string[]) {
+        const prefix = spaces(indent);
+        for (let i = 0; i < lines.length; i++) {
+            lines[i] = prefix + lines[i];
+            if (i > 0) lines[i] = prefix + lines[i];
         }
     }
-    function prSpan(span : Span) {
-        write(LEFT_SPAN);
-        for (const fragment of span.fragments) {
-            if (isSpan(fragment)) prSpan(fragment);
-            else prText(fragment.text, false);
-        }
-        write(RIGHT_SPAN);
-    }
-    function prLine(indentation : nat, line : Line) {
-        newline();
-        write(spaces(indentation));
-        let first = true;
-        for (const fragment of line.fragments) {
-            if (isSpan(fragment)) { 
-                prSpan(fragment);
-                first = false;
-            } else if (fragment.text.length > 0) {
-                prText(fragment.text, first);
-                first = false;  
+
+    function wBlock(block : Block) : string[] {
+        let lines : string[] = [];
+        for (const part of block.parts) {
+            if (isLine(part)) {
+                lines.push(wLine(part));
+            } else {
+                const blockLines = wBlock(part);
+                indentBlock(blockLines);
+                lines.push(...blockLines);
             }
         }
+        return lines;
     }
-    prBlock(0, block);
-    return lines;
+
+    return wBlock(block);
 }
 
+function line(text? : string) : Line {
+    if (text === undefined) return { fragments: [] };
+    else return { fragments : [{text : text}] };
+}
+
+function block(...parts : (Line | Block)[]) : Block {
+    return { parts: parts };
+}
+
+const exampleBlock : Block = block(
+    line("theory Pure"),
+    block(
+        line("theorem Modus-Ponens: B"),
+        block(line("premise: implies(A, B)")),
+        block(line("premise: A"))
+    ),
+    block(
+        line("theorem Universal-Introduction:"),
+        line("for-all(x. A[x])"),
+        block(line("premise: x. A[x]"))
+    ),
+    block(
+        line("theorem Truth-1: true")
+    ),
+    block(
+        line("theorem Implication-2:"),
+        block(
+            line("implies"),
+            block(
+                block(line("implies(A, implies(B, C))")),
+                block(line("implies(implies(A, B), implies(B, C))"))
+            )
+        )
+    )
+);
+
+const lines = writeBlock(exampleBlock, 2);
+for (const line of lines) {
+    console.log("| " + line);
+}
+
+
+
+
+
+
+/*
 let nextKeyBase = 0;
 
 function newKey() : string {
@@ -178,7 +203,7 @@ export function readBlocks(lines : string[], indent : nat) : (Line | Block)[] {
     }
 }
 
-
+*/
 
 
 
