@@ -1,4 +1,5 @@
-import { nat } from "things"
+import { Relation, force, nat, string } from "things"
+import { example } from "./example.js";
 
 export type Key = string
 export interface Ephemerals {
@@ -22,6 +23,52 @@ export function isSpan(fragment : Fragment) : fragment is Span {
     return Object.hasOwn(fragment, 'fragments');
 }
 
+function compareFragments(fragments1 : Fragment[], fragments2 : Fragment[]) : Relation {
+    let c = nat.compare(fragments1.length, fragments2.length);
+    if (c !== Relation.EQUAL) return c;
+    for (let i = 0; i < fragments1.length; i++) {
+        const fragment1 = fragments1[i];
+        const fragment2 = fragments2[i];
+        if (isSpan(fragment1)) {
+            if (!isSpan(fragment2)) return Relation.GREATER;
+            c = compareFragments(fragment1.fragments, fragment2.fragments);
+            if (c !== Relation.EQUAL) return c;
+        } else {
+            if (isSpan(fragment2)) return Relation.LESS;
+            c = string.compare(fragment1.text, fragment2.text);
+            if (c !== Relation.EQUAL) return c;
+        }
+    }
+    return Relation.EQUAL;
+}
+
+function compareLines(line1 : Line, line2 : Line) : Relation {
+    return compareFragments(line1.fragments, line2.fragments);
+}
+
+function compareParts(parts1 : Part[], parts2 : Part[]) : Relation {
+    let c = nat.compare(parts1.length, parts2.length);
+    if (c !== Relation.EQUAL) return c;
+    for (let i = 0; i < parts1.length; i++) {
+        const part1 = parts1[i];
+        const part2 = parts2[i];
+        if (isLine(part1)) {
+            if (!isLine(part2)) return Relation.LESS;
+            c = compareLines(part1, part2);
+            if (c !== Relation.EQUAL) return c;
+        } else {
+            if (isLine(part2)) return Relation.GREATER;
+            c = compareParts(part1.parts, part2.parts);
+            if (c !== Relation.EQUAL) return c;
+        }
+    }
+    return Relation.EQUAL;
+}
+
+export function compareDocuments(doc1 : Document, doc2 : Document) : Relation {
+    return compareParts(doc1.blocks, doc2.blocks);
+}
+
 export const LF = "\n";
 export const CR = "\r";
 export const SPACE = "\x20";
@@ -37,7 +84,7 @@ function spaces(num : nat) : string {
     return s;
 }
 
-export function writeDocument(document : Document, indent : nat) : string[] {
+export function writeDocument(document : Document, indent : nat) : string {
 
     const prefix = spaces(indent);   
     
@@ -126,7 +173,49 @@ export function writeDocument(document : Document, indent : nat) : string[] {
         return lines;    
     }
 
-    return wDocument(document);
+    return wDocument(document).join(LF);
+}
+
+export function displayDocument(document : Document, log : (s : string) => void) {
+
+    const indent = "  ";
+
+    function displayText(prefix : string, text : Text) {
+        log(prefix + "'" + text.text + "'");
+    }
+
+    function displaySpan(prefix : string, span : Span) {
+        log(prefix + "Span");
+        prefix += indent;
+        for (const fragment of span.fragments) {
+            if (isSpan(fragment)) displaySpan(prefix, fragment);
+            else displayText(prefix, fragment);
+        }
+    }
+
+    function displayLine(prefix : string, line : Line) {
+        log(prefix + "Line");
+        prefix += indent;
+        for (const fragment of line.fragments) {
+            if (isSpan(fragment)) displaySpan(prefix, fragment);
+            else displayText(prefix, fragment);
+        }
+    }
+
+    function displayBlock(prefix : string, block : Block) {
+        log(prefix + "Block");
+        prefix += indent;
+        for (const part of block.parts) {
+            if (isLine(part)) displayLine(prefix, part);
+            else displayBlock(prefix, part);
+        }
+    }
+
+    log("Document");
+
+    for (const block of document.blocks) {
+        displayBlock(indent, block);
+    }
 }
 
 let nextKeyBase = 0;
@@ -172,7 +261,7 @@ function paragraph(text : string) : Block {
     return block(line(text));
 }
 
-const exampleDocument : Document = createDocument(
+const exampleDocument : Document = createDocument(block(
     block( // comment block
       line("% This is a comment."),
       line("This is the second line of the comment."),
@@ -218,86 +307,145 @@ const exampleDocument : Document = createDocument(
     ),
     paragraph("theorem Equality-1: equals(x, x)"),
     paragraph("theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))")
-);
+));
 
-const lines = writeDocument(exampleDocument, 2);
-for (const line of lines) {
-    console.log("|" + line);
+const INDENT = 2;
+
+const lines = writeDocument(exampleDocument, INDENT);
+console.log("--------------------");
+console.log(lines);
+console.log("--------------------");
+
+displayDocument(exampleDocument, console.log);
+
+function makeLines(input : string) : string[] {
+    let lines : string[] = [];
+    function write(s : string) {
+        lines[lines.length - 1] += s;
+    }
+    function newline() {
+        lines.push("");
+    }
+    newline();
+    // LFCR, CRLF, LF, CR are all considered newlines
+    let prevNL : string | null = null;
+    for (const c of input) {
+        if (c === LF || c === CR) {
+            if (prevNL !== null) {
+                if (c === prevNL) {
+                    newline();
+                } else {
+                    prevNL = null;
+                }
+            } else {
+                newline();
+                prevNL = c;
+            }
+        } else {
+            prevNL = null;
+            write(c);
+        }
+    }
+    return lines;
 }
 
-
-/*
-let nextKeyBase = 0;
-
-function newKey() : string {
-    return `key-` + (nextKeyBase++);
+function startsWithSpaces(n : nat, s : string) : boolean {
+    for (const c of s) {
+        if (c === SPACE) {
+            if (n > 0) n--;
+            else return true;
+        } else {
+            return n <= 0;
+        }
+    }
+    return n <= 0;
 }
 
-export function createEphemerals() : Ephemerals {
-    return { key : newKey() };
-}
+export function readDocument(input : string, indent : nat) : Document {
 
-export function createLine(fragments : (Text | Span)[] = []) : Line {
-    return { ephemerals : createEphemerals(), fragments : fragments };
-}
-
-export function createBlock(first : Line = createLine(), rest : (Line | Block)[] = []) : Block {
-    return { ephemerals : createEphemerals(), first : first, rest : rest };
-}
-
-export function createSpan(fragments : (Text | Span)[] = []) : Span {
-    return { ephemerals : createEphemerals(), fragments : fragments }
-}
-
-export function createText(text : string = "") : Text {
-    return { ephemerals : createEphemerals(), text : text };
-}
-
-export function readBlocks(lines : string[], indent : nat) : (Line | Block)[] {
-    function rBlock(row : nat, indentation : nat) : { rows : nat, result : Block } {
-        let line = lines[row];        
-        if (!line.startsWith(spaces(indentation))) 
-            throw new Error("Block must start with " + indentation + " spaces.");
-        const first = rLine(line.substring(indentation));
+    function rBlock(lines : string[], row : nat, indentation : nat) : { rows : nat, result : Block } {
+        let line = lines[row];  
+        if (!startsWithSpaces(indentation, line)) throw new Error("Missing indentation");      
+        let blockLines : string[] = [line.substring(indentation)];
         let rows = 1;
-        let rest : (Line | Block)[] = [];
-        indentation += indent;
-        while (true) {
-            const blockOrLine = rBlockOrLine(row + rows, indentation);
-            if (blockOrLine === null) break;
-            rest.push(blockOrLine.result);
-            rows += blockOrLine.rows;
+        while (row + rows < lines.length && 
+            startsWithSpaces(indentation + indent, lines[row + rows])) 
+        {
+            blockLines.push(lines[row + rows].substring(indentation + indent));
+            rows += 1;
         }
-        return { rows : rows, result: createBlock(first, rest) };
-    }
-    function rBlockOrLine(row : nat, indentation : nat) : { rows : nat, result : Block | Line } | null {
-        if (row >= lines.length) return null;
-        let line = lines[row];
-        if (!line.startsWith(spaces(indentation))) return null;
-        line = line.substring(indentation);
-        if (!line.startsWith(spaces(indent))) { // it's a line
-            return { rows : 1, result : rLine(line) }
-        } else { // it's a block
-            return rBlock(row, indentation + indent);
+        let r = 0;
+        let parts : Part[] = [];
+        while (r < rows) {
+            let line = blockLines[r];
+            if (!startsWithSpaces(indent, line)) {
+                parts.push(rLine(line));
+                r += 1;
+            } else {
+                const block = rBlock(blockLines, r, indent);
+                parts.push(block.result);
+                r += block.rows;
+            }
         }
+        return { rows : rows, result : createBlock(...parts) };
     }
-    function rTextOrSpan(line : string) : { length : nat, result : Text | Span } | null {
-        return null;
-    }
+
     function rLine(line : string) : Line {
-        throw new Error();
+        const stack : Fragment[][] = [[]];
+        let text = "";
+        function commit() {
+            if (text.length > 0) {
+                stack[stack.length - 1].push(createText(text));
+                text = "";
+            }
+        }
+        function close() : boolean {
+            if (stack.length > 1) {
+                commit();
+                const fragments = force(stack.pop());
+                stack[stack.length - 1].push(createSpan(...fragments));
+                return true;
+            } else {
+                return false;
+            }
+        }
+        let first = true;
+        for (const c of line) {
+            if (first && c === SPACE_ALT) text += SPACE;
+            first = false;
+            if (c === LEFT_SPAN) {
+                commit();
+                stack.push([]);
+            } else if (c === RIGHT_SPAN) {
+                if (!close()) {
+                    text += RIGHT_SPAN_ALT;
+                }
+            } else {
+                text += c;
+            }
+        }
+        while (close());
+        commit();
+        return createLine(...stack[0]);
     }
+
     let row = 0;
-    let result : Blocks = [];
-    while (true) {
-        const blockOrLine = rBlockOrLine(row, 0);
-        if (blockOrLine === null) return result;
-        result.push(blockOrLine.result);
-        row += blockOrLine.rows;
+    let result : Block[] = [];
+    const lines = makeLines(input);
+    while (row < lines.length) {
+        const block = rBlock(lines, row, 0);
+        result.push(block.result);
+        row += block.rows;
     }
+    return createDocument(...result);
 }
 
-*/
+const D = readDocument(lines, INDENT);
+
+console.log("~~~~~~~~~~~~~~~~~~");
+displayDocument(D, console.log);
+console.log("###############");
+console.log("comparison: ", Relation[compareDocuments(exampleDocument, D)], " | ", Relation[compareDocuments(D, exampleDocument)]); 
 
 
 
