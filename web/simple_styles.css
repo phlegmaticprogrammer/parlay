@@ -1,0 +1,50 @@
+:root {
+    --text-grid: #d5c4a1; /*#bdae93;*/ /* #a89984; */
+    --text-foreground: #3c3836;
+    --text-background: #fbf1c7;
+}
+
+.parlay-document {
+    overflow-y: scroll;
+    margin: 10px;
+    border: 2px solid var(--text-background-highlights);
+}
+
+.parlay-block, .parlay-indented-block {
+    color: var(--text-foreground);
+    background-color: var(--text-background);
+    border-left: 1px dashed var(--text-grid);
+    border-top: 1px dashed var(--text-grid);
+    margin-left: 0ch; /* width of 4 spaces */
+    margin-top: 0.0ex;
+    margin-bottom: 0.2ex;
+    display: block;
+}
+
+.parlay-block {
+    border-right: 1px dashed var(--text-grid);
+    padding-left: 0.5ch;
+    margin-left: 0ch; /* width of 4 spaces */
+}
+
+.parlay-indented-block {
+    padding-left: 0ch;
+    margin-left: 2ch; /* width of 4 spaces */
+}
+
+.parlay-close-block {
+    border-bottom: 1px dashed var(--text-grid);
+}
+
+.parlay-line {
+    padding-left: 0.5ch;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    width: 100%;
+    display: block;
+}
+
+
+
+
+

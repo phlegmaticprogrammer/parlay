@@ -37,14 +37,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Context.md",
-                "mode": "preview",
+                "file": "Content-independent Blocks.md",
+                "mode": "source",
+                "source": true
+              }
+            }
+          },
+          {
+            "id": "2d2527fda14de735",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Blocks2UI.md",
+                "mode": "source",
                 "source": true
               }
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -118,7 +130,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Context.md",
+                "file": "Blocks2UI.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -135,7 +147,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Context.md",
+                "file": "Blocks2UI.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -158,7 +170,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Context.md"
+                "file": "Blocks2UI.md"
               }
             }
           }
@@ -179,12 +191,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d25a9a16cb9a0b70",
+  "active": "2d2527fda14de735",
   "lastOpenFiles": [
+    "Content-independent Blocks.md",
+    "Blocks2UI.md",
+    "Block-Based Editing.md",
+    "Context.md",
     "Pasted image 20230920173122.png",
     "Symbols.md",
-    "Context.md",
-    "Block-Based Editing.md",
     "Repository/Identifiers.md",
     "Abstraction Logic/2-Space Indentation.md",
     "Abstraction Logic/Indentation Syntax.md",
@@ -211,7 +225,6 @@
     "Repository",
     "Workbench/The Workbench as an Interactive Environment.md",
     "ALAI/First Steps.md",
-    "Proofs.md",
     "Workbench",
     "Parsing",
     "ALogic",

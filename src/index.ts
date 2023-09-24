@@ -1,6 +1,7 @@
 import { example } from "./example.js";
 import { hello1 } from "./module1.js";
 import { ParlayEditor } from "./parlay_editor.js";
+import { ParlaySimpleEditor } from "./parlay_simple_editor.js";
 
 export { hello1 } from "./module1.js";
 
@@ -26,7 +27,8 @@ function register(id : string, handler : (id : string) => void) {
 function run() {
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
     const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);
-    const editor = new ParlayEditor(root, debugRoot);
+    const editor = new ParlaySimpleEditor(root, debugRoot);
+    editor.load(example);
     function cmd_light() {
         const body = document.getElementsByTagName("body").item(0)!;
         body.classList.replace("solarized-dark", "solarized-light");
@@ -36,22 +38,22 @@ function run() {
         body.classList.replace("solarized-light", "solarized-dark");
     }
     function cmd_plain() {
-        editor.view(example, false, true);
+        //editor.view(example, false, true);
     }
     function cmd_text() {
-        editor.view(example, false);
+        //editor.view(example, false);
     }
     function cmd_structure() {
-        editor.view(example, true);
+        //editor.view(example, true);
     }
     register("cmd-plain", cmd_plain);
     register("cmd-light", cmd_light);
     register("cmd-dark", cmd_dark);
     register("cmd-text", cmd_text);
     register("cmd-structure", cmd_structure);
-    var character = '  ';
+    /*var character = '  ';
     var font = '24px stixtwotext';
-    console.log('Width of character ' + character + ' is ' + calculateCharacterWidthCh(character, font) + ' ch.');    
+    console.log('Width of character ' + character + ' is ' + calculateCharacterWidthCh(character, font) + ' ch.');*/
 }
 
 window.addEventListener('DOMContentLoaded', () => {

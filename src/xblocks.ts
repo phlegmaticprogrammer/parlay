@@ -15,6 +15,12 @@ export type Fragment = Text | Span
 export type Span = { ephemerals : Ephemerals, fragments : (Text | Span)[] }
 export type Text = { ephemerals : Ephemerals, text : string }
 
+export type Path = (nat | Key)[]
+
+export function isKey(ptr : nat | Key) : ptr is Key {
+    return typeof ptr === "string";
+}
+
 export function isLine(part : Part) : part is Line {
     return Object.hasOwn(part, 'fragments');
 }
