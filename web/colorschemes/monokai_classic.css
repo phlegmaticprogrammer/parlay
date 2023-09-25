@@ -1,0 +1,60 @@
+:root {
+    --monokai-classic-bg0: #272822;
+    --monokai-classic-bg1: #3f4039;
+    --monokai-classic-bg2: #565750;
+    --monokai-classic-bg3: #6e6f66;
+    --monokai-classic-bg4: #85877d;
+    --monokai-classic-gray: #9d9e94;
+    --monokai-classic-fg4: #b4b6ab;
+    --monokai-classic-fg3: #cccec1;
+    --monokai-classic-fg2: #e3e5d8;
+    --monokai-classic-fg1: #fdfff1;
+    --monokai-classic-fg0: #ffffff;
+    
+    --monokai-classic-red: #f92672;
+    --monokai-classic-red-dimmed: #c92660;
+    --monokai-classic-orange: #fd971f;
+    --monokai-classic-orange-dimmed: #cc7d20;
+    --monokai-classic-yellow: #e6db74;
+    --monokai-classic-yellow-dimmed: #bab261;
+    --monokai-classic-green: #a6e22e;
+    --monokai-classic-green-dimmed: #89b72b;
+    --monokai-classic-cyan: #86de8f;
+    --monokai-classic-cyan-dimmed: #70b476;
+    --monokai-classic-blue: #66d9ef;
+    --monokai-classic-blue-dimmed: #58b0c0;
+    --monokai-classic-purple: #ae81ff;
+    --monokai-classic-purple-dimmed: #8f6dcc;
+}
+
+.monokai-classic {
+    --text-foreground: var(--monokai-classic-fg1);
+    --text-background: var(--monokai-classic-bg0);
+
+    --text-bg0: var(--monokai-classic-bg0);
+    --text-bg1: var(--monokai-classic-bg1);
+    --text-bg2: var(--monokai-classic-bg2);
+    --text-bg3: var(--monokai-classic-bg3);
+    --text-bg4: var(--monokai-classic-bg4);
+    --text-gray: var(--monokai-classic-gray);
+    --text-fg0: var(--monokai-classic-fg0);
+    --text-fg1: var(--monokai-classic-fg1);
+    --text-fg2: var(--monokai-classic-fg2);
+    --text-fg3: var(--monokai-classic-fg3);
+    --text-fg4: var(--monokai-classic-fg4);
+
+    --text-red: var(--monokai-classic-red);
+    --text-red-dimmed: var(--monokai-classic-red-dimmed);
+    --text-orange: var(--monokai-classic-orange);
+    --text-orange-dimmed: var(--monokai-classic-orange-dimmed);
+    --text-yellow: var(--monokai-classic-yellow);
+    --text-yellow-dimmed: var(--monokai-classic-yellow-dimmed);
+    --text-green: var(--monokai-classic-green);
+    --text-green-dimmed: var(--monokai-classic-green-dimmed);
+    --text-cyan: var(--monokai-classic-cyan);
+    --text-cyan-dimmed: var(--monokai-classic-cyan-dimmed);
+    --text-blue: var(--monokai-classic-blue);
+    --text-blue-dimmed: var(--monokai-classic-blue-dimmed);
+    --text-purple: var(--monokai-classic-purple);
+    --text-purple-dimmed: var(--monokai-classic-purple-dimmed);
+}

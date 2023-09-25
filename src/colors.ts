@@ -41,9 +41,14 @@ export const black : RGB = [0, 0, 0];
 export const white : RGB = [255, 255, 255];
 
 export function mix(from : RGB, to : RGB, alpha : number) : RGB {
-    const r = (1-alpha) * from[0] + alpha * to[0];
-    const g = (1-alpha) * from[1] + alpha * to[1];
-    const b = (1-alpha) * from[2] + alpha * to[2];
+    function clamp(x : number) : number {
+        if (x < 0) return 0;
+        if (x > 255) return 255;
+        return x;
+    }
+    const r = clamp((1-alpha) * from[0] + alpha * to[0]);
+    const g = clamp((1-alpha) * from[1] + alpha * to[1]);
+    const b = clamp((1-alpha) * from[2] + alpha * to[2]);
     return [r, g, b];
 }
 
@@ -54,7 +59,12 @@ export function closestMix(from : RGB, to : RGB, color : RGB) : number {
     return alpha;
 }
 
-function closestInterpolation(from : RGB, to : RGB, color : RGB) {
+function closestInterpolation(msg : string, sfrom : string, sto : string, scolor : string) {
+    console.log("-----------");
+    console.log(msg);
+    const from = parseColor(sfrom);
+    const to = parseColor(sto);
+    const color = parseColor(scolor);
     const alpha = closestMix(from, to, color);
     console.log("closest color is at " + alpha);
     const p = mix(from, to, alpha);
@@ -67,11 +77,14 @@ for (const color of ["#cc241d", "#98971a", "#d79921", "#458588"]) {
     console.log("gray: ", (rgb[0] + rgb[1] + rgb[2]) / 3);
 }
 
-const A = parseColor("#076678");
-const B = parseColor("#fbf1c7");
-const C = parseColor("#458588");
-closestInterpolation(A, B, C);
+closestInterpolation("gruvbox-light interpolate gray from bg0 to fg1", "#fbf1c7", "#3c3836", "#928374");
+closestInterpolation("gruvbox-light interpolate fg0 from bg0 to fg1", "#fbf1c7", "#3c3836", "#282828");
+closestInterpolation("gruvbox-light interpolate fg0 from gray to fg1", "#928374", "#3c3836", "#282828");
+closestInterpolation("gruvbox-dark interpolate gray from bg0 to fg1", "#282828", "#ebdbb2", "#928374");
+closestInterpolation("gruvbox-dark interpolate fg0 from gray to fg1", "#928374", "#ebdbb2", "#fbf1c7");
+closestInterpolation("gruvbox-dark interpolate fg0 from bg0 to fg1", "#282828", "#ebdbb2", "#fbf1c7");
 
+console.log("");
 
 
 

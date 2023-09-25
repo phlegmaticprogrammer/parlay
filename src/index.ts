@@ -27,6 +27,10 @@ function register(id : string, handler : (id : string) => void) {
 
 function run() {
     const viewer = document.getElementById("colorscheme-viewer")!;
+    viewer.appendChild(viewColorScheme("monokai-classic"));
+    viewer.appendChild(viewColorScheme("monokai-pro"));
+    viewer.appendChild(viewColorScheme("solarized-light"));
+    viewer.appendChild(viewColorScheme("solarized-dark"));
     viewer.appendChild(viewColorScheme("gruvbox-light-hard"));
     viewer.appendChild(viewColorScheme("gruvbox-light"));
     viewer.appendChild(viewColorScheme("gruvbox-light-soft"));

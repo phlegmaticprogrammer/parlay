@@ -1,0 +1,60 @@
+:root {
+    --solarized-dark-bg0: #002b36;
+    --solarized-dark-bg1: #0e3741;
+    --solarized-dark-bg2: #1d424b;
+    --solarized-dark-bg3: #2b4e56;
+    --solarized-dark-bg4: #3a5960;
+    --solarized-dark-gray: #48656b;
+    --solarized-dark-fg4: #567075;
+    --solarized-dark-fg3: #657c80;
+    --solarized-dark-fg2: #73878a;
+    --solarized-dark-fg1: #839496;
+    --solarized-dark-fg0: #91a0a1;
+    
+    --solarized-dark-red: #dc322f;
+    --solarized-dark-red-dimmed: #a93031;
+    --solarized-dark-orange: #cb4b16;
+    --solarized-dark-orange-dimmed: #9c441d;
+    --solarized-dark-yellow: #b58900;
+    --solarized-dark-yellow-dimmed: #8b730c;
+    --solarized-dark-green: #859900;
+    --solarized-dark-green-dimmed: #66800c;
+    --solarized-dark-cyan: #2aa198;
+    --solarized-dark-cyan-dimmed: #208681;
+    --solarized-dark-blue: #268bd2;
+    --solarized-dark-blue-dimmed: #1d75ae;
+    --solarized-dark-purple: #d33682;
+    --solarized-dark-purple-dimmed: #a23371;
+}
+
+.solarized-dark {
+    --text-foreground: var(--solarized-dark-fg1);
+    --text-background: var(--solarized-dark-bg0);
+
+    --text-bg0: var(--solarized-dark-bg0);
+    --text-bg1: var(--solarized-dark-bg1);
+    --text-bg2: var(--solarized-dark-bg2);
+    --text-bg3: var(--solarized-dark-bg3);
+    --text-bg4: var(--solarized-dark-bg4);
+    --text-gray: var(--solarized-dark-gray);
+    --text-fg0: var(--solarized-dark-fg0);
+    --text-fg1: var(--solarized-dark-fg1);
+    --text-fg2: var(--solarized-dark-fg2);
+    --text-fg3: var(--solarized-dark-fg3);
+    --text-fg4: var(--solarized-dark-fg4);
+
+    --text-red: var(--solarized-dark-red);
+    --text-red-dimmed: var(--solarized-dark-red-dimmed);
+    --text-orange: var(--solarized-dark-orange);
+    --text-orange-dimmed: var(--solarized-dark-orange-dimmed);
+    --text-yellow: var(--solarized-dark-yellow);
+    --text-yellow-dimmed: var(--solarized-dark-yellow-dimmed);
+    --text-green: var(--solarized-dark-green);
+    --text-green-dimmed: var(--solarized-dark-green-dimmed);
+    --text-cyan: var(--solarized-dark-cyan);
+    --text-cyan-dimmed: var(--solarized-dark-cyan-dimmed);
+    --text-blue: var(--solarized-dark-blue);
+    --text-blue-dimmed: var(--solarized-dark-blue-dimmed);
+    --text-purple: var(--solarized-dark-purple);
+    --text-purple-dimmed: var(--solarized-dark-purple-dimmed);
+}

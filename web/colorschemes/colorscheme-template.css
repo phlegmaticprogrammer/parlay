@@ -32,8 +32,8 @@
 }
 
 .colorscheme {
-    --text-foreground: --var(--colorscheme-fg1);
-    --text-background: --var(--colorscheme-bg0);
+    --text-foreground: var(--colorscheme-fg1);
+    --text-background: var(--colorscheme-bg0);
 
     --text-bg0: var(--colorscheme-bg0);
     --text-bg1: var(--colorscheme-bg1);
