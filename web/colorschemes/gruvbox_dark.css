@@ -1,0 +1,129 @@
+:root {
+    /** Foreground and background colors. */
+    --gruvbox-dark-fg0: #fbf1c7;
+    --gruvbox-dark-fg1: #ebdbb2;
+    --gruvbox-dark-fg2: #d5c4a1;
+    --gruvbox-dark-fg3: #bdae93;
+    --gruvbox-dark-fg4: #a89984;
+    --gruvbox-dark-gray: #928374;
+    --gruvbox-dark-bg4: #7c6f64;
+    --gruvbox-dark-bg3: #665c54;
+    --gruvbox-dark-bg2: #504945;
+    --gruvbox-dark-bg1: #3c3836;
+    --gruvbox-dark-bg0: #282828;
+    --gruvbox-dark-bg0_h: #1d2021;
+    --gruvbox-dark-bg0_s: #32302f;
+
+
+    /** Accent colors, and their dimmed versions. */
+    --gruvbox-dark-red: #f64934;
+    --gruvbox-dark-red-dimmed: #cc241d;
+    --gruvbox-dark-orange: #fe8019;
+    --gruvbox-dark-orange-dimmed: #d65d0e;
+    --gruvbox-dark-yellow: #fabd2f;
+    --gruvbox-dark-yellow-dimmed: #d79921;
+    --gruvbox-dark-green: #b8bb26;
+    --gruvbox-dark-green-dimmed: #98971a;
+    --gruvbox-dark-cyan: #8ec07c;
+    --gruvbox-dark-cyan-dimmed: #689d6a;
+    --gruvbox-dark-blue: #83a598;
+    --gruvbox-dark-blue-dimmed: #458588;
+    --gruvbox-dark-purple: #d3869b;
+    --gruvbox-dark-purple-dimmed: #b16286;
+}
+
+.gruvbox-dark {
+    --text-foreground: var(--gruvbox-dark-fg1);
+    --text-background: var(--gruvbox-dark-bg0);
+
+    --text-bg0: var(--gruvbox-dark-bg0);
+    --text-bg1: var(--gruvbox-dark-bg1);
+    --text-bg2: var(--gruvbox-dark-bg2);
+    --text-bg3: var(--gruvbox-dark-bg3);
+    --text-bg4: var(--gruvbox-dark-bg4);
+    --text-gray: var(--gruvbox-dark-gray);
+    --text-fg0: var(--gruvbox-dark-fg0);
+    --text-fg1: var(--gruvbox-dark-fg1);
+    --text-fg2: var(--gruvbox-dark-fg2);
+    --text-fg3: var(--gruvbox-dark-fg3);
+    --text-fg4: var(--gruvbox-dark-fg4);
+
+    --text-red: var(--gruvbox-dark-red);
+    --text-red-dimmed: var(--gruvbox-dark-red-dimmed);
+    --text-orange: var(--gruvbox-dark-orange);
+    --text-orange-dimmed: var(--gruvbox-dark-orange-dimmed);
+    --text-yellow: var(--gruvbox-dark-yellow);
+    --text-yellow-dimmed: var(--gruvbox-dark-yellow-dimmed);
+    --text-green: var(--gruvbox-dark-green);
+    --text-green-dimmed: var(--gruvbox-dark-green-dimmed);
+    --text-cyan: var(--gruvbox-dark-cyan);
+    --text-cyan-dimmed: var(--gruvbox-dark-cyan-dimmed);
+    --text-blue: var(--gruvbox-dark-blue);
+    --text-blue-dimmed: var(--gruvbox-dark-blue-dimmed);
+    --text-purple: var(--gruvbox-dark-purple);
+    --text-purple-dimmed: var(--gruvbox-dark-purple-dimmed);
+}
+
+.gruvbox-dark-hard {
+    --text-foreground: var(--gruvbox-dark-fg1);
+    --text-background: var(--gruvbox-dark-bg0_h);
+
+    --text-bg0: var(--gruvbox-dark-bg0_h);
+    --text-bg1: var(--gruvbox-dark-bg1);
+    --text-bg2: var(--gruvbox-dark-bg2);
+    --text-bg3: var(--gruvbox-dark-bg3);
+    --text-bg4: var(--gruvbox-dark-bg4);
+    --text-gray: var(--gruvbox-dark-gray);
+    --text-fg0: var(--gruvbox-dark-fg0);
+    --text-fg1: var(--gruvbox-dark-fg1);
+    --text-fg2: var(--gruvbox-dark-fg2);
+    --text-fg3: var(--gruvbox-dark-fg3);
+    --text-fg4: var(--gruvbox-dark-fg4);
+
+    --text-red: var(--gruvbox-dark-red);
+    --text-red-dimmed: var(--gruvbox-dark-red-dimmed);
+    --text-orange: var(--gruvbox-dark-orange);
+    --text-orange-dimmed: var(--gruvbox-dark-orange-dimmed);
+    --text-yellow: var(--gruvbox-dark-yellow);
+    --text-yellow-dimmed: var(--gruvbox-dark-yellow-dimmed);
+    --text-green: var(--gruvbox-dark-green);
+    --text-green-dimmed: var(--gruvbox-dark-green-dimmed);
+    --text-cyan: var(--gruvbox-dark-cyan);
+    --text-cyan-dimmed: var(--gruvbox-dark-cyan-dimmed);
+    --text-blue: var(--gruvbox-dark-blue);
+    --text-blue-dimmed: var(--gruvbox-dark-blue-dimmed);
+    --text-purple: var(--gruvbox-dark-purple);
+    --text-purple-dimmed: var(--gruvbox-dark-purple-dimmed);
+}
+
+.gruvbox-dark-soft {
+    --text-foreground: var(--gruvbox-dark-fg1);
+    --text-background: var(--gruvbox-dark-bg0_s);
+
+    --text-bg0: var(--gruvbox-dark-bg0_s);
+    --text-bg1: var(--gruvbox-dark-bg1);
+    --text-bg2: var(--gruvbox-dark-bg2);
+    --text-bg3: var(--gruvbox-dark-bg3);
+    --text-bg4: var(--gruvbox-dark-bg4);
+    --text-gray: var(--gruvbox-dark-gray);
+    --text-fg0: var(--gruvbox-dark-fg0);
+    --text-fg1: var(--gruvbox-dark-fg1);
+    --text-fg2: var(--gruvbox-dark-fg2);
+    --text-fg3: var(--gruvbox-dark-fg3);
+    --text-fg4: var(--gruvbox-dark-fg4);
+
+    --text-red: var(--gruvbox-dark-red);
+    --text-red-dimmed: var(--gruvbox-dark-red-dimmed);
+    --text-orange: var(--gruvbox-dark-orange);
+    --text-orange-dimmed: var(--gruvbox-dark-orange-dimmed);
+    --text-yellow: var(--gruvbox-dark-yellow);
+    --text-yellow-dimmed: var(--gruvbox-dark-yellow-dimmed);
+    --text-green: var(--gruvbox-dark-green);
+    --text-green-dimmed: var(--gruvbox-dark-green-dimmed);
+    --text-cyan: var(--gruvbox-dark-cyan);
+    --text-cyan-dimmed: var(--gruvbox-dark-cyan-dimmed);
+    --text-blue: var(--gruvbox-dark-blue);
+    --text-blue-dimmed: var(--gruvbox-dark-blue-dimmed);
+    --text-purple: var(--gruvbox-dark-purple);
+    --text-purple-dimmed: var(--gruvbox-dark-purple-dimmed);
+}

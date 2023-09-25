@@ -1,3 +1,4 @@
+import { viewColorScheme } from "./view_colorscheme.js";
 import { example } from "./example.js";
 import { hello1 } from "./module1.js";
 import { ParlayEditor } from "./parlay_editor.js";
@@ -25,6 +26,13 @@ function register(id : string, handler : (id : string) => void) {
 } 
 
 function run() {
+    const viewer = document.getElementById("colorscheme-viewer")!;
+    viewer.appendChild(viewColorScheme("gruvbox-light-hard"));
+    viewer.appendChild(viewColorScheme("gruvbox-light"));
+    viewer.appendChild(viewColorScheme("gruvbox-light-soft"));
+    viewer.appendChild(viewColorScheme("gruvbox-dark-hard"));
+    viewer.appendChild(viewColorScheme("gruvbox-dark"));
+    viewer.appendChild(viewColorScheme("gruvbox-dark-soft"));
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
     const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);
     const editor = new ParlaySimpleEditor(root, debugRoot);

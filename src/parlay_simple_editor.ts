@@ -71,22 +71,43 @@ export class ParlaySimpleEditor {
     }
 
     #setup() {
-        let style = this.#root.style;
+        //let style = this.#root.style;
         this.#root.contentEditable = "true";
         this.#root.spellcheck = false;
         this.#root.classList.add("parlay");
-        //style.overflowY = "scroll";
-        //style.whiteSpace = "pre";
-        //style.fontFamily = //"stixtwotext";
-        //style.margin = "10px";
-        //style.border = "2px solid var(--text-background-highlights)";
-/*        this.view(example);
         document.addEventListener("selectionchange", () => {
             const selection = document.getSelection();
-            this.selectionChanged(selection);
+            this.#selectionChanged(selection);
             //console.log(document.getSelection());
         });
-        this.selectionChanged(document.getSelection());*/
+        this.#selectionChanged(document.getSelection());
     }
+
+    log(s : string) {
+        console.log("Parlay> " + s);
+    }
+
+    #selectionChanged(selection : Selection | null) {
+        if (!selection) {
+            this.log("no selection");
+        } else {
+            if (selection.anchorNode === null || selection.focusNode === null) {
+                this.log("no selection");            
+            } else {
+                let node : Node | null = selection.anchorNode;
+                let up = 0;
+                while (node !== null && node !== this.#root) {
+                    node = node.parentNode;
+                    up += 1;
+                }
+                if (node !== null) {
+                    this.log("selected: " + up + " up");
+                } else {
+                    this.log("not selected");
+                }
+            }
+        }
+    }
+
 
 }

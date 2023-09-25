@@ -1,0 +1,64 @@
+/* General format of a colorscheme. */
+
+:root {
+    /** Foreground and background colors. */
+    --colorscheme-fg0: ;
+    --colorscheme-fg1: ;
+    --colorscheme-fg2: ;
+    --colorscheme-fg3: ;
+    --colorscheme-fg4: ;
+    --colorscheme-gray: ;
+    --colorscheme-bg4: ;
+    --colorscheme-bg3: ;
+    --colorscheme-bg2: ;
+    --colorscheme-bg1: ;
+    --colorscheme-bg0: ;
+
+    /** Accent colors, and their dimmed versions. */
+    --colorscheme-red: ;
+    --colorscheme-red-dimmed: ;
+    --colorscheme-orange: ;
+    --colorscheme-orange-dimmed: ;
+    --colorscheme-yellow: ;
+    --colorscheme-yellow-dimmed: ;
+    --colorscheme-green: ;
+    --colorscheme-green-dimmed: ;
+    --colorscheme-cyan: ;
+    --colorscheme-cyan-dimmed: ;
+    --colorscheme-blue: ;
+    --colorscheme-blue-dimmed: ;
+    --colorscheme-purple: ;
+    --colorscheme-purple-dimmed: ;
+}
+
+.colorscheme {
+    --text-foreground: --var(--colorscheme-fg1);
+    --text-background: --var(--colorscheme-bg0);
+
+    --text-bg0: var(--colorscheme-bg0);
+    --text-bg1: var(--colorscheme-bg1);
+    --text-bg2: var(--colorscheme-bg2);
+    --text-bg3: var(--colorscheme-bg3);
+    --text-bg4: var(--colorscheme-bg4);
+    --text-gray: var(--colorscheme-gray);
+    --text-fg0: var(--colorscheme-fg0);
+    --text-fg1: var(--colorscheme-fg1);
+    --text-fg2: var(--colorscheme-fg2);
+    --text-fg3: var(--colorscheme-fg3);
+    --text-fg4: var(--colorscheme-fg4);
+
+    --text-red: var(--colorscheme-red);
+    --text-red-dimmed: var(--colorscheme-red-dimmed);
+    --text-orange: var(--colorscheme-orange);
+    --text-orange-dimmed: var(--colorscheme-orange-dimmed);
+    --text-yellow: var(--colorscheme-yellow);
+    --text-yellow-dimmed: var(--colorscheme-yellow-dimmed);
+    --text-green: var(--colorscheme-green);
+    --text-green-dimmed: var(--colorscheme-green-dimmed);
+    --text-cyan: var(--colorscheme-cyan);
+    --text-cyan-dimmed: var(--colorscheme-cyan-dimmed);
+    --text-blue: var(--colorscheme-blue);
+    --text-blue-dimmed: var(--colorscheme-blue-dimmed);
+    --text-purple: var(--colorscheme-purple);
+    --text-purple-dimmed: var(--colorscheme-purple-dimmed);
+}

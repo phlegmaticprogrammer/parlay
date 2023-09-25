@@ -1,0 +1,128 @@
+:root {
+    /** Foreground and background colors. */
+    --gruvbox-light-fg0: #282828;
+    --gruvbox-light-fg1: #3c3836;
+    --gruvbox-light-fg2: #504945;
+    --gruvbox-light-fg3: #665c54;
+    --gruvbox-light-fg4: #7c6f64;
+    --gruvbox-light-gray: #928374;
+    --gruvbox-light-bg4: #a89984;
+    --gruvbox-light-bg3: #bdae93;
+    --gruvbox-light-bg2: #d5c4a1;
+    --gruvbox-light-bg1: #ebdbb2;
+    --gruvbox-light-bg0: #fbf1c7;
+    --gruvbox-light-bg0_h: #f9f5d7;
+    --gruvbox-light-bg0_s: #f2e5bc;
+
+    /** Accent colors, and their dimmed versions. */
+    --gruvbox-light-red: #9d0006;
+    --gruvbox-light-red-dimmed: #cc241d;
+    --gruvbox-light-orange: #af3a03;
+    --gruvbox-light-orange-dimmed: #d65d0e;
+    --gruvbox-light-yellow: #b57614;
+    --gruvbox-light-yellow-dimmed: #d79921;
+    --gruvbox-light-green: #79740e;
+    --gruvbox-light-green-dimmed: #98971a;
+    --gruvbox-light-cyan: #427658;
+    --gruvbox-light-cyan-dimmed: #689d6a;
+    --gruvbox-light-blue: #076678;
+    --gruvbox-light-blue-dimmed: #458588;
+    --gruvbox-light-purple: #8f3f71;
+    --gruvbox-light-purple-dimmed: #b16286;
+}
+
+.gruvbox-light {
+    --text-foreground: var(--gruvbox-light-fg1);
+    --text-background: var(--gruvbox-light-bg0);
+
+    --text-bg0: var(--gruvbox-light-bg0);
+    --text-bg1: var(--gruvbox-light-bg1);
+    --text-bg2: var(--gruvbox-light-bg2);
+    --text-bg3: var(--gruvbox-light-bg3);
+    --text-bg4: var(--gruvbox-light-bg4);
+    --text-gray: var(--gruvbox-light-gray);
+    --text-fg0: var(--gruvbox-light-fg0);
+    --text-fg1: var(--gruvbox-light-fg1);
+    --text-fg2: var(--gruvbox-light-fg2);
+    --text-fg3: var(--gruvbox-light-fg3);
+    --text-fg4: var(--gruvbox-light-fg4);
+
+    --text-red: var(--gruvbox-light-red);
+    --text-red-dimmed: var(--gruvbox-light-red-dimmed);
+    --text-orange: var(--gruvbox-light-orange);
+    --text-orange-dimmed: var(--gruvbox-light-orange-dimmed);
+    --text-yellow: var(--gruvbox-light-yellow);
+    --text-yellow-dimmed: var(--gruvbox-light-yellow-dimmed);
+    --text-green: var(--gruvbox-light-green);
+    --text-green-dimmed: var(--gruvbox-light-green-dimmed);
+    --text-cyan: var(--gruvbox-light-cyan);
+    --text-cyan-dimmed: var(--gruvbox-light-cyan-dimmed);
+    --text-blue: var(--gruvbox-light-blue);
+    --text-blue-dimmed: var(--gruvbox-light-blue-dimmed);
+    --text-purple: var(--gruvbox-light-purple);
+    --text-purple-dimmed: var(--gruvbox-light-purple-dimmed);
+}
+
+.gruvbox-light-hard {
+    --text-foreground: var(--gruvbox-light-fg1);
+    --text-background: var(--gruvbox-light-bg0_h);
+
+    --text-bg0: var(--gruvbox-light-bg0_h);
+    --text-bg1: var(--gruvbox-light-bg1);
+    --text-bg2: var(--gruvbox-light-bg2);
+    --text-bg3: var(--gruvbox-light-bg3);
+    --text-bg4: var(--gruvbox-light-bg4);
+    --text-gray: var(--gruvbox-light-gray);
+    --text-fg0: var(--gruvbox-light-fg0);
+    --text-fg1: var(--gruvbox-light-fg1);
+    --text-fg2: var(--gruvbox-light-fg2);
+    --text-fg3: var(--gruvbox-light-fg3);
+    --text-fg4: var(--gruvbox-light-fg4);
+
+    --text-red: var(--gruvbox-light-red);
+    --text-red-dimmed: var(--gruvbox-light-red-dimmed);
+    --text-orange: var(--gruvbox-light-orange);
+    --text-orange-dimmed: var(--gruvbox-light-orange-dimmed);
+    --text-yellow: var(--gruvbox-light-yellow);
+    --text-yellow-dimmed: var(--gruvbox-light-yellow-dimmed);
+    --text-green: var(--gruvbox-light-green);
+    --text-green-dimmed: var(--gruvbox-light-green-dimmed);
+    --text-cyan: var(--gruvbox-light-cyan);
+    --text-cyan-dimmed: var(--gruvbox-light-cyan-dimmed);
+    --text-blue: var(--gruvbox-light-blue);
+    --text-blue-dimmed: var(--gruvbox-light-blue-dimmed);
+    --text-purple: var(--gruvbox-light-purple);
+    --text-purple-dimmed: var(--gruvbox-light-purple-dimmed);
+}
+
+.gruvbox-light-soft {
+    --text-foreground: var(--gruvbox-light-fg1);
+    --text-background: var(--gruvbox-light-bg0_s);
+
+    --text-bg0: var(--gruvbox-light-bg0_s);
+    --text-bg1: var(--gruvbox-light-bg1);
+    --text-bg2: var(--gruvbox-light-bg2);
+    --text-bg3: var(--gruvbox-light-bg3);
+    --text-bg4: var(--gruvbox-light-bg4);
+    --text-gray: var(--gruvbox-light-gray);
+    --text-fg0: var(--gruvbox-light-fg0);
+    --text-fg1: var(--gruvbox-light-fg1);
+    --text-fg2: var(--gruvbox-light-fg2);
+    --text-fg3: var(--gruvbox-light-fg3);
+    --text-fg4: var(--gruvbox-light-fg4);
+
+    --text-red: var(--gruvbox-light-red);
+    --text-red-dimmed: var(--gruvbox-light-red-dimmed);
+    --text-orange: var(--gruvbox-light-orange);
+    --text-orange-dimmed: var(--gruvbox-light-orange-dimmed);
+    --text-yellow: var(--gruvbox-light-yellow);
+    --text-yellow-dimmed: var(--gruvbox-light-yellow-dimmed);
+    --text-green: var(--gruvbox-light-green);
+    --text-green-dimmed: var(--gruvbox-light-green-dimmed);
+    --text-cyan: var(--gruvbox-light-cyan);
+    --text-cyan-dimmed: var(--gruvbox-light-cyan-dimmed);
+    --text-blue: var(--gruvbox-light-blue);
+    --text-blue-dimmed: var(--gruvbox-light-blue-dimmed);
+    --text-purple: var(--gruvbox-light-purple);
+    --text-purple-dimmed: var(--gruvbox-light-purple-dimmed);
+}

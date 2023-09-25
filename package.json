@@ -17,7 +17,8 @@
     "server": "esbuild src/index.ts --bundle --outdir=web --servedir=web --watch",
     "test": "tsc && node dist/esm/test.js",
     "experimental": "tsc && node dist/esm/experimental_blocks.js",
-    "xblocks": "tsc && node dist/esm/xblocks.js"
+    "xblocks": "tsc && node dist/esm/xblocks.js",
+    "colors": "tsc && node dist/esm/colors.js"
   },
   "repository": {
     "type": "git",
