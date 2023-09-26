@@ -1,6 +1,6 @@
 .parlay {
     background-color: var(--text-background);
-    color: var(--text-content-primary);
+    color: var(--text-foreground);
     width: 45%;
     height: 800px;
     padding: 5px;
@@ -25,24 +25,24 @@
 .parlay-button {
     padding: 1ch;
     margin: 1ch;
-    border: solid 1px var(--text-accent-yellow);
+    border: solid 1px var(--text-yellow);
     border-radius: 1ch;
     color: var(--text-accent-yellow);
     background-color: var(--text-background);
 }
 
 .parlay-button:hover {
-    background-color: var(--text-background-highlights);
+    background-color: var(--text-bg1);
 }
 
 .parlay-button:active {
-    background-color: var(--text-accent-yellow);
+    background-color: var(--text-yellow);
     color: var(--text-background);
 }
 
 .parlay-body {
     background-color: var(--text-background);
-    color: var(--text-content-primary);
+    color: var(--text-foreground);
 }
 
 
