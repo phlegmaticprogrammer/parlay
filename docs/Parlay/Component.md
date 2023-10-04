@@ -1,0 +1,1 @@
+A component is responsible for displaying and editing some part of the document. 

@@ -317,12 +317,12 @@ const exampleDocument : Document = createDocument(block(
 
 const INDENT = 2;
 
-const lines = writeDocument(exampleDocument, INDENT);
+/*const lines = writeDocument(exampleDocument, INDENT);
 console.log("--------------------");
 console.log(lines);
 console.log("--------------------");
 
-displayDocument(exampleDocument, console.log);
+displayDocument(exampleDocument, console.log);*/
 
 function makeLines(input : string) : string[] {
     let lines : string[] = [];
@@ -446,12 +446,12 @@ export function readDocument(input : string, indent : nat) : Document {
     return createDocument(...result);
 }
 
-const D = readDocument(lines, INDENT);
+/*const D = readDocument(lines, INDENT);
 
 console.log("~~~~~~~~~~~~~~~~~~");
 displayDocument(D, console.log);
 console.log("###############");
 console.log("comparison: ", Relation[compareDocuments(exampleDocument, D)], " | ", Relation[compareDocuments(D, exampleDocument)]); 
 
-
+*/
 

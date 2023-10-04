@@ -8,18 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "1526918c422c4ef5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Block-Based Editing.md",
-                "mode": "source",
-                "source": true
-              }
-            }
-          },
-          {
             "id": "51f93c298e1e629a",
             "type": "leaf",
             "state": {
@@ -37,26 +25,62 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Content-independent Blocks.md",
+                "file": "Recursive teXt.md",
+                "mode": "preview",
+                "source": true
+              }
+            }
+          },
+          {
+            "id": "7655cd211df7ceeb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Recursive teXt.md",
                 "mode": "source",
                 "source": true
               }
             }
           },
           {
-            "id": "2d2527fda14de735",
+            "id": "a50b5fe357e06b63",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Blocks2UI.md",
+                "file": "Component.md",
+                "mode": "source",
+                "source": true
+              }
+            }
+          },
+          {
+            "id": "336490846e9b1f7f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Document Store - Recursive DB.md",
+                "mode": "source",
+                "source": true
+              }
+            }
+          },
+          {
+            "id": "b1084c50fade160d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Recursive teXt.md",
                 "mode": "source",
                 "source": true
               }
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -130,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Blocks2UI.md",
+                "file": "Document Store - Recursive DB.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Blocks2UI.md",
+                "file": "Document Store - Recursive DB.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -170,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Blocks2UI.md"
+                "file": "Document Store - Recursive DB.md"
               }
             }
           }
@@ -191,14 +215,18 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "2d2527fda14de735",
+  "active": "336490846e9b1f7f",
   "lastOpenFiles": [
-    "Content-independent Blocks.md",
-    "Blocks2UI.md",
-    "Block-Based Editing.md",
-    "Context.md",
-    "Pasted image 20230920173122.png",
+    "Recursive teXt.md",
     "Symbols.md",
+    "Document Store - Recursive DB.md",
+    "Context.md",
+    "Content-independent Blocks.md",
+    "Component.md",
+    "Block-Based Editing.md",
+    "Blocks2UI.md",
+    "Pasted image 20230920173122.png",
+    "Untitled 1.md",
     "Repository/Identifiers.md",
     "Abstraction Logic/2-Space Indentation.md",
     "Abstraction Logic/Indentation Syntax.md",
@@ -219,12 +247,7 @@
     "How To",
     "Repository/Sources and Builds.md",
     "Progress Tracking",
-    "Repository/Realm.md",
-    "Repository/Peers and Logins.md",
-    "Repository/Versions.md",
     "Repository",
-    "Workbench/The Workbench as an Interactive Environment.md",
-    "ALAI/First Steps.md",
     "Workbench",
     "Parsing",
     "ALogic",
