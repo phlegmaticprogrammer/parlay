@@ -1,24 +1,11 @@
-That's what I am calling the basic file format. A recursive text file has suffix `.rx`. Furthermore, to distinguish between different types of files, another suffix can be prepended to this, as in `.thy.rx`, which could for example be a theory file in recursive text format. Each such different type can be handled by a different *plugin*.
+That's what I am calling the basic file format. A recursive text file has suffix `.rx`. 
+Furthermore, to distinguish between different types of files, another suffix can be prepended to 
+this, as in `.thy.rx`, which could for example be a theory file in recursive text format. 
+Each such different type can be handled by a different *plugin*.
 
 ## Source of Truth
 The document is the source of truth. Each time the document is changed, a (partial) copy is created. Different copies can, and actually mostly should, share keys, but within one document copy, all keys must be different. 
 
-## Components
-
-### BlockComponent
-This component is responsible for viewing and editing a block.
-
-### BlocksComponent?
-This component is responsible for viewing and editing a sequence of blocks.
-
-### DocumentComponent
-This component is responsible for viewing and editing a document.
-
-### LineComponent
-
-### LinesComponent
-
-### SpanComponent
 
 ## How does it work?
 

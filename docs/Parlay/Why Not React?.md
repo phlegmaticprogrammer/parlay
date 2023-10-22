@@ -1,0 +1,1 @@
+Why can I not just use React? I would not be able to use a content-editable for everything, but is that a problem? I am actually not sure, but everybody else is using a content-editable, so I am just assuming I should too. And making the entire editor a content-editable will be too tough using React, both content-editable and React fighting over control.

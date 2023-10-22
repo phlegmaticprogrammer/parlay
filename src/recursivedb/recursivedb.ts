@@ -2,7 +2,7 @@ import { nat } from "things"
 
 export type Key = unknown
 
-export type Value = string | number | boolean | null | Key
+export type Value = string | number | boolean | null | Key 
 
 export enum ContentType { map, list, set, option, value }
 
@@ -99,8 +99,13 @@ export interface Replica {
 
 export interface Repository {
     
-    /** Creates a new document, and returns its root replica. */
-    create(c : Content) : Promise<Replica>
+    /** 
+     * Creates a new document, and returns its root replica. If no key is given,
+     * a unique fresh one is created. If a key is given, it is used, 
+     * if no such document exists in the repository. Returns undefined if the key is given,
+     * but there exists already a document with this key in the repository.
+     */
+    create(c : Content, key? : Key) : Promise<Replica | undefined>
 
     /** 
      * Returns the (local) heads of the document associated with the key.
@@ -120,4 +125,10 @@ export interface Repository {
      */
     documents() : Promise<Key[]>
 
+}
+
+export async function sync(repo : Repository, document : Key) : Promise<Replica | undefined> {
+    const heads = await repo.heads(document);
+    if (heads === undefined) return undefined;
+    return repo.merge(heads);
 }

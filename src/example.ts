@@ -349,6 +349,9 @@ export const ExampleForSimpleEditor = `
   This is the second line of the comment.
   And here is the third one.
 
+What if I indent
+ just by one?
+
 theorem Modus-Ponens: B
     premise: implies(A, B)
     premise: A
