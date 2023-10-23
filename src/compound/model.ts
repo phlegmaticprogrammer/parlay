@@ -21,7 +21,3 @@ export interface Subscription {
     unsubscribe() : void
 
 }
-
-let m : Model<any, any, any> = undefined
-
-await m.send(3);

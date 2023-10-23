@@ -18,6 +18,7 @@
     "test": "tsc && node dist/esm/test.js",
     "experimental": "tsc && node dist/esm/experimental_blocks.js",
     "xblocks": "tsc && node dist/esm/xblocks.js",
+    "rx": "tsc && node dist/esm/recursivetext/rx.js",
     "colors": "tsc && node dist/esm/colors.js",
     "gen": "tsc && node dist/esm/generate_colorscheme.js"
   },

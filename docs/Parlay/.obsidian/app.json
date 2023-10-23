@@ -1,4 +1,5 @@
 {
   "livePreview": false,
-  "newFileLocation": "current"
+  "newFileLocation": "current",
+  "attachmentFolderPath": "./"
 }
