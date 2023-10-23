@@ -1,5 +1,6 @@
 import { Relation, nat, string } from "things"
 import { createExampleDocument } from "./example.js"
+import { read } from "fs"
 
 /**
  * Abstract representation of a Recursive Text (RX) document.  
@@ -110,14 +111,11 @@ export const LF = "\n";
 export const CR = "\r";
 export const SPACE = "\x20";
 export const SPACE_ALT = "\xA0";
-export const LEFT_SPAN = "\uFF5F"; // FULLWIDTH LEFT WHITE PARENTHESIS (U+FF5F, Ps): ｟
-export const LEFT_SPAN_ALT = "\u2E28"; // LEFT DOUBLE PARENTHESIS (U+2E28, Ps): ⸨
-export const RIGHT_SPAN = "\uFF60"; // FULLWIDTH RIGHT WHITE PARENTHESIS (U+FF60, Pe): ｠
-export const RIGHT_SPAN_ALT = "\u2E29"; // RIGHT DOUBLE PARENTHESIS (U+2E29, Pe): ⸩
 
-export function writeDocument<D, B, L>(rx : RX<D, B, L>, document : D,
-    newline = LF, prefix = SPACE + SPACE) : string 
+export function writeDocument<D, B, L>(rx : RX<D, B, L>, document : D, crlf : boolean = false) : string 
 {
+    const newline = crlf ? CR + LF : LF;
+    const prefix = SPACE + SPACE;
     function removeNewlines(text : string) : string {
         let removing = false;
         let result = "";
@@ -182,14 +180,116 @@ export function writeDocument<D, B, L>(rx : RX<D, B, L>, document : D,
     return wDocument(document).join(newline);
 }
 
+function makeLines(input : string) : string[] {
+    let lines : string[] = [];
+    function write(s : string) {
+        lines[lines.length - 1] += s;
+    }
+    function newline() {
+        lines.push("");
+    }
+    newline();
+    // LFCR, CRLF, LF, CR are all considered newlines
+    let prevNL : string | null = null;
+    for (const c of input) {
+        if (c === LF || c === CR) {
+            if (prevNL !== null) {
+                if (c === prevNL) {
+                    newline();
+                } else {
+                    prevNL = null;
+                }
+            } else {
+                newline();
+                prevNL = c;
+            }
+        } else {
+            prevNL = null;
+            write(c);
+        }
+    }
+    return lines;
+}
 
-let exampleDocument = createExampleDocument(simpleRX);
+function startsWithSpaces(n : nat, s : string) : boolean {
+    for (const c of s) {
+        if (c === SPACE) {
+            if (n > 0) n--;
+            else return true;
+        } else {
+            return n <= 0;
+        }
+    }
+    return n <= 0;
+}
+
+export function readDocument<D, B, L>(rx : RX<D, B, L>, input : string) : D {
+    type Part = L | B
+
+    const indent = 2;
+
+    function rBlock(lines : string[], row : nat, indentation : nat) : { rows : nat, result : B } {
+        let line = lines[row];  
+        if (!startsWithSpaces(indentation, line)) throw new Error("Missing indentation");      
+        let blockLines : string[] = [line.substring(indentation)];
+        let rows = 1;
+        while (row + rows < lines.length && 
+            startsWithSpaces(indentation + indent, lines[row + rows])) 
+        {
+            blockLines.push(lines[row + rows].substring(indentation + indent));
+            rows += 1;
+        }
+        let r = 0;
+        let parts : Part[] = [];
+        while (r < rows) {
+            let line = blockLines[r];
+            if (!startsWithSpaces(indent, line)) {
+                parts.push(rLine(line));
+                r += 1;
+            } else {
+                const block = rBlock(blockLines, r, indent);
+                parts.push(block.result);
+                r += block.rows;
+            }
+        }
+        return { rows : rows, result : rx.block(...parts) };
+    }
+
+    function rLine(line : string) : L {
+        if (line.startsWith(SPACE_ALT))
+            return rx.line(SPACE + line.substring(SPACE_ALT.length));
+        else
+            return rx.line(line);
+    }
+
+    let row = 0;
+    let result : B[] = [];
+    const lines = makeLines(input);
+    while (row < lines.length) {
+        const block = rBlock(lines, row, 0);
+        result.push(block.result);
+        row += block.rows;
+    }
+    return rx.document(...result);
+}
+
+let exampleDocument = createExampleDocument(simpleRX, 3);
 
 displayDocument(simpleRX, exampleDocument);
-console.log("comparison: ", compareDocuments(simpleRX, exampleDocument, exampleDocument) === Relation.EQUAL);
+console.log("comparison with itself: ", compareDocuments(simpleRX, exampleDocument, exampleDocument) === Relation.EQUAL);
 const text = writeDocument(simpleRX, exampleDocument);
 console.log("-----------");
 console.log(text);
+const doc = readDocument(simpleRX, text);
+console.log("-----------");
+console.log("comparison with read: ", compareDocuments(simpleRX, exampleDocument, doc) === Relation.EQUAL);
+console.log("-------- read");
+let ex = `
+hello
+ world
+`;
+const doc2 = readDocument(simpleRX, ex);
+displayDocument(simpleRX, doc2);
 
 
 
