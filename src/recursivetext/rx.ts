@@ -1,9 +1,12 @@
 import { Relation, nat, string } from "things"
-import { createExampleDocument } from "./example.js"
-import { read } from "fs"
 
 /**
  * Abstract representation of a Recursive Text (RX) document.  
+ * 
+ * The following constraints hold:
+ * * Neither Documents nor Blocks are allowed to be empty.
+ * * A Line must not start with a non-breaking space (\xA0).
+ * * A Line must not contain characters CR (\r) or LF (\n).
  */ 
 export interface RX<Document, Block, Line> {
 
@@ -32,12 +35,16 @@ class SimpleRX implements RX<SimpleDocument, SimpleBlock, SimpleLine> {
         return typeof lineOrBlock === "string";
     }
     line(text?: string | undefined): SimpleLine {
-        return text ?? "";
+        if (text === undefined) return "";
+        if (!isSanitized(text)) throw new Error("Line is not sanitized.");
+        return text;
     }
     block(...items: (SimpleLine | SimpleBlock)[]): SimpleBlock {
+        if (items.length === 0) throw new Error("Empty blocks are not allowed.");
         return items;
     }
     document(...blocks: SimpleBlock[]): SimpleDocument {
+        if (blocks.length === 0) throw new Error("Empty documents are not allowed.");
         return blocks;
     }
     fromLine(line: SimpleLine): string {
@@ -51,6 +58,45 @@ class SimpleRX implements RX<SimpleDocument, SimpleBlock, SimpleLine> {
     }
 }
 export let simpleRX = new SimpleRX();
+
+const LF = "\n";
+const CR = "\r";
+const SPACE = "\x20";
+const NON_BREAKING_SPACE = "\xA0";
+
+export function isSanitized(text : string) : boolean {
+    if (text.startsWith(NON_BREAKING_SPACE)) return false;
+    if (text.indexOf(CR) >= 0) return false;
+    if (text.indexOf(LF) >= 0) return false;
+    return true;
+}
+
+function removeNewlines(text : string) : string {
+    let removing = false;
+    let result = "";
+    for (const c of text) {
+        if (c === LF || c === CR) {
+            if (!removing) {
+                removing = true;
+                result += SPACE;
+            }
+        } else {
+            removing = false;
+            result += c;
+        }
+    }
+    return result;
+}    
+
+export function sanitize(text : string) : string {
+    if (text.startsWith(NON_BREAKING_SPACE)) {
+        text = SPACE + text.substring(NON_BREAKING_SPACE.length);
+    }
+    if (text.indexOf(CR) >= 0 || text.indexOf(LF) >= 0) {
+        text = removeNewlines(text);
+    }
+    return text;
+}
 
 export function displayDocument<D, B, L>(rx : RX<D, B, L>, document : D, 
     log : (s : string) => void = console.log) : void 
@@ -107,36 +153,15 @@ export function compareDocuments<D, B, L>(rx : RX<D, B, L>, doc1 : D, doc2 : D) 
     return compareParts([...rx.fromDocument(doc1)], [...rx.fromDocument(doc2)]);
 }
 
-export const LF = "\n";
-export const CR = "\r";
-export const SPACE = "\x20";
-export const SPACE_ALT = "\xA0";
-
 export function writeDocument<D, B, L>(rx : RX<D, B, L>, document : D, crlf : boolean = false) : string 
 {
     const newline = crlf ? CR + LF : LF;
     const prefix = SPACE + SPACE;
-    function removeNewlines(text : string) : string {
-        let removing = false;
-        let result = "";
-        for (const c of text) {
-            if (c === LF || c === CR) {
-                if (!removing) {
-                    removing = true;
-                    result += SPACE;
-                }
-            } else {
-                removing = false;
-                result += c;
-            }
-        }
-        return result;
-    }    
 
     function wLine(line : L) : string {
-        let result = removeNewlines(rx.fromLine(line));
+        let result = sanitize(rx.fromLine(line));
         if (result.startsWith(SPACE)) 
-            result = SPACE_ALT + result.substring(SPACE.length);
+            result = NON_BREAKING_SPACE + result.substring(SPACE.length);
         return result;
     }
 
@@ -256,8 +281,8 @@ export function readDocument<D, B, L>(rx : RX<D, B, L>, input : string) : D {
     }
 
     function rLine(line : string) : L {
-        if (line.startsWith(SPACE_ALT))
-            return rx.line(SPACE + line.substring(SPACE_ALT.length));
+        if (line.startsWith(NON_BREAKING_SPACE))
+            return rx.line(SPACE + line.substring(NON_BREAKING_SPACE.length));
         else
             return rx.line(line);
     }
@@ -272,30 +297,3 @@ export function readDocument<D, B, L>(rx : RX<D, B, L>, input : string) : D {
     }
     return rx.document(...result);
 }
-
-let exampleDocument = createExampleDocument(simpleRX, 3);
-
-displayDocument(simpleRX, exampleDocument);
-console.log("comparison with itself: ", compareDocuments(simpleRX, exampleDocument, exampleDocument) === Relation.EQUAL);
-const text = writeDocument(simpleRX, exampleDocument);
-console.log("-----------");
-console.log(text);
-const doc = readDocument(simpleRX, text);
-console.log("-----------");
-console.log("comparison with read: ", compareDocuments(simpleRX, exampleDocument, doc) === Relation.EQUAL);
-console.log("-------- read");
-let ex = `
-hello
- world
-`;
-const doc2 = readDocument(simpleRX, ex);
-displayDocument(simpleRX, doc2);
-
-
-
-
-
-
-
-
-

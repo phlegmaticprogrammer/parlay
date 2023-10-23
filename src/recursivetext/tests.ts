@@ -1,4 +1,6 @@
-import { RX } from "./rx.js";
+import { Relation, Test, assertEqT, assertT } from "things";
+import { RX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
+import { write } from "fs";
 
 export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number = 0) : D {
 
@@ -66,3 +68,24 @@ export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number 
         default: throw new Error("Unknow example index");
     }
 }
+
+function testReadWrite<D, B, L>(rx : RX<D, B, L>, doc : D) {
+    assertT(compareDocuments(rx, doc, doc) === Relation.EQUAL);
+    const text = writeDocument(rx, doc);
+    const parsed_doc = readDocument(rx, text);
+    assertT(compareDocuments(rx, doc, parsed_doc) === Relation.EQUAL);
+}
+
+Test(() => {
+    testReadWrite(simpleRX, createExampleDocument(simpleRX, 0));
+}, "Write/Read Example 0");
+
+Test(() => {
+    let text = "";
+    const doc = readDocument(simpleRX, text);
+    let text2 = writeDocument(simpleRX, doc);
+    assertEqT(text, text2);
+    testReadWrite(simpleRX, doc);
+
+}, "Empty Text <-> Document");
+
