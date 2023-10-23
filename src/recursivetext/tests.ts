@@ -1,6 +1,5 @@
 import { Relation, Test, assertEqT, assertT } from "things";
 import { RX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
-import { write } from "fs";
 
 export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number = 0) : D {
 
@@ -62,11 +61,21 @@ export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number 
         case 1:
             return rx.document(block(block()));
         case 2:
-            return rx.document(block(block(line("Hello"))));
+            return rx.document(block(block(line("Hello"), line(" World"))));
         case 3:
             return rx.document(block(block(line(""))));
         default: throw new Error("Unknow example index");
     }
+}
+
+function CrashTest(test : () => void, descr? : string) {
+    function t() {
+        try {
+            test();
+            assertT(false);
+        } catch {}
+    }
+    Test(t, descr);
 }
 
 function testReadWrite<D, B, L>(rx : RX<D, B, L>, doc : D) {
@@ -76,9 +85,15 @@ function testReadWrite<D, B, L>(rx : RX<D, B, L>, doc : D) {
     assertT(compareDocuments(rx, doc, parsed_doc) === Relation.EQUAL);
 }
 
-Test(() => {
-    testReadWrite(simpleRX, createExampleDocument(simpleRX, 0));
-}, "Write/Read Example 0");
+for (const index of [0, 2, 3]) {
+    Test(() => {
+        testReadWrite(simpleRX, createExampleDocument(simpleRX, index));
+    }, `Write/Read Example ${index}`);
+}
+
+CrashTest(() => {
+    createExampleDocument(simpleRX, 1);
+}, `Create Example 1`);
 
 Test(() => {
     let text = "";
@@ -86,6 +101,5 @@ Test(() => {
     let text2 = writeDocument(simpleRX, doc);
     assertEqT(text, text2);
     testReadWrite(simpleRX, doc);
-
 }, "Empty Text <-> Document");
 
