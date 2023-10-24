@@ -57,6 +57,10 @@ class SimpleRX implements RX<SimpleDocument, SimpleBlock, SimpleLine> {
         return document;
     }
 }
+
+/**
+ * Implements RX<SimpleDocument, SimpleBlock, SimpleLine>.
+ */
 export let simpleRX = new SimpleRX();
 
 const LF = "\n";

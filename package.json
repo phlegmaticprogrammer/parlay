@@ -41,7 +41,7 @@
     "@practal/parsing": "file:../parsing",
     "@types/validate-npm-package-name": "^4.0.0",
     "alogic": "file:../alogic",
-    "things": "^4.2.2",
+    "things": "file:../things",
     "validate-npm-package-name": "^5.0.0"
   }
 }

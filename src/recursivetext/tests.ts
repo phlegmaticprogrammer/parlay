@@ -1,4 +1,4 @@
-import { Relation, Test, assertEqT, assertT } from "things";
+import { CrashTest, Relation, Test, assertEqT, assertT } from "things";
 import { RX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
 
 export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number = 0) : D {
@@ -66,16 +66,6 @@ export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number 
             return rx.document(block(block(line(""))));
         default: throw new Error("Unknow example index");
     }
-}
-
-function CrashTest(test : () => void, descr? : string) {
-    function t() {
-        try {
-            test();
-            assertT(false);
-        } catch {}
-    }
-    Test(t, descr);
 }
 
 function testReadWrite<D, B, L>(rx : RX<D, B, L>, doc : D) {
