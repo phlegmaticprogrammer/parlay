@@ -1,5 +1,6 @@
-import { CrashTest, Relation, Test, assertEqT, assertT } from "things";
+import { Relation, Test, assertEqT, assertT } from "things";
 import { RX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
+import { assertCrashT } from "things";
 
 export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number = 0) : D {
 
@@ -81,8 +82,8 @@ for (const index of [0, 2, 3]) {
     }, `Write/Read Example ${index}`);
 }
 
-CrashTest(() => {
-    createExampleDocument(simpleRX, 1);
+Test(() => {
+    assertCrashT(() => createExampleDocument(simpleRX, 1));
 }, `Create Example 1`);
 
 Test(() => {
