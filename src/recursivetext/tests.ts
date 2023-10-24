@@ -1,13 +1,17 @@
 import { Relation, Test, assertEqT, assertT } from "things";
-import { RX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
+import { RX, SafeRX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
 import { assertCrashT } from "things";
 
 export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number = 0) : D {
 
-    let block = rx.block;
-    let line = rx.line;
+    function block(...items : (L | B)[]) : B {
+        return rx.block(...items);
+    }
+    function line(text? : string) : L {
+        return rx.line(text);
+    }
     function paragraph(s : string) : B {
-        return block(line(s));
+        return rx.block(rx.line(s));
     }
 
     switch(index) {
@@ -65,6 +69,77 @@ export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number 
             return rx.document(block(block(line("Hello"), line(" World"))));
         case 3:
             return rx.document(block(block(line(""))));
+        case 4:
+            return rx.document(block(line(), block(line())));   
+        case 5:
+            return rx.document(); 
+        case 6:
+            return rx.document(
+                paragraph("Here is a simple list of items:"),
+                block(
+                    paragraph("item 1"),
+                    paragraph("item 2"),
+                    paragraph("item 3"))
+            );
+        case 7:
+            return rx.document(
+                paragraph("Here is a simple list of items:"),
+                block(
+                    line("Some line"),
+                    paragraph("item 1"),
+                    paragraph("item 2"),
+                    paragraph("item 3"))
+            );    
+        case 8:
+            return rx.document(
+                paragraph("Here is a simple list of items:"),
+                block(
+                    line(""),
+                    paragraph("item 1"),
+                    paragraph("item 2"),
+                    paragraph("item 3"))
+            );    
+        case 9:
+            return rx.document(
+                block(
+                    paragraph("item 1"),
+                    paragraph("item 2"),
+                    paragraph("item 3")),
+                block(
+                    paragraph("item 4"),
+                    paragraph("item 5"),
+                    paragraph("item 6"))
+            );
+        case 10:
+            return rx.document(
+                block(
+                    line(),
+                    paragraph("item 1"),
+                    paragraph("item 2"),
+                    paragraph("item 3")),
+                block(
+                    line(),
+                    paragraph("item 4"),
+                    paragraph("item 5"),
+                    paragraph("item 6"))
+            );
+        case 11: 
+            return rx.document(
+                paragraph(" hello"),
+                paragraph("world")
+            );
+        case 12:
+            return rx.document(
+                paragraph("\xA0hello")
+            );
+        case 13:
+            return rx.document(
+                paragraph("hello\n")
+            )
+        case 14:
+            return rx.document(
+                paragraph("hello\r")
+            )
         default: throw new Error("Unknow example index");
     }
 }
@@ -76,15 +151,40 @@ function testReadWrite<D, B, L>(rx : RX<D, B, L>, doc : D) {
     assertT(compareDocuments(rx, doc, parsed_doc) === Relation.EQUAL);
 }
 
-for (const index of [0, 2, 3]) {
-    Test(() => {
-        testReadWrite(simpleRX, createExampleDocument(simpleRX, index));
-    }, `Write/Read Example ${index}`);
+function examineReadWrite<D, B, L>(rx : RX<D, B, L>, doc : D) {
+    console.log("-------------- original document");
+    displayDocument(rx, doc);
+    console.log("-------------- as text");
+    const text = writeDocument(rx, doc)
+    console.log(text.replaceAll(" ", "␣"));
+    console.log("------------- document parsed from text");
+    const parsed_doc = readDocument(rx, text);
+    displayDocument(rx, parsed_doc);
+    console.log("------------- original === parsed: ", 
+        compareDocuments(rx, doc, parsed_doc) === Relation.EQUAL);
 }
 
-Test(() => {
-    assertCrashT(() => createExampleDocument(simpleRX, 1));
-}, `Create Example 1`);
+// Valid Examples
+for (const index of [0, 4, 7, 8, 10, 11]) {
+    Test(() => {
+        testReadWrite(simpleRX, createExampleDocument(simpleRX, index));
+    }, `Valid RX Example ${index}`);
+}
+
+// Invalid Examples
+for (const index of [1, 2, 3, 5, 6, 9, 12, 13, 14]) {
+    Test(() => {
+        assertCrashT(() => createExampleDocument(simpleRX, index));
+    }, `Invalid RX Example ${index}`);
+}
+
+// All Examples, made safe
+for (const index of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]) {
+    Test(() => {
+        let rx = new SafeRX(simpleRX);
+        testReadWrite(rx, createExampleDocument(rx, index));
+    }, `Safe RX Example ${index}`);
+}
 
 Test(() => {
     let text = "";
@@ -94,3 +194,4 @@ Test(() => {
     testReadWrite(simpleRX, doc);
 }, "Empty Text <-> Document");
 
+//examineReadWrite(simpleRX, createExampleDocument(simpleRX, 6));

@@ -4,7 +4,8 @@ import { Relation, nat, string } from "things"
  * Abstract representation of a Recursive Text (RX) document.  
  * 
  * The following constraints hold:
- * * Neither Documents nor Blocks are allowed to be empty.
+ * * A Document must contain at least one Block.
+ * * A Block must start with a Line.
  * * A Line must not start with a non-breaking space (\xA0).
  * * A Line must not contain characters CR (\r) or LF (\n).
  */ 
@@ -26,6 +27,41 @@ export interface RX<Document, Block, Line> {
 
 }
 
+// Wraps around another RX and makes it safe to use by forcing the constraints of an RX document.
+export class SafeRX<Document, Block, Line> implements RX<Document, Block, Line> {
+    #inner : RX<Document, Block, Line>
+    constructor(rx : RX<Document, Block, Line>) {
+        this.#inner = rx;
+    }
+    isLine(lineOrBlock: Block | Line): lineOrBlock is Line {
+        return this.#inner.isLine(lineOrBlock);
+    }
+    line(text?: string): Line {
+        if (text === undefined) return this.#inner.line();
+        return this.#inner.line(sanitize(text));
+    }
+    block(...items: (Block | Line)[]): Block {
+        if (items.length === 0) return this.#inner.block(this.#inner.line());
+        if (!this.#inner.isLine(items[0])) 
+            return this.#inner.block(this.#inner.line(), ...items);
+        return this.#inner.block(...items);
+    }
+    document(...blocks: Block[]): Document {
+        if (blocks.length === 0) 
+            return this.#inner.document(this.#inner.block(this.#inner.line()));
+        return this.#inner.document(...blocks);
+    }
+    fromLine(line: Line): string {
+        return this.#inner.fromLine(line);
+    }
+    fromBlock(block: Block): Iterable<Block | Line> {
+        return this.#inner.fromBlock(block);
+    }
+    fromDocument(document: Document): Iterable<Block> {
+        return this.#inner.fromDocument(document);
+    }
+}
+
 export type SimpleDocument = SimpleBlock[]
 export type SimpleBlock = (SimpleLine | SimpleBlock)[]  
 export type SimpleLine = string
@@ -41,6 +77,7 @@ class SimpleRX implements RX<SimpleDocument, SimpleBlock, SimpleLine> {
     }
     block(...items: (SimpleLine | SimpleBlock)[]): SimpleBlock {
         if (items.length === 0) throw new Error("Empty blocks are not allowed.");
+        if (!this.isLine(items[0])) throw new Error("Block must start with a line.");
         return items;
     }
     document(...blocks: SimpleBlock[]): SimpleDocument {
@@ -109,7 +146,8 @@ export function displayDocument<D, B, L>(rx : RX<D, B, L>, document : D,
     const indent = "  ";
 
     function displayLine(prefix : string, line : L) {
-        log(prefix + `Line "${line}"`);
+        let text = rx.fromLine(line);
+        log(prefix + `Line "${text}"`);
     }
 
     function displayBlock(prefix : string, block : B) {
