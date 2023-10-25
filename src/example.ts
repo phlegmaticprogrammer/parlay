@@ -388,10 +388,12 @@ theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
 export const MarkdownVariant = `
 Things like *bold
   style* work like before.
-Itemization could work like this:
+
     First item
     Second item
     Third item
+  
+  Continue
 `;
 
 
