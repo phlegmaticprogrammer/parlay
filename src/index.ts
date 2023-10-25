@@ -1,10 +1,7 @@
 import { viewColorScheme } from "./view_colorscheme.js";
 import { example } from "./example.js";
-import { hello1 } from "./module1.js";
 import { ParlayEditor } from "./parlay_editor.js";
 import { ParlaySimpleEditor } from "./parlay_simple_editor.js";
-
-export { hello1 } from "./module1.js";
 
 function calculateCharacterWidth(character : string, font : string) : number | undefined {
     var canvas = document.createElement('canvas');

@@ -12,11 +12,11 @@ export class Key {
 
 export type Value = string | number | boolean | null | Key 
 
-export enum ContentType { map, list, set, option, value }
+export enum ContentType { map, list, set, value }
 
-export type Content = MapContent | ListContent | ValueContent | OptionContent | SetContent
+export type Content = MapContent | ListContent | ValueContent | SetContent
 
-export type Update = MapUpdate | ListUpdate | ValueUpdate | OptionUpdate | SetUpdate
+export type Update = MapUpdate | ListUpdate | SetUpdate | ValueUpdate
 
 export type MapContent = {
     contentType : ContentType.map,
@@ -59,16 +59,6 @@ export type ValueContent = {
 export type ValueUpdate = {
     contentType : ContentType.value,
     update : Value
-}
-
-export type OptionContent = {
-    contentType : ContentType.option,
-    content : Value | null
-}
-
-export type OptionUpdate = {
-    contentType : ContentType.option,
-    update : Value | null
 }
 
 export interface Replica {
