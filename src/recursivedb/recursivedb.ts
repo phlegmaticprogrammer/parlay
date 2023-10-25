@@ -1,6 +1,14 @@
 import { nat } from "things"
 
-export type Key = unknown
+export class Key {
+    #id : string
+    constructor(id : string) {
+        this.#id = id;
+    }
+    get id() : string {
+        return this.#id;
+    }
+}
 
 export type Value = string | number | boolean | null | Key 
 
