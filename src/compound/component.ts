@@ -26,9 +26,7 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
 }
 
 export interface CompoundComponent<Init, Update> extends ComponentBase<Init, Update> {
-
     isPrimitive : false
-
 }
 
 export type Component<Init, Update> = 
@@ -117,7 +115,6 @@ export class Compound {
             this.log("oops, top vanished");
         }
     }    
-
 }
 
 export function createCompound(elem : HTMLElement, log : (s : string) => void = console.log) : Compound {
