@@ -25,7 +25,7 @@ class TextComponent implements PrimitiveComponent<string, string>, UniformObserv
 
     aborted(): void {}
 
-    createDOM() : Node {
+    get DOMNode() : Node {
         return this.#node;
     }
 

@@ -13,7 +13,7 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
 
     isPrimitive : true
 
-    createDOM() : Node
+    get DOMNode() : Node
 
     integrate(prefix : Node[], suffix : Node[]) : void
 
@@ -53,9 +53,9 @@ export class Compound {
 
     render(component : AnyComponent) {
         if (component.isPrimitive) {
-            const elem = component.createDOM();
+            const node = component.DOMNode;
             removeAllChildNodes(this.#root);
-            this.#root.appendChild(elem);
+            this.#root.appendChild(node);
             this.#top = component;
             this.#startObserving();
         } else {
@@ -99,16 +99,19 @@ export class Compound {
             this.log("need primitive component");
             return;
         }
-        const index = children.indexOf(this.#top.createDOM());
+        const index = children.indexOf(this.#top.DOMNode);
         if (index >= 0) {
             if (children.length === 1) {
                 this.log("strange, child list changed, but still 1 child, which is the top");
             } else {
+                this.#stopObserving();
                 const prefix = children.slice(0, index);
                 removeChildNodes(this.#root, prefix);
                 const suffix = children.slice(index+1);
                 removeChildNodes(this.#root, suffix);
                 this.#top.integrate(prefix, suffix);
+                this.log("integrated");
+                this.#startObserving();
             }
         } else {
             this.log("oops, top vanished");
