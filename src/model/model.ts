@@ -2,20 +2,32 @@ import { freeze } from "things"
 
 export interface Model<Init, Update> { 
 
+    subscribe(observer : ModelObserver<Init, Update>) : ModelSubscription
+
     /**
-     * Updates the model. 
-     * Returns whether the update was or will be accepted, or has been refused.
+     * Submits a completion request to the model. 
+     * Returns whether the completion will be or has been accepted, or has been refused.
+     */
+    complete() : Promise<boolean>
+
+    /**
+     * Submits an abortion request to the model. 
+     * Returns whether the abortion will be or has been accepted, or has been refused.
+     */
+    abort(reason? : any) : Promise<boolean>
+    
+    /**
+     * Submits an update request to the model. 
+     * Returns whether the update will be or has been accepted, or has been refused.
      */
     update(u : Update) : Promise<boolean>
     
-    subscribe(observer : ModelObserver<Init, Update>) : ModelSubscription
-
 }
 
 /**
  * Allowed call sequences are:
- * * init updated* (completed | error)?
- * * error
+ * * init updated* (completed | aborted)?
+ * * aborted?
  */
 export interface ModelObserver<Init, Update> {
 
@@ -25,7 +37,7 @@ export interface ModelObserver<Init, Update> {
 
     completed() : void
 
-    error(e : any) : void
+    aborted(error : any) : void
 
 }
 
@@ -39,9 +51,14 @@ export interface ModelSubscription {
 
 export type AnyModel = Model<any, any>
 
+/** A UniformModel does not distinguish between init and update. */
 export type UniformModel<Value> = Model<Value, Value>
+export type UniformObserver<Value> = ModelObserver<Value, Value>
+export type Mstring = UniformModel<string>
 
-export type StaticModel<Value> = Model<Value, void>
+/** A StaticModel has no updates. */
+export type StaticModel<Value> = Model<Value, never>
+export type StaticObserver<Value> = ModelObserver<Value, never>
 
 export let finishedSubscription : ModelSubscription = {
     active: false,

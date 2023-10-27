@@ -163,7 +163,7 @@ export class ParlaySimpleEditor {
             const n = document.createTextNode(s);
             div.appendChild(n);
             this.#debugRoot.appendChild(div);
-            div.scrollIntoView({ block: "end", behavior: "smooth" });
+            //div.scrollIntoView({ block: "end", behavior: "smooth" });
         } else {
             console.log("Parlay> " + s);
         }
@@ -171,10 +171,10 @@ export class ParlaySimpleEditor {
 
     #selectionChanged(selection : Selection | null) {
         if (!selection) {
-            this.log("no selection");
+            //this.log("no selection");
         } else {
             if (selection.anchorNode === null || selection.focusNode === null) {
-                this.log("no selection");            
+                //this.log("no selection");            
             } else {
                 let node : Node | null = selection.anchorNode;
                 let up = 0;
@@ -185,7 +185,7 @@ export class ParlaySimpleEditor {
                 if (node !== null) {
                     this.log("selected: " + up + " up");
                 } else {
-                    this.log("not selected");
+                    //this.log("not selected");
                 }
             }
         }

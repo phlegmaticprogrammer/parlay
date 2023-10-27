@@ -45,4 +45,13 @@
     color: var(--text-foreground);
 }
 
+.compound {
+    background-color: var(--text-background);
+    color: var(--text-foreground);
+    margin: 1cm;
+    padding: 0.2cm;
+    border: solid 5px var(--text-blue);
+    white-space: pre;
+}
+
 

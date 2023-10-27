@@ -1,4 +1,4 @@
-import { ModelObserver, ModelSubscription, StaticModel, UniformModel, finishedSubscription } from "./model.js";
+import { ModelSubscription, StaticModel, StaticObserver, finishedSubscription } from "./model.js";
 
 class ConstModel<Value> implements StaticModel<Value> {
 
@@ -8,11 +8,19 @@ class ConstModel<Value> implements StaticModel<Value> {
         this.#value = value;
     }
 
-    async update(u : void) : Promise<boolean> {
-        return true;
+    async complete(): Promise<boolean> {
+        return false;
     }
 
-    subscribe(observer: ModelObserver<Value, void>): ModelSubscription {
+    async abort(): Promise<boolean> {
+        return false;
+    }
+
+    async update() : Promise<boolean> {
+        return false;
+    }
+
+    subscribe(observer: StaticObserver<Value>): ModelSubscription {
         observer.initialized(this.#value);
         observer.completed();
         return finishedSubscription;

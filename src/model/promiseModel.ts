@@ -1,4 +1,4 @@
-import { ModelObserver, ModelSubscription, StaticModel } from "./model.js";
+import { ModelSubscription, StaticModel, StaticObserver } from "./model.js";
 
 class PromiseModel<Value> implements StaticModel<Value> {
 
@@ -8,11 +8,19 @@ class PromiseModel<Value> implements StaticModel<Value> {
         this.#promise = promise;
     }
 
-    async update(u : void) : Promise<boolean> {
-        return true;
+    async complete(): Promise<boolean> {
+        return false;
+    }
+
+    async abort(): Promise<boolean> {
+        return false;
+    }
+
+    async update() : Promise<boolean> {
+        return false;
     }    
 
-    subscribe(observer: ModelObserver<Value, void>): ModelSubscription {
+    subscribe(observer: StaticObserver<Value>): ModelSubscription {
         let active = true;
         function resolved(value : Value) {
              if (active) {
@@ -23,7 +31,7 @@ class PromiseModel<Value> implements StaticModel<Value> {
         }
         function failed(reason : any) {
             if (active) {
-                observer.error(reason);
+                observer.aborted(reason);
                 active = false;
             }
         }

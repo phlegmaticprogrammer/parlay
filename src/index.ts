@@ -2,6 +2,8 @@ import { viewColorScheme } from "./view_colorscheme.js";
 import { example } from "./example.js";
 import { ParlayEditor } from "./parlay_editor.js";
 import { ParlaySimpleEditor } from "./parlay_simple_editor.js";
+import { createCompound, textComponent } from "./compound/index.js";
+import { varModel } from "./model/index.js";
 
 function calculateCharacterWidth(character : string, font : string) : number | undefined {
     var canvas = document.createElement('canvas');
@@ -22,7 +24,7 @@ function register(id : string, handler : (id : string) => void) {
     document.getElementById(id)!.addEventListener("click", (event) => handler(id));
 } 
 
-function run() {
+function registerColorschemeViewers() {
     const viewer = document.getElementById("colorscheme-viewer")!;
     viewer.appendChild(viewColorScheme("monokai-classic"));
     viewer.appendChild(viewColorScheme("monokai-pro"));
@@ -34,6 +36,15 @@ function run() {
     viewer.appendChild(viewColorScheme("gruvbox-dark-hard"));
     viewer.appendChild(viewColorScheme("gruvbox-dark"));
     viewer.appendChild(viewColorScheme("gruvbox-dark-soft"));
+}
+
+function run() {
+    const model = varModel("Hello\nworld!");
+    const compound = createCompound(document.getElementById("compound")!, console.log);
+    compound.render(textComponent(model));
+    const mirror = createCompound(document.getElementById("compound-mirror")!, s => undefined);
+    mirror.render(textComponent(model));
+
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
     const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);
     const editor = new ParlaySimpleEditor(root, debugRoot);
@@ -47,19 +58,27 @@ function run() {
         body.classList.replace("solarized-light", "solarized-dark");
     }
     function cmd_plain() {
-        //editor.view(example, false, true);
+        model.update("plain");
     }
     function cmd_text() {
-        //editor.view(example, false);
+        model.update("text");
     }
     function cmd_structure() {
-        //editor.view(example, true);
+        model.update("structure");
+    }
+    function cmd_abort() {
+        model.abort();
+    }
+    function cmd_complete() {
+        model.complete();
     }
     register("cmd-plain", cmd_plain);
     register("cmd-light", cmd_light);
     register("cmd-dark", cmd_dark);
     register("cmd-text", cmd_text);
     register("cmd-structure", cmd_structure);
+    register("cmd-abort", cmd_abort);
+    register("cmd-complete", cmd_complete);
     /*var character = '  ';
     var font = '24px stixtwotext';
     console.log('Width of character ' + character + ' is ' + calculateCharacterWidthCh(character, font) + ' ch.');*/
