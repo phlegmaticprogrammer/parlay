@@ -38,7 +38,7 @@ class TextComponent implements PrimitiveComponent<string, string>, UniformObserv
         return this.#node;
     }
 
-    integrate(prefix : Node[], suffix : Node[]) {
+    surroundWith(prefix : Node[], suffix : Node[]) {
         const nodes = [...prefix, this.#node, ...suffix]
         const s = textOf(nodes);
         this.updated(s);

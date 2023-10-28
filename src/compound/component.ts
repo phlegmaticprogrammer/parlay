@@ -15,7 +15,7 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
 
     get DOMNode() : Node
 
-    integrate(prefix : Node[], suffix : Node[]) : void
+    surroundWith(prefix : Node[], suffix : Node[]) : void
     replaceWith(replacements : Node[]) : void
 
     //digest(before : Node[], after : Node[]
@@ -108,7 +108,7 @@ export class Compound {
                 removeChildNodes(this.#root, prefix);
                 const suffix = children.slice(index+1);
                 removeChildNodes(this.#root, suffix);
-                this.#top.integrate(prefix, suffix);
+                this.#top.surroundWith(prefix, suffix);
                 this.log("integrated");
                 this.#startObserving();
             }
