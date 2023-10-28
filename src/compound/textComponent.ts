@@ -1,14 +1,6 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { PrimitiveComponent, UniformComponent } from "./component.js";
-
-function textOf(nodes : Node[]) : string {
-    let s = "";
-    for (const node of nodes) {
-        const t = node.textContent;
-        if (t) s += t;
-    }
-    return s;
-}
+import { textOf } from "./flatnode.js";
 
 class TextComponent implements PrimitiveComponent<string, string>, UniformObserver<string> {
 

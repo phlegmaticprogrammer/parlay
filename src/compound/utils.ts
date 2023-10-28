@@ -8,6 +8,12 @@
     return elems;
 }*/
 
+import { nat } from "things";
+
+export function childNodesOf(parent : Element) : Node[] {
+    return nodesOfList(parent.childNodes);
+}
+
 export function removeAllChildNodes(parent : Element) {
     for (const c of nodesOfList(parent.childNodes)) {
         parent.removeChild(c);
@@ -38,9 +44,45 @@ export function nodeIsText(node : Node) : node is Text {
     return node.nodeType === 3;
 }
 
-export function getOuterDisplayType(element : Element) {
-    var displayType = window.getComputedStyle(element, null).getPropertyValue('display');
+/*export function getOuterDisplayType(element : Element) {
+    var displayType = getComputedStyle(element, null).getPropertyValue('display');
     var outerDisplayType = displayType.split(' ')[0]; // Get the first word of the display type
     return outerDisplayType;
+}*/
+
+export function getOuterDisplayType(element : Element) : "block" | "inline" {
+    const displayType = window.getComputedStyle(element, null).getPropertyValue('display');
+
+    // If displayType is not set, use the default display type for the element
+    if (!displayType) {
+        if (["DIV"].includes(element.tagName)) 
+            return "block";
+        else 
+            return "inline";
+    } 
+    // List of display types that behave like 'block'
+    const blockTypes = ['block', 'flex', 'grid', 'table', 'list-item'];
+
+    if (blockTypes.includes(displayType)) {
+        return 'block';
+    } else {
+        return 'inline';
+    }
+}
+
+export function printNodes(nodes : Node[], log : (s : string) => void = console.log) : void
+{
+    function pr(indent : string, node : Node) {
+        if (nodeIsText(node)) {
+            log(indent + "Text '" + node.data + "'");
+        } else if (nodeIsElement(node)) {
+            log(indent + node.tagName);
+            indent += "  ";
+            for (const child of childNodesOf(node)) {
+                pr(indent, child);
+            }
+        }
+    }
+    for (const node of nodes) pr("", node);
 }
 

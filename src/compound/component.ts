@@ -98,7 +98,8 @@ export class Compound {
             this.log("need primitive component");
             return;
         }
-        const index = children.indexOf(this.#top.DOMNode);
+        const topnode = this.#top.DOMNode;
+        const index = children.indexOf(topnode);
         if (index >= 0) {
             if (children.length === 1) {
                 this.log("strange, child list changed, but still 1 child, which is the top");
@@ -113,10 +114,16 @@ export class Compound {
                 this.#startObserving();
             }
         } else {
+            if (topnode.parentElement === null) {
+                this.log("no parent");
+            } else {
+                this.log("has parent");
+            }
             this.#stopObserving();
             removeChildNodes(this.#root, children);
-            this.#root.appendChild(this.#top.DOMNode);
+            //this.#root.appendChild(this.#top.DOMNode);
             this.#top.replaceWith(children);
+            this.#root.appendChild(this.#top.DOMNode);
             this.log("replaced");
             this.#startObserving();
         }
