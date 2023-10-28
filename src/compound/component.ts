@@ -16,6 +16,7 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
     get DOMNode() : Node
 
     integrate(prefix : Node[], suffix : Node[]) : void
+    replaceWith(replacements : Node[]) : void
 
     //digest(before : Node[], after : Node[]
 
@@ -112,7 +113,12 @@ export class Compound {
                 this.#startObserving();
             }
         } else {
-            this.log("oops, top vanished");
+            this.#stopObserving();
+            removeChildNodes(this.#root, children);
+            this.#root.appendChild(this.#top.DOMNode);
+            this.#top.replaceWith(children);
+            this.log("replaced");
+            this.#startObserving();
         }
     }    
 }

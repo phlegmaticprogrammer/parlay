@@ -29,3 +29,18 @@ export function nodesOfList(nodelist : NodeList) : Node[] {
     }
     return nodes;
 }
+
+export function nodeIsElement(node : Node) : node is Element {
+    return node.nodeType === 1;
+}
+
+export function nodeIsText(node : Node) : node is Text {
+    return node.nodeType === 3;
+}
+
+export function getOuterDisplayType(element : Element) {
+    var displayType = window.getComputedStyle(element, null).getPropertyValue('display');
+    var outerDisplayType = displayType.split(' ')[0]; // Get the first word of the display type
+    return outerDisplayType;
+}
+

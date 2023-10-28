@@ -1,6 +1,15 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { PrimitiveComponent, UniformComponent } from "./component.js";
 
+function textOf(nodes : Node[]) : string {
+    let s = "";
+    for (const node of nodes) {
+        const t = node.textContent;
+        if (t) s += t;
+    }
+    return s;
+}
+
 class TextComponent implements PrimitiveComponent<string, string>, UniformObserver<string> {
 
     isPrimitive : true = true
@@ -30,6 +39,16 @@ class TextComponent implements PrimitiveComponent<string, string>, UniformObserv
     }
 
     integrate(prefix : Node[], suffix : Node[]) {
+        const nodes = [...prefix, this.#node, ...suffix]
+        const s = textOf(nodes);
+        this.updated(s);
+        this.model.update(s);
+    }
+
+    replaceWith(replacements : Node[]) {
+        const s = textOf(replacements);
+        this.updated(s);
+        this.model.update(s);
     }
 
 }
