@@ -1,5 +1,6 @@
+import { assertNever } from "things";
 import { Model, Mstring, UniformModel, UniformObserver, varModel } from "../model/index.js";
-import { nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
+import { isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
 
 export interface ComponentBase<Init, Update> {
 
@@ -7,6 +8,33 @@ export interface ComponentBase<Init, Update> {
 
     model : Model<Init, Update>
 
+}
+
+export enum MutationKind {
+    attributes,
+    childList,
+    characterData
+}
+
+export class MutationInfo {
+    kind : MutationKind
+    target : Node
+    constructor (kind : MutationKind, target : Node) {
+        this.kind = kind;
+        this.target = target;
+    }
+}
+
+function createMutationInfo(m : MutationRecord) : MutationInfo {
+    const t = m.type;
+    let kind : MutationKind
+    switch(t) {
+        case "attributes": kind = MutationKind.attributes; break;
+        case "characterData": kind = MutationKind.characterData; break;
+        case "childList": kind = MutationKind.childList; break;
+        default: assertNever(t);
+    }
+    return new MutationInfo(kind, m.target);
 }
 
 export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Update> {
@@ -26,10 +54,7 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
      */    
     replaceWith(replacements : Node[]) : void
 
-    attributeChanged?(node : Node, attr : string, oldValue : any)  : void
-    textChanged?(node : Node, oldValue : string) : void
-    childrenChanged?(node : Node, added : Node[], removed : Node[]) : void
-
+    mutationsObserved(mutations : MutationInfo[]) : void
 }
 
 export interface CompoundComponent<Init, Update> extends ComponentBase<Init, Update> {
@@ -71,7 +96,7 @@ export class Compound {
     #startObserving() {
         if (!this.#observer) {
             this.#observer = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
-            this.#observer.observe(this.#root, { childList: true, characterData: true, subtree: false });
+            this.#observer.observe(this.#root, { childList: true, characterData: true, subtree: true });
         }
     }
 
@@ -86,18 +111,7 @@ export class Compound {
         this.#log(s);
     }
 
-    #mutationsObserved(mutations : MutationRecord[]) {
-        let changed = false;
-        for (const m of mutations) {
-            if (m.target === this.#root && m.type === "childList") {
-                changed = true;
-                break;
-            }
-            if (m.target === this.#root && m.type === "characterData") {
-                changed = true;
-            }
-        }
-        if (!changed) return;
+    #adjustChildren() {
         this.log("-------------------");
         const children = nodesOfList(this.#root.childNodes);
         if (!this.#top?.isPrimitive) {
@@ -120,17 +134,38 @@ export class Compound {
                 this.#startObserving();
             }
         } else {
-            if (topnode.parentElement === null) {
-                this.log("no parent");
-            } else {
-                this.log("has parent");
-            }
             this.#stopObserving();
             removeChildNodes(this.#root, children);
-            //this.#root.appendChild(this.#top.DOMNode);
             this.#top.replaceWith(children);
-            this.#root.appendChild(this.#top.DOMNode);
+            this.#root.appendChild(topnode);
             this.log("replaced");
+            this.#startObserving();
+        }
+    }
+
+    #mutationsObserved(mutations : MutationRecord[]) {
+        let changed = false;
+        for (const m of mutations) {
+            if (m.target === this.#root && m.type === "childList") {
+                changed = true;
+                break;
+            }
+            if (m.target === this.#root && m.type === "characterData") {
+                changed = true;
+            }
+        }
+        if (changed) {
+            this.#adjustChildren();
+        }
+        if (!this.#top?.isPrimitive) {
+            this.log("need primitive component");
+            return;
+        }    
+        const topnode = this.#top.DOMNode;
+        const remaining = mutations.filter(m => isAncestorOf(topnode, m.target)).map(createMutationInfo);
+        if (remaining.length > 0) {
+            this.#stopObserving();
+            this.#top?.mutationsObserved(remaining);
             this.#startObserving();
         }
     }    

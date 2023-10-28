@@ -1,5 +1,5 @@
 import { Mstring, UniformObserver } from "../model/index.js";
-import { PrimitiveComponent, UniformComponent } from "./component.js";
+import { MutationInfo, PrimitiveComponent, UniformComponent } from "./component.js";
 import { textOf } from "./flatnode.js";
 
 class TextComponent implements PrimitiveComponent<string, string>, UniformObserver<string> {
@@ -42,6 +42,11 @@ class TextComponent implements PrimitiveComponent<string, string>, UniformObserv
 
     replaceWith(replacements : Node[]) {
         this.#update(textOf(replacements));
+    }
+
+    mutationsObserved(mutations: MutationInfo[]): void {
+        console.log("mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
+        this.#update(this.#node.data);
     }
 
 }

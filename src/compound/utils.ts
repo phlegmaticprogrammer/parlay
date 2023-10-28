@@ -86,3 +86,13 @@ export function printNodes(nodes : Node[], log : (s : string) => void = console.
     for (const node of nodes) pr("", node);
 }
 
+export function isAncestorOf(ancestor : Node, node : Node) : boolean {
+    if (ancestor === node) return true;
+    while (node !== ancestor) {
+        const n = node.parentNode;
+        if (n === null) return false;
+        node = n;
+    }
+    return true;
+}
+
