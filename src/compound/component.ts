@@ -15,10 +15,16 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
 
     get DOMNode() : Node
 
+    /**
+     * The DOMNode is guaranteed not to be a part of the prefix or suffix trees.
+     */
     surroundWith(prefix : Node[], suffix : Node[]) : void
-    replaceWith(replacements : Node[]) : void
 
-    //digest(before : Node[], after : Node[]
+    /**
+     * While the DOMNode is not one of the replacements, 
+     * it may be a direct or indirect child of one of the replacements.
+     */    
+    replaceWith(replacements : Node[]) : void
 
     attributeChanged?(node : Node, attr : string, oldValue : any)  : void
     textChanged?(node : Node, oldValue : string) : void
