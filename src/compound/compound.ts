@@ -33,6 +33,7 @@ export class Compound {
     #root : HTMLElement
     #top : AnyComponent | undefined
     #observer : MutationObserver | undefined
+    #listener : () => void
     #log : (s : string) => void 
 
     constructor(root : HTMLElement, log : (s : string) => void = console.log) {
@@ -40,6 +41,7 @@ export class Compound {
         this.#observer = undefined;
         this.#log = log;
         this.#top = undefined;
+        this.#listener = () => this.#selectionChanged();
     }
 
     render(component : AnyComponent) {
@@ -58,6 +60,7 @@ export class Compound {
         if (!this.#observer) {
             this.#observer = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
             this.#observer.observe(this.#root, { childList: true, characterData: true, subtree: true });
+            document.addEventListener("selectionchange", this.#listener);
         }
     }
 
@@ -65,6 +68,7 @@ export class Compound {
         if (this.#observer) {
             this.#observer.disconnect();
             this.#observer = undefined;
+            document.removeEventListener("selectionchange", this.#listener);
         }
     }
 
@@ -130,6 +134,23 @@ export class Compound {
             this.#startObserving();
         }
     }    
+
+    #selectionChanged() {
+        const selection = document.getSelection();
+        if (selection === null || selection.anchorNode === null || selection.focusNode === null) {
+            return;
+        }
+        const anchorIn = isAncestorOf(this.#root, selection.anchorNode);
+        const focusIn = isAncestorOf(this.#root, selection.focusNode);
+        if (!anchorIn && !focusIn) {
+            return;
+        }
+        if (selection.anchorNode === selection.focusNode && selection.anchorOffset === selection.focusOffset) {
+            console.log("cursor in compound");
+        } else {
+            console.log("selection in compound");
+        }
+    }
 }
 
 export function createCompound(elem : HTMLElement, log : (s : string) => void = console.log) : Compound {
