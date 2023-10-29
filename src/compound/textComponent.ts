@@ -1,5 +1,6 @@
 import { Mstring, UniformObserver } from "../model/index.js";
-import { MutationInfo, PrimitiveComponent, UniformComponent } from "./component.js";
+import { PrimitiveComponent, UniformComponent } from "./component.js";
+import { MutationInfo } from "./compound.js";
 import { textOf } from "./flatnode.js";
 
 class TextComponent implements PrimitiveComponent<string, string>, UniformObserver<string> {
