@@ -1,4 +1,4 @@
-import { assertNever } from "things";
+import { assertNever, assertTrue } from "things";
 import { AnyComponent } from "./component.js";
 import { isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
 
@@ -45,15 +45,11 @@ export class Compound {
     }
 
     render(component : AnyComponent) {
-        if (component.isPrimitive) {
-            const node = component.DOMNode;
-            removeAllChildNodes(this.#root);
-            this.#root.appendChild(node);
-            this.#top = component;
-            this.#startObserving();
-        } else {
-            throw new Error("Cannot render compound components yet.");
-        }
+        const node = component.DOMNode;
+        removeAllChildNodes(this.#root);
+        this.#root.appendChild(node);
+        this.#top = component;
+        this.#startObserving();
     }
 
     #startObserving() {
@@ -77,12 +73,8 @@ export class Compound {
     }
 
     #adjustChildren() {
-        this.log("-------------------");
+        if(!this.#top) return;
         const children = nodesOfList(this.#root.childNodes);
-        if (!this.#top?.isPrimitive) {
-            this.log("need primitive component");
-            return;
-        }
         const topnode = this.#top.DOMNode;
         const index = children.indexOf(topnode);
         if (index >= 0) {
@@ -109,6 +101,7 @@ export class Compound {
     }
 
     #mutationsObserved(mutations : MutationRecord[]) {
+        if (!this.#top) return;
         let changed = false;
         for (const m of mutations) {
             if (m.target === this.#root && m.type === "childList") {
@@ -122,10 +115,6 @@ export class Compound {
         if (changed) {
             this.#adjustChildren();
         }
-        if (!this.#top?.isPrimitive) {
-            this.log("need primitive component");
-            return;
-        }    
         const topnode = this.#top.DOMNode;
         const remaining = mutations.filter(m => isAncestorOf(topnode, m.target)).map(createMutationInfo);
         if (remaining.length > 0) {

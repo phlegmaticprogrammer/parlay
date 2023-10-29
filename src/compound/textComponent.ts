@@ -1,9 +1,9 @@
 import { Mstring, UniformObserver } from "../model/index.js";
-import { PrimitiveComponent, UniformComponent } from "./component.js";
+import { Component, UniformComponent } from "./component.js";
 import { MutationInfo } from "./compound.js";
 import { textOf } from "./flatnode.js";
 
-class TextComponent implements PrimitiveComponent<string, string>, UniformObserver<string> {
+class TextComponent implements Component<string, string>, UniformObserver<string> {
 
     isPrimitive : true = true
     model : Mstring

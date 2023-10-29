@@ -1,17 +1,9 @@
 import { Model } from "../model/index.js";
 import { MutationInfo } from "./compound.js";
 
-export interface ComponentBase<Init, Update> {
-
-    isPrimitive : boolean
+export interface Component<Init, Update> {
 
     model : Model<Init, Update>
-
-}
-
-export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Update> {
-
-    isPrimitive : true
 
     get DOMNode() : Node
 
@@ -27,15 +19,8 @@ export interface PrimitiveComponent<Init, Update> extends ComponentBase<Init, Up
     replaceWith(replacements : Node[]) : void
 
     mutationsObserved(mutations : MutationInfo[]) : void
-}
 
-export interface CompoundComponent<Init, Update> extends ComponentBase<Init, Update> {
-    isPrimitive : false
 }
-
-export type Component<Init, Update> = 
-    PrimitiveComponent<Init, Update> | 
-    CompoundComponent<Init, Update>
 
 export type AnyComponent = Component<any, any>
 export type UniformComponent<Value> = Component<Value, Value>
