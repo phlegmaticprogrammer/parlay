@@ -15,8 +15,9 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     constructor(text : Mstring) {
         this.model = text;
         this.#node = new Text();
-        this.model.subscribe(this);
         this.#cursor = null;
+        this.#compound = undefined;
+        this.model.subscribe(this);
     }
 
     rendered(compound : Compound) {
@@ -29,8 +30,10 @@ class TextComponent implements Component<string, string>, UniformObserver<string
 
     updated(u: string): void {
         // How do I deal with the cursor in here??
+        this.#compound?.beginMutation();
         this.#node.data = u;
         console.log("MODEL MUTATION!");
+        this.#compound?.endMutation();
     }
 
     completed(): void {}

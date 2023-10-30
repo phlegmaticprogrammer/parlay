@@ -1,4 +1,4 @@
-import { assertNever } from "things";
+import { assertNever, nat } from "things";
 import { AnyComponent } from "./component.js";
 import { childNodesOf, isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
 import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, setCurrentCursor } from "./cursor.js";
@@ -39,6 +39,7 @@ export class Compound {
     #listener : () => void
     #log : (s : string) => void 
     #cursor : Cursor
+    #in_mutation : nat
 
     constructor(root : HTMLElement, log : (s : string) => void = console.log) {
         this.#root = root;
@@ -46,6 +47,7 @@ export class Compound {
         this.#log = log;
         this.#top = undefined;
         this.#cursor = null;
+        this.#in_mutation = 0;
         this.#listener = () => this.#selectionChanged();
     }
 
@@ -56,6 +58,21 @@ export class Compound {
         this.#root.appendChild(node);
         this.#top = component;
         this.#startObserving();
+        component.rendered(this);
+    }
+
+    beginMutation() {
+        if (this.#in_mutation === 0) this.#stopObserving();
+        this.#in_mutation += 1;
+    }
+
+    endMutation() {
+        if (this.#in_mutation <= 0) {
+            this.log("spurious endMutation");
+            return;
+        }
+        this.#in_mutation -= 1;
+        if (this.#in_mutation === 0) this.#startObserving();
     }
 
     #startObserving() {
@@ -128,7 +145,7 @@ export class Compound {
     #mutationsObserved(mutations : MutationRecord[]) {
         if (!this.#top) return;  
         this.log("--------------");
-        this.#stopObserving();            
+        this.beginMutation();            
         let cursor = this.#adjustChildren();
         const topnode = this.#top.DOMNode;
         const remaining = mutations.filter(m => isAncestorOf(topnode, m.target)).map(createMutationInfo);
@@ -140,7 +157,7 @@ export class Compound {
         if (!cursorsAreEqual(cursor, currentCursor)) {
             setCurrentCursor(cursor);
         }
-        this.#startObserving();       
+        this.endMutation();     
     }    
 
     #selectionChanged() {
