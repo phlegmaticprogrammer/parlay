@@ -42,8 +42,8 @@ function run() {
     const model = varModel("Hello\nworld!");
     const compound = createCompound(document.getElementById("compound")!, console.log);
     compound.render(textComponent(model));
-    const mirror = createCompound(document.getElementById("compound-mirror")!, s => undefined);
-    mirror.render(textComponent(model));
+    //const mirror = createCompound(document.getElementById("compound-mirror")!, s => undefined);
+    //mirror.render(textComponent(model));
 
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
     const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);

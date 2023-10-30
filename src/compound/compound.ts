@@ -60,6 +60,7 @@ export class Compound {
 
     #startObserving() {
         if (!this.#observer) {
+            this.log(">>>>>>>>>>>>>>");
             this.#observer = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
             this.#observer.observe(this.#root, { childList: true, characterData: true, subtree: true });
             document.addEventListener("selectionchange", this.#listener);
@@ -68,6 +69,7 @@ export class Compound {
 
     #stopObserving() {
         if (this.#observer) {
+            this.log("<<<<<<<<<<<<<<");
             this.#observer.disconnect();
             this.#observer = undefined;
             document.removeEventListener("selectionchange", this.#listener);
@@ -125,6 +127,7 @@ export class Compound {
 
     #mutationsObserved(mutations : MutationRecord[]) {
         if (!this.#top) return;  
+        this.log("--------------");
         this.#stopObserving();            
         let cursor = this.#adjustChildren();
         const topnode = this.#top.DOMNode;

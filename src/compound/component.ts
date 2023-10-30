@@ -1,5 +1,5 @@
 import { Model } from "../model/index.js";
-import { MutationInfo } from "./compound.js";
+import { Compound, MutationInfo } from "./compound.js";
 import { Cursor } from "./cursor.js";
 
 export interface Component<Init, Update> {
@@ -24,6 +24,8 @@ export interface Component<Init, Update> {
     mutationsObserved(cursor : Cursor, mutations : MutationInfo[]) : void
 
     cursorChanged(cursor : Cursor) : void
+
+    rendered(compound : Compound) : void
 
 }
 

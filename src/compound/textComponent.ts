@@ -1,15 +1,16 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { Component, UniformComponent } from "./component.js";
-import { MutationInfo } from "./compound.js";
+import { Compound, MutationInfo } from "./compound.js";
 import { Cursor, Position, adjustCursor } from "./cursor.js";
 import { textOf } from "./flatnode.js";
+import { getUniqueObjectId } from "./utils.js";
 
 class TextComponent implements Component<string, string>, UniformObserver<string> {
 
-    isPrimitive : true = true
     model : Mstring
     #node : Text
     #cursor : Cursor
+    #compound? : Compound
 
     constructor(text : Mstring) {
         this.model = text;
@@ -18,15 +19,18 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         this.#cursor = null;
     }
 
+    rendered(compound : Compound) {
+        this.#compound = compound;
+    }
+
     initialized(data: string): void {
         this.#node.data = data;
     }
 
     updated(u: string): void {
-        if (u !== this.#node.data) {
-            this.#node.data = u;
-        }
-        // What about the cursor? How do I update that after a model update comes?
+        // How do I deal with the cursor in here??
+        this.#node.data = u;
+        console.log("MODEL MUTATION!");
     }
 
     completed(): void {}
@@ -38,11 +42,13 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     }
 
     #update(s : string) {
-        this.updated(s);
+        this.#node.data = s;
+        console.log("MUTATION!");
         this.model.update(s);
     }
 
     surroundWith(cursor : Cursor, prefix : Node[], suffix : Node[]) {
+        console.log("surround with");
         const nodes = [...prefix, this.#node, ...suffix]
         this.#cursor = adjustCursor(cursor, nodes, this.#node);
         this.#update(textOf(nodes));
@@ -53,17 +59,22 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     }
 
     replaceWith(cursor : Cursor, replacements : Node[]) {
+        console.log("replace with");
         this.#cursor = adjustCursor(cursor, replacements, this.#node);
         this.#update(textOf(replacements));
     }
 
     mutationsObserved(cursor : Cursor, mutations: MutationInfo[]) {
         console.log("mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
+        for (const m of mutations) {
+            console.log("  mutation, target = N" + getUniqueObjectId(m.target) + ", kind = " + m.kind);
+        }
         this.#cursor = adjustCursor(cursor, [this.#node], this.#node);
         this.#update(this.#node.data);
     }
 
     cursorChanged(cursor : Cursor) {
+        console.log("cursor changed");
         this.#cursor = adjustCursor(cursor, [this.#node], this.#node);        
     }
 

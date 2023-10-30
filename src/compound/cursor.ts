@@ -106,7 +106,10 @@ export function printCursor(cursor : Cursor) : string {
 }
 
 export function adjustCursor(cursor : Cursor, nodes : Node[], placeIn : Node) : Cursor {
-    if (cursor === null) return null;
+    if (cursor === null) {
+        console.log("Null cursor, will not adjust");
+        return null;
+    }
     const startOffset = findOffsetInNodes(cursor.start, nodes);
     const endOffset = findOffsetInNodes(cursor.end, nodes);
     console.log("Adjusted cursor, " + printCursor(cursor) + " => " + startOffset + " : " + endOffset);
