@@ -1,6 +1,7 @@
-import { assertNever, assertTrue } from "things";
+import { assertNever } from "things";
 import { AnyComponent } from "./component.js";
-import { isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
+import { childNodesOf, isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
+import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, setCurrentCursor } from "./cursor.js";
 
 export enum MutationKind {
     attributes,
@@ -29,22 +30,27 @@ function createMutationInfo(m : MutationRecord) : MutationInfo {
     return new MutationInfo(kind, m.target);
 }
 
+
+
 export class Compound {
     #root : HTMLElement
     #top : AnyComponent | undefined
     #observer : MutationObserver | undefined
     #listener : () => void
     #log : (s : string) => void 
+    #cursor : Cursor
 
     constructor(root : HTMLElement, log : (s : string) => void = console.log) {
         this.#root = root;
         this.#observer = undefined;
         this.#log = log;
         this.#top = undefined;
+        this.#cursor = null;
         this.#listener = () => this.#selectionChanged();
     }
 
     render(component : AnyComponent) {
+        if (this.#top) throw new Error("Component has already been rendered.");
         const node = component.DOMNode;
         removeAllChildNodes(this.#root);
         this.#root.appendChild(node);
@@ -72,72 +78,78 @@ export class Compound {
         this.#log(s);
     }
 
-    #adjustChildren() {
-        if(!this.#top) return;
+    #adjustChildren() : Cursor {
+        if(!this.#top) throw new Error();
+        const top = this.#top;
+        let cursor = this.#getCurrentCursor();
         const children = nodesOfList(this.#root.childNodes);
-        const topnode = this.#top.DOMNode;
+        const topnode = top.DOMNode;
         const index = children.indexOf(topnode);
         if (index >= 0) {
-            if (children.length === 1) {
-                this.log("strange, child list changed, but still 1 child, which is the top");
-            } else {
-                this.#stopObserving();
-                const prefix = children.slice(0, index);
-                removeChildNodes(this.#root, prefix);
-                const suffix = children.slice(index+1);
-                removeChildNodes(this.#root, suffix);
-                this.#top.surroundWith(prefix, suffix);
-                this.log("integrated");
-                this.#startObserving();
-            }
+            if (children.length === 1) return cursor;
+            const prefix = children.slice(0, index);
+            removeChildNodes(this.#root, prefix);
+            const suffix = children.slice(index+1);
+            removeChildNodes(this.#root, suffix);
+            top.surroundWith(cursor, prefix, suffix);
+            this.log("integrated");           
         } else {
             this.#stopObserving();
             removeChildNodes(this.#root, children);
-            this.#top.replaceWith(children);
+            top.replaceWith(cursor, children);
             this.#root.appendChild(topnode);
             this.log("replaced");
-            this.#startObserving();
+        }
+        return top.cursor;
+    }
+
+    #pushdownPosition(p : Position) : Position {
+        if (p.node === this.#root) {
+            const children = childNodesOf(this.#root);
+            const r = findPositionInNodes(p.offset, children);
+            if (r === null) throw new Error("Cannot push down position.");
+            return r.position;
+        } else {
+            return p;
         }
     }
 
+    #getCurrentCursor() : Cursor {
+        if(!this.#top) return null;
+        const cursor = getCurrentCursor(this.#root);
+        if (cursor === null) return null;
+        cursor.anchor = this.#pushdownPosition(cursor.anchor);
+        cursor.focus = this.#pushdownPosition(cursor.focus);
+        return cursor;
+    }
+
     #mutationsObserved(mutations : MutationRecord[]) {
-        if (!this.#top) return;
-        let changed = false;
-        for (const m of mutations) {
-            if (m.target === this.#root && m.type === "childList") {
-                changed = true;
-                break;
-            }
-            if (m.target === this.#root && m.type === "characterData") {
-                changed = true;
-            }
-        }
-        if (changed) {
-            this.#adjustChildren();
-        }
+        if (!this.#top) return;  
+        this.#stopObserving();            
+        let cursor = this.#adjustChildren();
         const topnode = this.#top.DOMNode;
         const remaining = mutations.filter(m => isAncestorOf(topnode, m.target)).map(createMutationInfo);
         if (remaining.length > 0) {
-            this.#stopObserving();
-            this.#top?.mutationsObserved(remaining);
-            this.#startObserving();
+            this.#top.mutationsObserved(cursor, remaining);
         }
+        const currentCursor = this.#getCurrentCursor();
+        cursor = this.#top.cursor;
+        if (!cursorsAreEqual(cursor, currentCursor)) {
+            setCurrentCursor(cursor);
+        }
+        this.#startObserving();       
     }    
 
     #selectionChanged() {
-        const selection = document.getSelection();
-        if (selection === null || selection.anchorNode === null || selection.focusNode === null) {
-            return;
-        }
-        const anchorIn = isAncestorOf(this.#root, selection.anchorNode);
-        const focusIn = isAncestorOf(this.#root, selection.focusNode);
-        if (!anchorIn && !focusIn) {
-            return;
-        }
-        if (selection.anchorNode === selection.focusNode && selection.anchorOffset === selection.focusOffset) {
-            console.log("cursor in compound");
-        } else {
-            console.log("selection in compound");
+        if (!this.#top) return;
+        let currentCursor = this.#getCurrentCursor();
+        this.#top.cursorChanged(currentCursor);
+        const cursor = this.#top.cursor;
+        currentCursor = this.#getCurrentCursor();
+        if (!cursorsAreEqual(cursor, currentCursor)) {
+            this.#stopObserving();
+            setCurrentCursor(cursor);
+            this.#startObserving();
         }
     }
 }

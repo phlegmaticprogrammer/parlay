@@ -1,6 +1,7 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { Component, UniformComponent } from "./component.js";
 import { MutationInfo } from "./compound.js";
+import { Cursor } from "./cursor.js";
 import { textOf } from "./flatnode.js";
 
 class TextComponent implements Component<string, string>, UniformObserver<string> {
@@ -8,11 +9,13 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     isPrimitive : true = true
     model : Mstring
     #node : Text
+    #cursor : Cursor
 
     constructor(text : Mstring) {
         this.model = text;
         this.#node = new Text();
         this.model.subscribe(this);
+        this.#cursor = null;
     }
 
     initialized(data: string): void {
@@ -21,6 +24,7 @@ class TextComponent implements Component<string, string>, UniformObserver<string
 
     updated(u: string): void {
         this.#node.data = u;
+        // What about the cursor? How do I update that after a model update comes?
     }
 
     completed(): void {}
@@ -36,18 +40,29 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         this.model.update(s);
     }
 
-    surroundWith(prefix : Node[], suffix : Node[]) {
+    surroundWith(cursor : Cursor, prefix : Node[], suffix : Node[]) {
         const nodes = [...prefix, this.#node, ...suffix]
         this.#update(textOf(nodes));
+        return cursor;
     }
 
-    replaceWith(replacements : Node[]) {
+    get cursor() : Cursor {
+        return this.#cursor;
+    }
+
+    replaceWith(cursor : Cursor, replacements : Node[]) {
         this.#update(textOf(replacements));
+        this.#cursor = cursor;
     }
 
-    mutationsObserved(mutations: MutationInfo[]): void {
+    mutationsObserved(cursor : Cursor, mutations: MutationInfo[]) {
         console.log("mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
         this.#update(this.#node.data);
+        this.#cursor = cursor;        
+    }
+
+    cursorChanged(cursor : Cursor) {
+        this.#cursor = cursor;        
     }
 
 }
