@@ -1,7 +1,7 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { Component, UniformComponent } from "./component.js";
 import { MutationInfo } from "./compound.js";
-import { Cursor, Position } from "./cursor.js";
+import { Cursor, Position, adjustCursor } from "./cursor.js";
 import { textOf } from "./flatnode.js";
 
 class TextComponent implements Component<string, string>, UniformObserver<string> {
@@ -23,7 +23,9 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     }
 
     updated(u: string): void {
-        this.#node.data = u;
+        if (u !== this.#node.data) {
+            this.#node.data = u;
+        }
         // What about the cursor? How do I update that after a model update comes?
     }
 
@@ -42,8 +44,8 @@ class TextComponent implements Component<string, string>, UniformObserver<string
 
     surroundWith(cursor : Cursor, prefix : Node[], suffix : Node[]) {
         const nodes = [...prefix, this.#node, ...suffix]
+        this.#cursor = adjustCursor(cursor, nodes, this.#node);
         this.#update(textOf(nodes));
-        return cursor;
     }
 
     get cursor() : Cursor {
@@ -51,19 +53,18 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     }
 
     replaceWith(cursor : Cursor, replacements : Node[]) {
+        this.#cursor = adjustCursor(cursor, replacements, this.#node);
         this.#update(textOf(replacements));
-        this.#cursor = cursor;
     }
 
     mutationsObserved(cursor : Cursor, mutations: MutationInfo[]) {
         console.log("mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
+        this.#cursor = adjustCursor(cursor, [this.#node], this.#node);
         this.#update(this.#node.data);
-        const p = Position(this.#node, this.#node.data.length);
-        this.#cursor = { start : p, end : p };      
     }
 
     cursorChanged(cursor : Cursor) {
-        this.#cursor = cursor;        
+        this.#cursor = adjustCursor(cursor, [this.#node], this.#node);        
     }
 
 }

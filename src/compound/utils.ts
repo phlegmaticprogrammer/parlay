@@ -96,3 +96,13 @@ export function isAncestorOf(ancestor : Node, node : Node) : boolean {
     return true;
 }
 
+let objectid = 0;
+const objectmap : Map<object, nat> = new Map();
+
+export function getUniqueObjectId(object : object) : nat {
+  if (!objectmap.has(object)) {
+    objectmap.set(object, ++objectid);
+  }
+  return objectmap.get(object)!;
+}
+
