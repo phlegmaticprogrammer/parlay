@@ -1,7 +1,7 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { Component, UniformComponent } from "./component.js";
 import { MutationInfo } from "./compound.js";
-import { Cursor } from "./cursor.js";
+import { Cursor, Position } from "./cursor.js";
 import { textOf } from "./flatnode.js";
 
 class TextComponent implements Component<string, string>, UniformObserver<string> {
@@ -58,7 +58,8 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     mutationsObserved(cursor : Cursor, mutations: MutationInfo[]) {
         console.log("mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
         this.#update(this.#node.data);
-        this.#cursor = cursor;        
+        const p = Position(this.#node, this.#node.data.length);
+        this.#cursor = { start : p, end : p };      
     }
 
     cursorChanged(cursor : Cursor) {

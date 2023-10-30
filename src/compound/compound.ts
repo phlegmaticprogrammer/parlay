@@ -118,8 +118,8 @@ export class Compound {
         if(!this.#top) return null;
         const cursor = getCurrentCursor(this.#root);
         if (cursor === null) return null;
-        cursor.anchor = this.#pushdownPosition(cursor.anchor);
-        cursor.focus = this.#pushdownPosition(cursor.focus);
+        cursor.start = this.#pushdownPosition(cursor.start);
+        cursor.end = this.#pushdownPosition(cursor.end);
         return cursor;
     }
 

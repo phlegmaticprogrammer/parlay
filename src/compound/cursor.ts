@@ -7,7 +7,7 @@ export function Position(node : Node, offset : number) : Position {
     return { node : node, offset : offset };
 }
 
-export type Cursor = null | { anchor : Position, focus : Position }
+export type Cursor = null | { start : Position, end : Position }
 
 export function getCurrentCursor(root : Node) : Cursor {
     const selection = document.getSelection();
@@ -16,8 +16,8 @@ export function getCurrentCursor(root : Node) : Cursor {
     if (!isAncestorOf(root, range.startContainer) || !isAncestorOf(root, range.endContainer))
         return null;
     return { 
-        anchor : Position(range.startContainer, range.startOffset),
-        focus : Position(range.endContainer, range.endOffset)
+        start : Position(range.startContainer, range.startOffset),
+        end : Position(range.endContainer, range.endOffset)
     };
 }
 
@@ -27,8 +27,8 @@ export function setCurrentCursor(cursor : Cursor) {
     selection.removeAllRanges();
     if (cursor === null) return;
     const range = document.createRange();
-    range.setStart(cursor.anchor.node, cursor.anchor.offset);
-    range.setEnd(cursor.focus.node, cursor.focus.offset);
+    range.setStart(cursor.start.node, cursor.start.offset);
+    range.setEnd(cursor.end.node, cursor.end.offset);
     selection.addRange(range);
 }
 
@@ -39,8 +39,8 @@ export function positionsAreEqual(p1 : Position, p2 : Position) : boolean {
 export function cursorsAreEqual(cursor1 : Cursor, cursor2 : Cursor) : boolean {
     if (cursor1 === cursor2) return true;
     if (cursor1 === null || cursor2 === null) return false;
-    return positionsAreEqual(cursor1.anchor, cursor2.anchor) &&
-        positionsAreEqual(cursor1.focus, cursor2.focus);
+    return positionsAreEqual(cursor1.start, cursor2.start) &&
+        positionsAreEqual(cursor1.end, cursor2.end);
 }
 
 export function findPositionInNodes(offset : nat, nodes : Node[]) : null | 
