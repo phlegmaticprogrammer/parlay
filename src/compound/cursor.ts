@@ -123,3 +123,15 @@ export function adjustCursor(cursor : Cursor, nodes : Node[], placeIn : Node) : 
         return Cursor(Position(placeIn, startOffset), Position(placeIn, endOffset));
     }
 }
+
+export function limitPositionOffset(position : Position, maxOffset : nat) : Position {
+    if (position.offset > maxOffset) {
+        return Position(position.node, maxOffset);
+    } else return position;
+}
+
+export function limitCursorOffset(cursor : Cursor, maxOffset : nat) : Cursor {
+    if (cursor === null) return null;
+    return Cursor(limitPositionOffset(cursor.start, maxOffset), 
+        limitPositionOffset(cursor.end, maxOffset));
+}

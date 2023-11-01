@@ -1,7 +1,7 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { Component, ComponentHost, UniformComponent } from "./component.js";
 import { Compound, MutationInfo } from "./compound.js";
-import { Cursor, Position, adjustCursor } from "./cursor.js";
+import { Cursor, Position, adjustCursor, limitCursorOffset } from "./cursor.js";
 import { textOf } from "./flatnode.js";
 import { getUniqueObjectId } from "./utils.js";
 
@@ -32,6 +32,7 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         // How do I deal with the cursor in here??
         this.#host?.beginMutation();
         this.#node.data = u;
+        this.#cursor = limitCursorOffset(this.#cursor, u.length);
         console.log("MODEL MUTATION!");
         this.#host?.endMutation();
     }
