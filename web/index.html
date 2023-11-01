@@ -20,8 +20,30 @@
     <div id="compound" contenteditable="true" class="compound"></div>
     <div id="compound-mirror" contenteditable="true" class="compound"></div>
     <div>  
-    <div id="parlay-editor"></div>
-    <div id="parlay-debug"></div>
+    <div id="parlay-editor">
+    </div>
+    <div id="parlay-debug">theorem Modus-Ponens: B
+    premise: implies(A, B)
+    premise: A
+theorem Universal-Introduction: 
+  for-all(x. A[x])
+    premise: x. A[x]
+theorem Truth-1: true
+theorem Truth-2: implies(A, equals(A, true))
+theorem Implication-1: implies(A, implies(B, A))
+theorem Implication-2: implies
+    implies(A, implies(B, C)) 
+    implies
+        implies(A, B) 
+        implies(A, C)
+theorem Universal-1: implies(for-all(x. A[x]), A[x])
+theorem Universal-2: implies
+    for-all(x. implies(A, B[x]))
+    implies(A, for-all(x. B[x]))
+theorem Equality-1: equals(x, x)
+theorem Equality-2: implies(equals(x, y), 
+  implies(A[x], A[y]))
+    </div>
     <div id="colorscheme-viewer" class="gruvbox-light"></div>  
     </div>
     <!-- page content -->

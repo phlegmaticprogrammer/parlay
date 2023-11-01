@@ -1,5 +1,5 @@
-import { assertNever, nat } from "things";
-import { AnyComponent } from "./component.js";
+import { assertNever, assertTrue, nat } from "things";
+import { AnyComponent, ComponentHost } from "./component.js";
 import { childNodesOf, isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
 import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, setCurrentCursor } from "./cursor.js";
 
@@ -30,67 +30,87 @@ function createMutationInfo(m : MutationRecord) : MutationInfo {
     return new MutationInfo(kind, m.target);
 }
 
-
-
-export class Compound {
+export class Compound implements ComponentHost {
     #root : HTMLElement
     #top : AnyComponent | undefined
-    #observer : MutationObserver | undefined
-    #listener : () => void
+    #mutationObserver : MutationObserver | undefined
+    #selectionListener : () => void
     #log : (s : string) => void 
-    #cursor : Cursor
     #in_mutation : nat
+    #in_cursorchange : nat
 
     constructor(root : HTMLElement, log : (s : string) => void = console.log) {
         this.#root = root;
-        this.#observer = undefined;
+        this.#mutationObserver = undefined;
         this.#log = log;
         this.#top = undefined;
-        this.#cursor = null;
         this.#in_mutation = 0;
-        this.#listener = () => this.#selectionChanged();
+        this.#in_cursorchange = 0;
+        this.#selectionListener = () => this.#selectionChanged();
     }
 
     render(component : AnyComponent) {
         if (this.#top) throw new Error("Component has already been rendered.");
-        const node = component.DOMNode;
+        const node = component.main;
         removeAllChildNodes(this.#root);
         this.#root.appendChild(node);
         this.#top = component;
-        this.#startObserving();
-        component.rendered(this);
+        this.#startMutationObserving();
+        this.#startSelectionListening();
+        component.attachHost(this);
     }
 
     beginMutation() {
-        if (this.#in_mutation === 0) this.#stopObserving();
+        this.#beginCursorChange();
+        if (this.#in_mutation === 0) {
+            this.#stopMutationObserving();
+        }
         this.#in_mutation += 1;
     }
 
     endMutation() {
-        if (this.#in_mutation <= 0) {
-            this.log("spurious endMutation");
-            return;
-        }
+        assertTrue(this.#in_mutation > 0);
         this.#in_mutation -= 1;
-        if (this.#in_mutation === 0) this.#startObserving();
+        if (this.#in_mutation === 0) {
+            this.#refreshCursor();
+            this.#startMutationObserving();
+        }
+        this.#endCursorChange();
     }
 
-    #startObserving() {
-        if (!this.#observer) {
-            this.log(">>>>>>>>>>>>>>");
-            this.#observer = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
-            this.#observer.observe(this.#root, { childList: true, characterData: true, subtree: true });
-            document.addEventListener("selectionchange", this.#listener);
+    #beginCursorChange() {
+        if (this.#in_cursorchange === 0) {
+            this.#stopSelectionListening();
+        }
+        this.#in_cursorchange += 1;
+    }
+
+    #endCursorChange() {
+        assertTrue(this.#in_cursorchange > 0);
+        this.#in_cursorchange -= 1;
+        if (this.#in_cursorchange === 0) {
+            this.#startSelectionListening();
         }
     }
 
-    #stopObserving() {
-        if (this.#observer) {
-            this.log("<<<<<<<<<<<<<<");
-            this.#observer.disconnect();
-            this.#observer = undefined;
-            document.removeEventListener("selectionchange", this.#listener);
-        }
+    #startMutationObserving() {
+        this.log(">>>>>>>>>>>>>>");
+        this.#mutationObserver = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
+        this.#mutationObserver.observe(this.#root, { childList: true, characterData: true, subtree: true });
+    }
+
+    #stopMutationObserving() {
+        this.log("<<<<<<<<<<<<<<");
+        this.#mutationObserver!.disconnect();
+        this.#mutationObserver = undefined;
+    }
+
+    #startSelectionListening() {
+        document.addEventListener("selectionchange", this.#selectionListener);
+    }
+
+    #stopSelectionListening() {
+        document.removeEventListener("selectionchange", this.#selectionListener);
     }
 
     log(s : string) {
@@ -102,7 +122,7 @@ export class Compound {
         const top = this.#top;
         let cursor = this.#getCurrentCursor();
         const children = nodesOfList(this.#root.childNodes);
-        const topnode = top.DOMNode;
+        const topnode = top.main;
         const index = children.indexOf(topnode);
         if (index >= 0) {
             if (children.length === 1) return cursor;
@@ -113,7 +133,6 @@ export class Compound {
             top.surroundWith(cursor, prefix, suffix);
             this.log("integrated");           
         } else {
-            this.#stopObserving();
             removeChildNodes(this.#root, children);
             top.replaceWith(cursor, children);
             this.#root.appendChild(topnode);
@@ -142,20 +161,26 @@ export class Compound {
         return cursor;
     }
 
+    #refreshCursor() {
+        if (!this.#top) return;
+        const currentCursor = this.#getCurrentCursor();
+        const cursor = this.#top.cursor;
+        if (!cursorsAreEqual(cursor, currentCursor)) {
+            this.#beginCursorChange();
+            setCurrentCursor(cursor);
+            this.#endCursorChange();
+        }
+    }
+
     #mutationsObserved(mutations : MutationRecord[]) {
         if (!this.#top) return;  
         this.log("--------------");
         this.beginMutation();            
         let cursor = this.#adjustChildren();
-        const topnode = this.#top.DOMNode;
+        const topnode = this.#top.main;
         const remaining = mutations.filter(m => isAncestorOf(topnode, m.target)).map(createMutationInfo);
         if (remaining.length > 0) {
             this.#top.mutationsObserved(cursor, remaining);
-        }
-        const currentCursor = this.#getCurrentCursor();
-        cursor = this.#top.cursor;
-        if (!cursorsAreEqual(cursor, currentCursor)) {
-            setCurrentCursor(cursor);
         }
         this.endMutation();     
     }    
@@ -164,13 +189,7 @@ export class Compound {
         if (!this.#top) return;
         let currentCursor = this.#getCurrentCursor();
         this.#top.cursorChanged(currentCursor);
-        const cursor = this.#top.cursor;
-        currentCursor = this.#getCurrentCursor();
-        if (!cursorsAreEqual(cursor, currentCursor)) {
-            this.#stopObserving();
-            setCurrentCursor(cursor);
-            this.#startObserving();
-        }
+        this.#refreshCursor();
     }
 }
 

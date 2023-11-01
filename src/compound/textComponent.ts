@@ -1,5 +1,5 @@
 import { Mstring, UniformObserver } from "../model/index.js";
-import { Component, UniformComponent } from "./component.js";
+import { Component, ComponentHost, UniformComponent } from "./component.js";
 import { Compound, MutationInfo } from "./compound.js";
 import { Cursor, Position, adjustCursor } from "./cursor.js";
 import { textOf } from "./flatnode.js";
@@ -10,18 +10,18 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     model : Mstring
     #node : Text
     #cursor : Cursor
-    #compound? : Compound
+    #host? : ComponentHost
 
     constructor(text : Mstring) {
         this.model = text;
         this.#node = new Text();
         this.#cursor = null;
-        this.#compound = undefined;
+        this.#host = undefined;
         this.model.subscribe(this);
     }
 
-    rendered(compound : Compound) {
-        this.#compound = compound;
+    attachHost(host : ComponentHost) {
+        this.#host = host;
     }
 
     initialized(data: string): void {
@@ -30,17 +30,17 @@ class TextComponent implements Component<string, string>, UniformObserver<string
 
     updated(u: string): void {
         // How do I deal with the cursor in here??
-        this.#compound?.beginMutation();
+        this.#host?.beginMutation();
         this.#node.data = u;
         console.log("MODEL MUTATION!");
-        this.#compound?.endMutation();
+        this.#host?.endMutation();
     }
 
     completed(): void {}
 
     aborted(): void {}
 
-    get DOMNode() : Node {
+    get main() : Node {
         return this.#node;
     }
 

@@ -1,11 +1,11 @@
 .parlay {
     background-color: var(--text-background);
     color: var(--text-foreground);
-    width: 45%;
+    width: 40%;
     height: 800px;
     padding: 5px;
     display: inline-block;
-    font-size: 14px;
+    font-size: 11px;
     font-family: stixtwotext, fallback;
 }
 
@@ -13,13 +13,13 @@
     width: 45%;
     height: 800px;
     padding: 5px;
-    background-color: black;
-    color: white;
+    background-color: var(--text-background);
+    color: var(--text-foreground);
     font-family: 'Courier New', Courier, monospace;
     display: inline-block;
     white-space: pre;
     overflow: scroll;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 .parlay-button {

@@ -170,7 +170,8 @@ theorem Universal-2: implies
     for-all(x. implies(A, B[x]))
     implies(A, for-all(x. B[x]))
 theorem Equality-1: equals(x, x)
-theorem Equality-2: implies(equals(x, y), implies(A[x], A[y]))
+theorem Equality-2: implies(equals(x, y), 
+  implies(A[x], A[y]))
 `;
 
 export const BaseTheoryPrettyFixed = `
@@ -404,6 +405,6 @@ theorem(great: u theorem, Imp: a)
 
 */
 
-export const example = MarkdownVariant.trim();
+export const example = BaseTheoryPretty.trim(); //MarkdownVariant.trim();
 
   
