@@ -1,7 +1,7 @@
 import { assertNever, assertTrue, nat } from "things";
 import { AnyComponent, ComponentHost } from "./component.js";
 import { childNodesOf, isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
-import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, setCurrentCursor } from "./cursor.js";
+import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, printCursor, setCurrentCursor } from "./cursor.js";
 
 export enum MutationKind {
     attributes,
@@ -94,13 +94,13 @@ export class Compound implements ComponentHost {
     }
 
     #startMutationObserving() {
-        this.log(">>>>>>>>>>>>>>");
+        this.log("--- startMutationObserving");
         this.#mutationObserver = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
         this.#mutationObserver.observe(this.#root, { childList: true, characterData: true, subtree: true });
     }
 
     #stopMutationObserving() {
-        this.log("<<<<<<<<<<<<<<");
+        this.log("--- stopMutationObserving");
         this.#mutationObserver!.disconnect();
         this.#mutationObserver = undefined;
     }
@@ -161,11 +161,15 @@ export class Compound implements ComponentHost {
         return cursor;
     }
 
+    #disc = 0
+
     #refreshCursor() {
         if (!this.#top) return;
         const currentCursor = this.#getCurrentCursor();
         const cursor = this.#top.cursor;
-        if (!cursorsAreEqual(cursor, currentCursor)) {
+        if (!cursorsAreEqual(cursor, currentCursor) && this.#disc < 30) {
+            this.#disc += 1;
+            this.log("(" + this.#disc + ") cursor discrepancy: top=" + printCursor(cursor) + " / current=" + printCursor(currentCursor));
             this.#beginCursorChange();
             setCurrentCursor(cursor);
             this.#endCursorChange();

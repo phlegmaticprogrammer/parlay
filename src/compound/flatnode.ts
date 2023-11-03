@@ -1,10 +1,12 @@
-import { assertNever } from "things"
+import { assertNever, nat } from "things"
 import { childNodesOf, getOuterDisplayType, nodeIsElement, nodeIsText } from "./utils.js"
+import { Position } from "./cursor.js"
 
 enum FlatNodeKind {
     block_separator,
     newline,
-    text
+    text,
+    marker
 }
 
 type FlatNodeSpecial = { 
@@ -16,32 +18,42 @@ type FlatNodeText = {
     text : string
 }
 
-type FlatNode = FlatNodeSpecial | FlatNodeText
+type FlatNodeMarker = {
+    kind : FlatNodeKind.marker,
+    index : nat,
+    offset : nat
+}
+
+type FlatNode = FlatNodeSpecial | FlatNodeText | FlatNodeMarker
 
 function simplifyFlatNodes(flatnodes : FlatNode[]) : FlatNode[] {
     const result : FlatNode[] = [];
+    function lastResult(kind : FlatNodeKind) : number {
+        for (let i = result.length - 1; i >= 0; i--) {
+            if (result[i].kind === kind) return i;
+            if (result[i].kind !== FlatNodeKind.marker) return -1;
+        }
+        return -1;
+    }
     for (const flatnode of flatnodes) {
         const kind = flatnode.kind;
         switch(kind) {
             case FlatNodeKind.text:
                 result.push(flatnode);
                 break;
-            case FlatNodeKind.newline:
-                if (result.length > 0) {
-                    const lastkind = result[result.length - 1].kind;
-                    if (lastkind === FlatNodeKind.block_separator) {
-                        result[result.length - 1] = { kind : FlatNodeKind.newline };
-                    } else result.push(flatnode);
-                } else {
-                    result.push(flatnode);
-                }
+            case FlatNodeKind.newline: {
+                const i = lastResult(FlatNodeKind.block_separator);
+                if (i >= 0) result[i] = { kind : FlatNodeKind.newline };
+                else result.push(flatnode);
                 break;
-            case FlatNodeKind.block_separator:
-                if (result.length > 0) {
-                    const lastkind = result[result.length - 1].kind;
-                    if (lastkind === FlatNodeKind.text)
-                        result.push(flatnode);
-                }
+            }
+            case FlatNodeKind.block_separator: {
+                const i = lastResult(FlatNodeKind.text);
+                if (i >= 0) result.push(flatnode);
+                break;
+            }
+            case FlatNodeKind.marker: 
+                result.push(flatnode);
                 break;
             default: assertNever(kind);
         }
@@ -51,22 +63,30 @@ function simplifyFlatNodes(flatnodes : FlatNode[]) : FlatNode[] {
     return result;
 }
 
-function consolidateFlatNodes(flatnodes : FlatNode[]) : string[] {
-    let lines = [""];
+function consolidateFlatNodes(flatnodes : FlatNode[]) : { text : string, offsets : number[] } {
+    let text = "";
+    let offsets : number[] = [];
+    function addOffset(index : nat, offset : nat) {
+        while (index >= offsets.length) offsets.push(-1);
+        offsets[index] = offset;
+    }
     for (const flatnode of simplifyFlatNodes(flatnodes)) {
         const kind = flatnode.kind;
         switch(kind) {
             case FlatNodeKind.text:
-                lines[lines.length-1] += flatnode.text;
+                text += flatnode.text;
                 break;
             case FlatNodeKind.newline:
             case FlatNodeKind.block_separator:
-                lines.push("");
+                text += "\n";
+                break;
+            case FlatNodeKind.marker:
+                addOffset(flatnode.index, text.length + flatnode.offset);
                 break;
             default: assertNever(kind);
         }
     }
-    return lines;
+    return { text: text, offsets : offsets };
 }
 
 function printFlatNodes(header : string, flatnodes : FlatNode[]) {
@@ -74,17 +94,29 @@ function printFlatNodes(header : string, flatnodes : FlatNode[]) {
     for (const flatnode of flatnodes) {
         if (flatnode.kind === FlatNodeKind.text) {
             console.log("  " + FlatNodeKind[flatnode.kind] + " '" + flatnode.text + "'");
+        } else if (flatnode.kind === FlatNodeKind.marker) {
+            console.log("  " + FlatNodeKind[flatnode.kind] + "@" + flatnode.index);
         } else {
             console.log("  " + FlatNodeKind[flatnode.kind]);
         }
     }
 }
 
-export function textOf(nodes : Node[]) : string {
+export function textOf(nodes : Node[], positions : Position[]) : { text : string, offsets : number[] } {
     let flatnodes : FlatNode[] = [];
 
     function print(nodes : Node[]) {
         for (const node of nodes) {
+            for (const [i, p] of positions.entries()) {
+                if (p.node === node) {
+                    const marker : FlatNodeMarker = {
+                        kind: FlatNodeKind.marker,
+                        index: i,
+                        offset: p.offset
+                    };    
+                    flatnodes.push(marker);
+                }
+            }
             if (nodeIsText(node)) {
                 flatnodes.push({ kind : FlatNodeKind.text, text : node.data });
             } else if (nodeIsElement(node)) {
@@ -102,5 +134,5 @@ export function textOf(nodes : Node[]) : string {
 
     print(nodes);
 
-    return consolidateFlatNodes(flatnodes).join("\n");
+    return consolidateFlatNodes(flatnodes);
 }

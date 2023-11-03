@@ -3,7 +3,8 @@ import { childNodesOf, getUniqueObjectId, isAncestorOf, nodeIsElement } from "./
 
 export type Position = { node : Node, offset : nat }
 
-export function Position(node : Node, offset : number) : Position {
+export function Position(node : Node, offset : nat) : Position {
+    if (!nat.is(offset)) throw new Error("Invalid offset in position: " + offset);
     return { node : node, offset : offset };
 }
 
@@ -106,10 +107,7 @@ export function printCursor(cursor : Cursor) : string {
 }
 
 export function adjustCursor(cursor : Cursor, nodes : Node[], placeIn : Node) : Cursor {
-    if (cursor === null) {
-        console.log("Null cursor, will not adjust");
-        return null;
-    }
+    if (cursor === null) return null;
     const startOffset = findOffsetInNodes(cursor.start, nodes);
     const endOffset = findOffsetInNodes(cursor.end, nodes);
     console.log("Adjusted cursor, " + printCursor(cursor) + " => " + startOffset + " : " + endOffset);
