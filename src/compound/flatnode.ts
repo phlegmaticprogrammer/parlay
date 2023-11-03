@@ -105,26 +105,32 @@ function printFlatNodes(header : string, flatnodes : FlatNode[]) {
 export function textOf(nodes : Node[], positions : Position[]) : { text : string, offsets : number[] } {
     let flatnodes : FlatNode[] = [];
 
+    function pushMarkers(node : Node) {
+        for (const [i, p] of positions.entries()) {
+            if (p.node === node) {
+                const marker : FlatNodeMarker = {
+                    kind: FlatNodeKind.marker,
+                    index: i,
+                    offset: p.offset
+                };    
+                flatnodes.push(marker);
+            }
+        }
+    }
+
     function print(nodes : Node[]) {
         for (const node of nodes) {
-            for (const [i, p] of positions.entries()) {
-                if (p.node === node) {
-                    const marker : FlatNodeMarker = {
-                        kind: FlatNodeKind.marker,
-                        index: i,
-                        offset: p.offset
-                    };    
-                    flatnodes.push(marker);
-                }
-            }
             if (nodeIsText(node)) {
+                pushMarkers(node);
                 flatnodes.push({ kind : FlatNodeKind.text, text : node.data });
             } else if (nodeIsElement(node)) {
-                if (node.tagName === "BR")
+                if (node.tagName === "BR") {
                     flatnodes.push({ kind : FlatNodeKind.newline });
-                else {
+                    pushMarkers(node);
+                } else {
                     const block = getOuterDisplayType(node) === "block";
                     if (block) flatnodes.push({ kind : FlatNodeKind.block_separator });
+                    pushMarkers(node);
                     print(childNodesOf(node));
                     if (block) flatnodes.push({ kind : FlatNodeKind.block_separator });
                 }

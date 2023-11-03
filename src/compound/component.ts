@@ -66,6 +66,8 @@ export interface ComponentHost {
 
     endMutation() : void
 
+    log(s : string) : void
+
 }
 
 

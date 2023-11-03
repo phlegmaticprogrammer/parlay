@@ -1,7 +1,7 @@
 import { assertNever, assertTrue, nat } from "things";
 import { AnyComponent, ComponentHost } from "./component.js";
-import { childNodesOf, isAncestorOf, nodesOfList, removeAllChildNodes, removeChildNodes } from "./utils.js";
-import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, printCursor, setCurrentCursor } from "./cursor.js";
+import { childNodesOf, isAncestorOf, nodesOfList, printNodes, removeAllChildNodes, removeChildNodes } from "./utils.js";
+import { Cursor, Position, cursorsAreEqual, findPositionInNodes, getCurrentCursor, printCursor, printPosition, setCurrentCursor } from "./cursor.js";
 
 export enum MutationKind {
     attributes,
@@ -38,6 +38,7 @@ export class Compound implements ComponentHost {
     #log : (s : string) => void 
     #in_mutation : nat
     #in_cursorchange : nat
+    #lognum : nat
 
     constructor(root : HTMLElement, log : (s : string) => void = console.log) {
         this.#root = root;
@@ -46,6 +47,7 @@ export class Compound implements ComponentHost {
         this.#top = undefined;
         this.#in_mutation = 0;
         this.#in_cursorchange = 0;
+        this.#lognum = 0;
         this.#selectionListener = () => this.#selectionChanged();
     }
 
@@ -114,7 +116,8 @@ export class Compound implements ComponentHost {
     }
 
     log(s : string) {
-        this.#log(s);
+        this.#log(`${this.#lognum}: ${s}`);
+        this.#lognum += 1;
     }
 
     #adjustChildren() : Cursor {
@@ -141,12 +144,11 @@ export class Compound implements ComponentHost {
         return top.cursor;
     }
 
-    #pushdownPosition(p : Position) : Position {
+    #pushdownPosition(p : Position) : Position | undefined {
         if (p.node === this.#root) {
             const children = childNodesOf(this.#root);
             const r = findPositionInNodes(p.offset, children);
-            if (r === null) throw new Error("Cannot push down position.");
-            return r.position;
+            return r?.position;
         } else {
             return p;
         }
@@ -156,8 +158,10 @@ export class Compound implements ComponentHost {
         if(!this.#top) return null;
         const cursor = getCurrentCursor(this.#root);
         if (cursor === null) return null;
-        cursor.start = this.#pushdownPosition(cursor.start);
-        cursor.end = this.#pushdownPosition(cursor.end);
+        const start = this.#pushdownPosition(cursor.start);
+        const end = this.#pushdownPosition(cursor.end);
+        if (start !== undefined) cursor.start = start;
+        if (end !== undefined) cursor.end = end;
         return cursor;
     }
 
@@ -168,7 +172,7 @@ export class Compound implements ComponentHost {
         const currentCursor = this.#getCurrentCursor();
         const cursor = this.#top.cursor;
         if (!cursorsAreEqual(cursor, currentCursor) && this.#disc < 30) {
-            this.#disc += 1;
+            //this.#disc += 1;
             this.log("(" + this.#disc + ") cursor discrepancy: top=" + printCursor(cursor) + " / current=" + printCursor(currentCursor));
             this.#beginCursorChange();
             setCurrentCursor(cursor);

@@ -73,10 +73,11 @@ export function getOuterDisplayType(element : Element) : "block" | "inline" {
 export function printNodes(nodes : Node[], log : (s : string) => void = console.log) : void
 {
     function pr(indent : string, node : Node) {
+        const id = getUniqueObjectId(node);
         if (nodeIsText(node)) {
-            log(indent + "Text '" + node.data + "'");
+            log(indent + id + "= Text '" + node.data + "' (" + node.data.length + ")");
         } else if (nodeIsElement(node)) {
-            log(indent + node.tagName);
+            log(indent + id + "= " + node.tagName);
             indent += "  ";
             for (const child of childNodesOf(node)) {
                 pr(indent, child);

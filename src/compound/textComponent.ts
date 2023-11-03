@@ -1,9 +1,9 @@
 import { Mstring, UniformObserver } from "../model/index.js";
 import { Component, ComponentHost, UniformComponent } from "./component.js";
 import { Compound, MutationInfo } from "./compound.js";
-import { Cursor, Position, adjustCursor, limitCursorOffset } from "./cursor.js";
+import { Cursor, Position, adjustCursor, limitCursorOffset, printCursor } from "./cursor.js";
 import { textOf } from "./flatnode.js";
-import { getUniqueObjectId } from "./utils.js";
+import { getUniqueObjectId, printNodes } from "./utils.js";
 
 function makeTextCursor(node : Node, startOffset : number, endOffset : number, length : number) : Cursor {
     if (!Number.isInteger(startOffset)) throw new Error("Invalid start offset.");
@@ -48,7 +48,7 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         this.#host?.beginMutation();
         this.#node.data = u;
         this.#cursor = limitCursorOffset(this.#cursor, u.length);
-        console.log("MODEL MUTATION!");
+        this.log("MODEL MUTATION!");
         this.#host?.endMutation();
     }
 
@@ -60,12 +60,22 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         return this.#node;
     }
 
+    log(s : string) {
+        if (!this.#host) {
+            console.log("no host: " + s);
+        } else {
+            this.#host.log(s);
+        }
+    }
+
     #update(s : string) {
-        this.#host?.beginMutation();        
-        this.#node.data = s;
-        console.log("MUTATION!");
+        if (this.#node.data !== s) {
+            this.#host?.beginMutation();        
+            this.#node.data = s;
+            this.log("MUTATION!");
+            this.#host?.endMutation();
+        }
         this.model.update(s);
-        this.#host?.endMutation();
     }
 
     #updateWithNodes(cursor : Cursor, nodes : Node[]) {
@@ -84,9 +94,16 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     }
 
     surroundWith(cursor : Cursor, prefix : Node[], suffix : Node[]) {
-        console.log("surround with");
+        this.log("surround with: " + prefix.length + " / " + suffix.length);
+        this.log("  cursor: " + printCursor(cursor));
+        this.log("  this.node:");
+        printNodes([this.#node], s => this.log("    " + s));
+        this.log("  suffix:");
+        printNodes(suffix, s => this.log("    " + s));
         const nodes = [...prefix, this.#node, ...suffix]
         this.#updateWithNodes(cursor, nodes);
+        this.log("  this.node after update:");
+        printNodes([this.#node], s => this.log("    " + s));
     }
 
     get cursor() : Cursor {
@@ -94,20 +111,29 @@ class TextComponent implements Component<string, string>, UniformObserver<string
     }
 
     replaceWith(cursor : Cursor, replacements : Node[]) {
-        console.log("replace with");
+        this.log("replace with");
+        this.log("  cursor: " + printCursor(cursor));
+        this.log("  this.node:");
+        printNodes([this.#node], s => this.log("    " + s));
+        this.log("  replacements:");
+        printNodes(replacements, s => this.log("    " + s));
         this.#updateWithNodes(cursor, replacements);
+        this.log("  this.node after replacement:");
+        printNodes([this.#node], s => this.log("    " + s));
     }
 
     mutationsObserved(cursor : Cursor, mutations: MutationInfo[]) {
-        console.log("mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
+        this.log("textcomponent: mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
+        this.log("  cursor = " + printCursor(cursor));
+        printNodes([this.#node], s => this.log("  " + s));
         for (const m of mutations) {
-            console.log("  mutation, target = N" + getUniqueObjectId(m.target) + ", kind = " + m.kind);
+            this.log("  -- mutation, target = N" + getUniqueObjectId(m.target) + ", kind = " + m.kind);
         }
         this.#updateWithNodes(cursor, [this.#node]);
     }
 
     cursorChanged(cursor : Cursor) {
-        console.log("cursor changed");
+        this.log("cursor changed: " + printCursor(cursor));
         this.#updateCursorOnly(cursor, [this.#node]);
         //this.#cursor = adjustCursor(cursor, [this.#node], this.#node);        
     }

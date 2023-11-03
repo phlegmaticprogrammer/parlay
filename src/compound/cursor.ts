@@ -54,13 +54,11 @@ export function findPositionInNodes(offset : nat, nodes : Node[]) : null |
     let i = 0;
     while (i < nodes.length) {
         const node = nodes[i];
-        if (node.textContent !== null) {
-            const len = node.textContent.length;
-            if (offset <= currentOffset + len) {
-                return { nodeIndex : i, position : Position(nodes[i], offset - currentOffset) };
-            }
-            currentOffset += len;
+        const len = textLengthOfNode(node);
+        if (offset <= currentOffset + len) {
+            return { nodeIndex : i, position : Position(nodes[i], offset - currentOffset) };
         }
+        currentOffset += len;
         i += 1;
     }
     return null;
