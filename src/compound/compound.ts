@@ -120,14 +120,24 @@ export class Compound implements ComponentHost {
         this.#lognum += 1;
     }
 
+    #repairRootCursor(cursor : Cursor) : Cursor {
+        if (cursor === null) return null;
+        const start = this.#pushdownPosition(cursor.start);
+        const end = this.#pushdownPosition(cursor.end);
+        if (start !== undefined) cursor.start = start;
+        if (end !== undefined) cursor.end = end;
+        return cursor;
+    }
+
     #adjustChildren() : Cursor {
         if(!this.#top) throw new Error();
         const top = this.#top;
-        let cursor = this.#getCurrentCursor();
+        let cursor = getCurrentCursor(this.#root);
         const children = nodesOfList(this.#root.childNodes);
         const topnode = top.main;
         const index = children.indexOf(topnode);
         if (index >= 0) {
+            cursor = this.#repairRootCursor(cursor);
             if (children.length === 1) return cursor;
             const prefix = children.slice(0, index);
             removeChildNodes(this.#root, prefix);
@@ -135,19 +145,24 @@ export class Compound implements ComponentHost {
             removeChildNodes(this.#root, suffix);
             top.surroundWith(cursor, prefix, suffix);
             this.log("integrated");           
-        } else {
+        } else if (children.length > 0) {
+            cursor = this.#repairRootCursor(cursor);
             removeChildNodes(this.#root, children);
             top.replaceWith(cursor, children);
             this.#root.appendChild(topnode);
             this.log("replaced");
+        } else {
+            top.clear(cursor !== null);
+            this.#root.appendChild(topnode);
+            this.log("cleared");
         }
         return top.cursor;
     }
 
     #pushdownPosition(p : Position) : Position | undefined {
         if (p.node === this.#root) {
-            const children = childNodesOf(this.#root);
-            const r = findPositionInNodes(p.offset, children);
+            const into = childNodesOf(this.#root)
+            const r = findPositionInNodes(p.offset, into);
             return r?.position;
         } else {
             return p;

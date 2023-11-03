@@ -122,6 +122,12 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         printNodes([this.#node], s => this.log("    " + s));
     }
 
+    clear(hasCursor : boolean)  {
+        this.#updateWithNodes(null, []);
+        if (hasCursor) this.#cursor = Cursor(Position(this.#node, 0), Position(this.#node, 0));
+        else this.#cursor = null;
+    }
+
     mutationsObserved(cursor : Cursor, mutations: MutationInfo[]) {
         this.log("textcomponent: mutations observed: " + mutations.length + ", '" + this.#node.data + "'");
         this.log("  cursor = " + printCursor(cursor));

@@ -41,6 +41,8 @@ export interface Component<Init, Update> {
      * The main node is guaranteed not to be a part of the prefix or suffix node trees.
      * It's up to the component how to integrate prefix and suffix nodes into the main node.
      * It might even choose not to integrate them at all and to just drop them.
+     * 
+     * The cursor is guaranteed to be part of the forest [...prefix, main, ...suffix], if non-null.
      */
     surroundWith(cursor : Cursor, prefix : Node[], suffix : Node[]) : void
 
@@ -48,8 +50,18 @@ export interface Component<Init, Update> {
      * Replaces the current content of the main node with the content of the given replacements.
      * The main node is guaranteed not to be one of the replacements, but one of the replacements
      * may currently be an ancestor of the main node.
+     * 
+     * @param cursor The cursor is guaranteed to be part of the replacements forest, if non-null.
+     * @param replacements Guaranteed to be non-empty.
      */    
     replaceWith(cursor : Cursor, replacements : Node[]) : void
+
+    /**
+     * Removes the current content of the main node.
+     * 
+     * @param hasCursor Whether the component has the cursor, or not.
+     */
+    clear(hasCursor : boolean) : void 
 
     mutationsObserved(cursor : Cursor, mutations : MutationInfo[]) : void
 

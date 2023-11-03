@@ -96,7 +96,11 @@ export function findOffsetInNodes(position : Position, nodes : Node[]) : nat | -
 }
 
 export function printPosition(position : Position) : string {
-    return `N${getUniqueObjectId(position.node)}@${position.offset}`;
+    let id = "" + getUniqueObjectId(position.node);
+    if (nodeIsElement(position.node)) {
+        id = position.node.id + "#" + id;
+    }
+    return `N${id}@${position.offset}`;
 }
 
 export function printCursor(cursor : Cursor) : string {
