@@ -2,6 +2,10 @@ import { freeze } from "things"
 
 export interface Model<Init, Update> { 
 
+    /**
+     * Guaranteed not to call the observer synchronously.
+     * @param observer 
+     */
     subscribe(observer : ModelObserver<Init, Update>) : ModelSubscription
 
     /**
@@ -52,7 +56,9 @@ export interface ModelSubscription {
 export type AnyModel = Model<any, any>
 
 /** A UniformModel does not distinguish between init and update. */
-export type UniformModel<Value> = Model<Value, Value>
+export interface UniformModel<Value> extends Model<Value, Value> {
+    valuesAreEqual(value1 : Value, value2 : Value) : boolean
+}
 export type UniformObserver<Value> = ModelObserver<Value, Value>
 export type Mstring = UniformModel<string>
 

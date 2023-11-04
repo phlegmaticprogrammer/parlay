@@ -1,4 +1,4 @@
-import { Mstring, UniformObserver } from "../model/index.js";
+import { Mstring, UniformObserver, UpdateModelSubscription, subscribeForUniformUpdate } from "../model/index.js";
 import { Component, ComponentHost, UniformComponent } from "./component.js";
 import { Compound, MutationInfo } from "./compound.js";
 import { Cursor, Position, adjustCursor, limitCursorOffset, printCursor } from "./cursor.js";
@@ -23,6 +23,7 @@ function makeTextCursor(node : Node, startOffset : number, endOffset : number, l
 class TextComponent implements Component<string, string>, UniformObserver<string> {
 
     model : Mstring
+    #model : UpdateModelSubscription<string>
     #node : Text
     #cursor : Cursor
     #host? : ComponentHost
@@ -32,7 +33,7 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         this.#node = new Text();
         this.#cursor = null;
         this.#host = undefined;
-        this.model.subscribe(this);
+        this.#model = subscribeForUniformUpdate(text, this);
     }
 
     attachHost(host : ComponentHost) {
@@ -75,7 +76,7 @@ class TextComponent implements Component<string, string>, UniformObserver<string
             this.log("MUTATION!");
             this.#host?.endMutation();
         }
-        this.model.update(s);
+        this.#model.update(s);
     }
 
     #updateWithNodes(cursor : Cursor, nodes : Node[]) {

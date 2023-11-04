@@ -1,6 +1,6 @@
 import { ModelSubscription, StaticModel, StaticObserver, finishedSubscription } from "./model.js";
 
-class ConstModel<Value> implements StaticModel<Value> {
+/*class ConstModel<Value> implements StaticModel<Value> {
 
     #value : Value
 
@@ -30,4 +30,4 @@ class ConstModel<Value> implements StaticModel<Value> {
 
 export function constModel<Value>(value : Value) : StaticModel<Value> {
     return new ConstModel(value);
-}
+}*/

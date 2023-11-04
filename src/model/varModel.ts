@@ -29,6 +29,10 @@ class VarModel<Value> implements UniformModel<Value> {
         this.#reason = undefined;
     }
 
+    valuesAreEqual(value1: Value, value2: Value): boolean {
+        return this.#eq(value1, value2);
+    }
+
     #notify() {
         if (this.#timeout === undefined) return;
         this.#timeout = undefined;
