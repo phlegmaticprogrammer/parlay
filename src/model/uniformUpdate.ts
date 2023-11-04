@@ -68,8 +68,10 @@ class UniformUpdateAdapter<Value> implements UniformObserver<Value>, UpdateModel
 
     updated(u: Value): void {
         this.#dirty = false;
-        if (!this.#model.valuesAreEqual(this.#currentValue!, u))
+        if (!this.#model.valuesAreEqual(this.#currentValue!, u)) {
+            this.#currentValue = u;
             this.#observer.updated(u);
+        }
     }
 
     completed(): void {
