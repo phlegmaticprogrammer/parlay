@@ -1,44 +1,29 @@
-import { NotUndefined } from "things";
 import { ModelSubscription, UniformModel, UniformObserver } from "./model.js";
 
-export interface UpdateModelSubscription<Value, R> extends ModelSubscription {
+export interface UpdateModelSubscription<Value> extends ModelSubscription {
 
     get active() : boolean
 
     unsubscribe() : void
 
-    update(value : Value, r : R) : void
+    update(value : Value) : void
 
 }
 
-export interface UniformUpdateObserver<Value, R> {
-
-    initialized(c : Value, r : R | undefined) : void
-
-    updated(u : Value, r : R | undefined) : void
-
-    completed() : void
-
-    aborted(error : any) : void
-
-}
-
-class UniformUpdateAdapter<Value, R> implements UniformObserver<Value>, UpdateModelSubscription<Value, R> {
+class UniformUpdateAdapter<Value> implements UniformObserver<Value>, UpdateModelSubscription<Value> {
 
     #model : UniformModel<Value>
-    #observer : UniformUpdateObserver<Value, R>
+    #observer : UniformObserver<Value>
     #subscription : ModelSubscription
     #currentValue? : Value
-    #currentR? : R
     #hasValue : boolean
     #observerIsInitialized : boolean
     #dirty : boolean  // true if between update and being updated
     
-    constructor(model : UniformModel<Value>, observer : UniformUpdateObserver<Value, R>) {
+    constructor(model : UniformModel<Value>, observer : UniformObserver<Value>) {
         this.#model = model;
         this.#observer = observer;
         this.#currentValue = undefined;
-        this.#currentR = undefined;
         this.#hasValue = false;
         this.#observerIsInitialized = false;
         this.#dirty = false;
@@ -53,41 +38,31 @@ class UniformUpdateAdapter<Value, R> implements UniformObserver<Value>, UpdateMo
         this.#subscription.unsubscribe();
     }
 
-    async update(value : Value, r : R) : Promise<void> {
+    async update(value : Value) : Promise<void> {
         const oldValue = this.#currentValue;
-        const oldR = this.#currentR;
         const hasOldValue = this.#hasValue;
         this.#currentValue = value;
-        this.#currentR = r;
         this.#hasValue = true;
         this.#dirty = true;
         const successful = await this.#model.update(value);
         const dirty = this.#dirty;
         this.#dirty = false;
         if (successful || !dirty || !hasOldValue) return;
-        this.#initialized(oldValue!, oldR);
+        this.initialized(oldValue!);
     }
 
-    initialized(c : Value): void {
-        this.#initialized(c, undefined);
-    }
-
-    #initialized(c: Value, r : R | undefined): void {
+    initialized(c: Value): void {
         this.#dirty = false;
-        if (r === undefined && this.#hasValue && this.#observerIsInitialized) {
-            if (this.#model.valuesAreEqual(c, this.#currentValue!)) {
-                this.#currentR = undefined;
-                return;
-            }
+        if (this.#hasValue && this.#observerIsInitialized) {
+            if (this.#model.valuesAreEqual(c, this.#currentValue!)) return;
         }
         this.#hasValue = true;
         this.#currentValue = c;
-        this.#currentR = r;
         if (this.#observerIsInitialized) {
-            this.#observer.updated(c, r);
+            this.#observer.updated(c);
         } else {
             this.#observerIsInitialized = true;
-            this.#observer.initialized(c, r);
+            this.#observer.initialized(c);
         }
     }
 
@@ -95,8 +70,7 @@ class UniformUpdateAdapter<Value, R> implements UniformObserver<Value>, UpdateMo
         this.#dirty = false;
         if (!this.#model.valuesAreEqual(this.#currentValue!, u)) {
             this.#currentValue = u;
-            this.#currentR = undefined;
-            this.#observer.updated(u, undefined);
+            this.#observer.updated(u);
         }
     }
 
@@ -110,8 +84,8 @@ class UniformUpdateAdapter<Value, R> implements UniformObserver<Value>, UpdateMo
 
 } 
 
-export function subscribeForUniformUpdate<Value, R>(model : UniformModel<Value>, 
-    observer : UniformUpdateObserver<Value, R>) : UpdateModelSubscription<Value, R>
+export function subscribeForUniformUpdate<Value>(model : UniformModel<Value>, 
+    observer : UniformObserver<Value>) : UpdateModelSubscription<Value>
 {
     return new UniformUpdateAdapter(model, observer);
 }
