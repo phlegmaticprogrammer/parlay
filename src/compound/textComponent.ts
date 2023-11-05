@@ -1,4 +1,4 @@
-import { Mstring, UniformObserver, UpdateModelSubscription, subscribeForUniformUpdate } from "../model/index.js";
+import { Mstring, UniformObserver, UniformUpdateObserver, UpdateModelSubscription, subscribeForUniformUpdate } from "../model/index.js";
 import { Component, ComponentHost, UniformComponent } from "./component.js";
 import { Compound, MutationInfo } from "./compound.js";
 import { Cursor, Position, adjustCursor, limitCursorOffset, printCursor } from "./cursor.js";
@@ -20,10 +20,10 @@ function makeTextCursor(node : Node, startOffset : number, endOffset : number, l
     }    
 }
 
-class TextComponent implements Component<string, string>, UniformObserver<string> {
+class TextComponent implements Component<string, string>, UniformUpdateObserver<string, Cursor> {
 
     model : Mstring
-    #model : UpdateModelSubscription<string>
+    #model : UpdateModelSubscription<string, Cursor>
     #node : Text
     #cursor : Cursor
     #host? : ComponentHost
@@ -40,15 +40,18 @@ class TextComponent implements Component<string, string>, UniformObserver<string
         this.#host = host;
     }
 
-    initialized(data: string): void {
+    initialized(data: string, cursor? : Cursor): void {
+        this.#host?.beginMutation();        
         this.#node.data = data;
+        this.#host?.endMutation();  
     }
 
-    updated(u: string): void {
+    updated(u: string, cursor? : Cursor): void {
         // How do I deal with the cursor in here??
         this.#host?.beginMutation();
         this.#node.data = u;
-        this.#cursor = limitCursorOffset(this.#cursor, u.length);
+        if (cursor === undefined) cursor = this.#cursor;
+        this.#cursor = limitCursorOffset(cursor, u.length);
         this.log("MODEL MUTATION!");
         this.#host?.endMutation();
     }
@@ -76,7 +79,7 @@ class TextComponent implements Component<string, string>, UniformObserver<string
             this.log("MUTATION!");
             this.#host?.endMutation();
         }
-        this.#model.update(s);
+        this.#model.update(s, this.#cursor);
     }
 
     #updateWithNodes(cursor : Cursor, nodes : Node[]) {
