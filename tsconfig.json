@@ -1,6 +1,7 @@
 {
     "extends": "./tsconfig-base.json",
     "compilerOptions": {
+        "jsx": "react",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "outDir": "dist/esm",
