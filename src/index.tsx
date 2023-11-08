@@ -1,9 +1,9 @@
+/** @jsx compoundRender */
+
+import { compoundRender, createCompound, printRender } from "./editor/index.js";
 import { viewColorScheme } from "./view_colorscheme.js";
 import { example } from "./example.js";
-import { ParlayEditor } from "./parlay_editor.js";
 import { ParlaySimpleEditor } from "./parlay_simple_editor.js";
-import { createCompound, textComponent } from "./compound/index.js";
-import { varModel } from "./model/index.js";
 
 function calculateCharacterWidth(character : string, font : string) : number | undefined {
     var canvas = document.createElement('canvas');
@@ -38,13 +38,15 @@ function registerColorschemeViewers() {
     viewer.appendChild(viewColorScheme("gruvbox-dark-soft"));
 }
 
-function run() {
-    const model = varModel("Hello\nworld!");
+function setupEditor() {
     const compound = createCompound(document.getElementById("compound")!, console.log);
-    compound.render(textComponent(model));
-    const mirror = createCompound(document.getElementById("compound-mirror")!, s => undefined);
-    mirror.render(textComponent(model));
+    compound.render(<div><span editable={false}>Hello</span><span editable={true}>beautiful</span><span editable={false}>World</span></div>);
+}
 
+
+
+function run() {
+    setupEditor();
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
     const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);
     const editor = new ParlaySimpleEditor(root, debugRoot);
@@ -58,19 +60,19 @@ function run() {
         body.classList.replace("solarized-light", "solarized-dark");
     }
     function cmd_plain() {
-        model.update("plain");
+        //model.update("plain");
     }
     function cmd_text() {
-        model.update("text");
+        //model.update("text");
     }
     function cmd_structure() {
-        model.update("structure");
+        //model.update("structure");
     }
     function cmd_abort() {
-        model.abort();
+        //model.abort();
     }
     function cmd_complete() {
-        model.complete();
+        //model.complete();
     }
     register("cmd-plain", cmd_plain);
     register("cmd-light", cmd_light);
