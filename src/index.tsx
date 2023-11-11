@@ -1,9 +1,10 @@
 /** @jsx compoundRender */
 
-import { compoundRender, createCompound, printRender } from "./editor/index.js";
+import { compoundRender, createCompound, printRender, renderSimpleDocument } from "./editor/index.js";
 import { viewColorScheme } from "./view_colorscheme.js";
-import { example } from "./example.js";
+import { BaseTheoryPretty, example } from "./example.js";
 import { ParlaySimpleEditor } from "./parlay_simple_editor.js";
+import { readDocument, simpleRX } from "recursivetext/rx.js";
 
 function calculateCharacterWidth(character : string, font : string) : number | undefined {
     var canvas = document.createElement('canvas');
@@ -39,8 +40,11 @@ function registerColorschemeViewers() {
 }
 
 function setupEditor() {
+    const d = readDocument(simpleRX, BaseTheoryPretty);
+    const r = renderSimpleDocument(d);
     const compound = createCompound(document.getElementById("compound")!, console.log);
-    compound.render(<div><span editable={false}>Hello</span><span editable={true}>beautiful</span><span editable={false}>World</span></div>);
+    compound.render(r);
+    //compound.render(<div><span editable={false}>Hello</span><span editable={true}>beautiful</span><span editable={false}>World</span></div>);
 }
 
 

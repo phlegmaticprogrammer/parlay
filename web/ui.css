@@ -52,6 +52,7 @@
     padding: 0.2cm;
     border: solid 5px var(--text-blue);
     white-space: pre;
+    font-size: 11px;
 }
 
 

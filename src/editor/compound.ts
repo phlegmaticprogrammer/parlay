@@ -3,12 +3,15 @@ import { Render, lookupComponent } from "./component.js"
 import { removeAllChildNodes } from "../compound/utils.js";
 
 function render2DOM(render : Render) : HTMLElement {
+    console.log("render: " + render.name + "(" + render + ")");
     const name = render.name;
     const component = lookupComponent(name);
     if (!component) throw new Error("Cannot render, no such component: '" + name + "'.");
     if (component.isPrimitive) {
         const node = component.render(render.props);
+        console.log("children = ", render.children);
         for (const child of render.children) {
+            console.log("render primitive child: " + child.name);
             node.appendChild(render2DOM(child));
         }
         return node;

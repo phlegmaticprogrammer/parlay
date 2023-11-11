@@ -32,6 +32,10 @@ export type Render = {
     children : Render[] 
 }
 
+function isRender(r : any) : r is Render {
+  return typeof r === "object" && typeof r.name === "string" && typeof r.props === "object" && Array.isArray(r.children);
+}
+
 let registeredComponents : Map<string, Component> = new Map();
 
 export function registerComponent(component : Component) {
@@ -51,7 +55,19 @@ function text2Render(content : string) : Render {
 export function compoundRender(tag : string, attrs?: { [key: string]: any },
     ...children: (Render | string)[]) : Render
 {
-  let rchildren = children.map(r => (typeof r === "string") ? text2Render(r) : r);
+  let rchildren : Render[] = [];
+  function add(c : any) {
+    if (typeof c === "string") {
+      rchildren.push(text2Render(c));
+    } else if (Array.isArray(c)) {
+      for (const e of c) add(e);
+    } else if (isRender(c)) {
+      rchildren.push(c);
+    } else throw new Error("Child is not a Render: " + c);
+  }
+  for (const child of children) add(child);
+
+  //let rchildren = children.map(r => (typeof r === "string") ? text2Render(r) : r);
   return { name : tag, props : attrs ?? {}, children: rchildren };
 }
 
@@ -161,3 +177,4 @@ class SpanComponent implements PrimitiveComponent {
 
 }
 registerComponent(new SpanComponent());
+

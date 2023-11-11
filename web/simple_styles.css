@@ -30,7 +30,6 @@
 }
 
 .parlay-indented-block {
-    padding-left: 0ch;
     margin-left: 2ch; /* width of 4 spaces */
 }
 
@@ -43,8 +42,12 @@
     margin-top: 2px;
     margin-bottom: 2px;
     width: 100%;
+    min-height: 1em;
     display: block;
+    word-break: break-all;
 }
+
+
 
 
 
