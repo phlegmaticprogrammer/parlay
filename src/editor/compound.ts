@@ -2,7 +2,7 @@ import { assertTrue, nat } from "things"
 import { Render, lookupComponent } from "./component.js"
 import { removeAllChildNodes } from "../compound/utils.js";
 
-function render2DOM(render : Render) : HTMLElement {
+function render2DOM(render : Render) : Node {
     console.log("render: " + render.name + "(" + render + ")");
     const name = render.name;
     const component = lookupComponent(name);

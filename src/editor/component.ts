@@ -10,7 +10,7 @@ export interface PrimitiveComponent {
   
   name : string
 
-  render(props : Properties) : HTMLElement
+  render(props : Properties) : Node
 
 }
 
@@ -104,7 +104,7 @@ declare global {
       "div": elementType,
       "span": elementType,
       "br": baseType,
-      "compound-text" : elementType & { content? : string }
+      "compound-text" : { content? : string }
     }
   }
 }
@@ -115,14 +115,8 @@ class TextComponent implements PrimitiveComponent {
   
   name: string = "compound-text";
   
-  render({class: className, style, content, editable} : 
-    {class? : string, style? : string, editable? : boolean, content? : string}): HTMLElement {
-    const node = document.createElement("span");
-    if (className) node.setAttribute("class", className);
-    if (style) node.setAttribute("style", style);
-    if (content) node.appendChild(document.createTextNode(content));
-    if (editable !== undefined) node.setAttribute("contenteditable", editable ? "true" : "false")
-    return node;
+  render({content} : {content? : string}): Node {
+    return document.createTextNode(content ?? "");
   }
 
 }

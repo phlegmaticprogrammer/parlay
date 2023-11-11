@@ -8,6 +8,7 @@
 
 .parlay-document {
     overflow-y: scroll;
+    max-width: 100%;
     margin: 10px;
     border: 2px solid var(--text-background-highlights);
 }
@@ -21,6 +22,7 @@
     margin-top: 0.0ex;
     margin-bottom: 0.2ex;
     display: block;
+    max-width: 100%;
 }
 
 .parlay-block {
