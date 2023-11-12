@@ -66,7 +66,7 @@ function renderAsNode(render : Render) : ComponentNode {
 export class Compound {
     #root : HTMLElement
     #render : Render | undefined
-    #topNode! : ComponentNode
+    #topNode! : CompoundNode
     #mutationObserver : MutationObserver | undefined
     #selectionListener : () => void
     #log : (s : string) => void 
@@ -88,7 +88,9 @@ export class Compound {
     render(r : Render) {
         if (this.#render) throw new Error("Component has already been rendered.");
         this.#render = r;
-        this.#topNode = renderAsNode(r);
+        const c = renderAsNode(r);
+        if (c.primitive) throw new Error("Top component must be compound."); 
+        this.#topNode = c;
         removeAllChildNodes(this.#root);
         this.#root.appendChild(this.#topNode.node);
         this.#startMutationObserving();
