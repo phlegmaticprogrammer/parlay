@@ -7,10 +7,11 @@
 }
 
 .parlay-document {
-    overflow-y: scroll;
+    width:60%;
     max-width: 100%;
     margin: 10px;
     border: 2px solid var(--text-background-highlights);
+    overflow-y: scroll;
 }
 
 .parlay-block, .parlay-indented-block {
@@ -43,10 +44,10 @@
     padding-left: 0.5ch;
     margin-top: 2px;
     margin-bottom: 2px;
-    width: 100%;
     min-height: 1em;
     display: block;
-    word-break: break-all;
+    white-space: normal; /* this is necessary for the wrap to work. */
+    word-break: break-word;
 }
 
 

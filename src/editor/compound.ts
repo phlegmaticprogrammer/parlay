@@ -1,28 +1,72 @@
 import { assertTrue, nat } from "things"
-import { Render, lookupComponent } from "./component.js"
+import { Properties, Render, lookupComponent } from "./component.js"
 import { removeAllChildNodes } from "../compound/utils.js";
 
-function render2DOM(render : Render) : Node {
-    console.log("render: " + render.name + "(" + render + ")");
+export type PrimitiveNode = {
+    primitive : true
+    name : string,
+    props : Properties,
+    children : ComponentNode[],
+    node : Node
+}
+
+export type CompoundNode = {
+    primitive : false
+    name : string,
+    props : Properties,
+    children : Render[],
+    derivative : ComponentNode
+    node : Node
+}
+
+export type ComponentNode = PrimitiveNode | CompoundNode
+
+export function PrimitiveNode(name : string, props : Properties, 
+    children : ComponentNode[], node : Node) : PrimitiveNode 
+{
+    return {
+        primitive : true,
+        name : name,
+        props : props,
+        children : children,
+        node : node
+    };
+}
+
+export function CompoundNode(name : string, props : Properties, children : Render[],
+    render : ComponentNode) : CompoundNode
+{
+    return {
+        primitive : false,
+        name : name,
+        props : props,
+        children : children,
+        derivative : render,
+        node : render.node
+    };
+}
+
+function renderAsNode(render : Render) : ComponentNode {
     const name = render.name;
     const component = lookupComponent(name);
     if (!component) throw new Error("Cannot render, no such component: '" + name + "'.");
     if (component.isPrimitive) {
         const node = component.render(render.props);
-        console.log("children = ", render.children);
-        for (const child of render.children) {
-            console.log("render primitive child: " + child.name);
-            node.appendChild(render2DOM(child));
+        const children = render.children.map(renderAsNode);
+        for (const child of children) {
+            node.appendChild(child.node);
         }
-        return node;
+        return PrimitiveNode(name, render.props, children, node);
     } else {
-        return render2DOM(component.render(render.props, render.children));
+        const derivative = renderAsNode(component.render(render.props, render.children));
+        return CompoundNode(name, render.props, render.children, derivative);
     }
 }
 
 export class Compound {
     #root : HTMLElement
     #render : Render | undefined
+    #topNode! : ComponentNode
     #mutationObserver : MutationObserver | undefined
     #selectionListener : () => void
     #log : (s : string) => void 
@@ -44,9 +88,9 @@ export class Compound {
     render(r : Render) {
         if (this.#render) throw new Error("Component has already been rendered.");
         this.#render = r;
-        const node = render2DOM(r);
+        this.#topNode = renderAsNode(r);
         removeAllChildNodes(this.#root);
-        this.#root.appendChild(node);
+        this.#root.appendChild(this.#topNode.node);
         this.#startMutationObserving();
         this.#startSelectionListening();
     }
@@ -85,13 +129,13 @@ export class Compound {
     }
 
     #startMutationObserving() {
-        this.log("--- startMutationObserving");
+        //this.log("--- startMutationObserving");
         this.#mutationObserver = new MutationObserver(mutations => this.#mutationsObserved(mutations));            
         this.#mutationObserver.observe(this.#root, { childList: true, characterData: true, subtree: true });
     }
 
     #stopMutationObserving() {
-        this.log("--- stopMutationObserving");
+        //this.log("--- stopMutationObserving");
         this.#mutationObserver!.disconnect();
         this.#mutationObserver = undefined;
     }
@@ -186,11 +230,11 @@ export class Compound {
     }*/
 
     #mutationsObserved(mutations : MutationRecord[]) {
-        this.log("-------------- mutation");
+        //this.log("-------------- mutation");
     }    
 
     #selectionChanged() {
-        this.log("-------------- selection");
+        //this.log("-------------- selection");
     }
 }
 
