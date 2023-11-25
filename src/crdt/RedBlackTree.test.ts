@@ -2,8 +2,8 @@ import { Test, assertFalseT, assertT, nat } from "things";
 import * as RB from "./RedBlackTree.js";
 
 function assertRB(tree : RB.RedBlackTree<nat>) {
-    console.log("-------------");
-    printRB(tree);
+    //console.log("-------------");
+    //printRB(tree);
 
     function height(tree : RB.RedBlackTree<nat>) : nat {
         if (RB.isEmpty(tree)) return 1;
@@ -38,7 +38,7 @@ function printRB(tree : RB.RedBlackTree<nat>) {
 }
 
 function assertEqualSets(A : Set<nat>, B : RB.RedBlackTree<nat>) {
-    console.log("number of elements: " + A.size);
+    //console.log("number of elements: " + A.size);
     const sorted = [...RB.iterateElements(B)];
     assertT(A.size === sorted.length);
     let last = -1;
@@ -70,12 +70,13 @@ function insertAndDelete(N : nat, MAX : nat) {
         deleted.delete(x);
         s = RB.deleteElement(nat, x, s);
     }
-    //assertEqualSets(deleted, s);
+    assertEqualSets(deleted, s);
 }
 
 Test(() => {
-    //insertAndDelete(10000, 100000);
-    insertAndDelete(5, 100000);
+    insertAndDelete(10000, 100000);
+    insertAndDelete(20000, 10000);
+    //insertAndDelete(5, 100000);
 }, "RedBlackTree test");
 
 //insertAndDelete(10, 10000);

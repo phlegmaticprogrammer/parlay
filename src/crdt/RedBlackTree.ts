@@ -164,7 +164,7 @@ function balance<E>(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) :
     } else {
         return mkBlack(left, elem, right);
     }
-    return mkBlack(mkRed(a, x, b), y, mkRed(c, z, d));
+    return mkRed(mkBlack(a, x, b), y, mkBlack(c, z, d));
 }
 
 /**
