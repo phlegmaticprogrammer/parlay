@@ -1,72 +1,13 @@
 import { assertTrue, nat } from "things"
-import { Properties, Render, lookupComponent } from "./component.js"
-import { removeAllChildNodes } from "../compound/utils.js";
-
-export type PrimitiveNode = {
-    primitive : true
-    name : string,
-    props : Properties,
-    children : ComponentNode[],
-    node : Node
-}
-
-export type CompoundNode = {
-    primitive : false
-    name : string,
-    props : Properties,
-    children : Render[],
-    derivative : ComponentNode
-    node : Node
-}
-
-export type ComponentNode = PrimitiveNode | CompoundNode
-
-export function PrimitiveNode(name : string, props : Properties, 
-    children : ComponentNode[], node : Node) : PrimitiveNode 
-{
-    return {
-        primitive : true,
-        name : name,
-        props : props,
-        children : children,
-        node : node
-    };
-}
-
-export function CompoundNode(name : string, props : Properties, children : Render[],
-    render : ComponentNode) : CompoundNode
-{
-    return {
-        primitive : false,
-        name : name,
-        props : props,
-        children : children,
-        derivative : render,
-        node : render.node
-    };
-}
-
-function renderAsNode(render : Render) : ComponentNode {
-    const name = render.name;
-    const component = lookupComponent(name);
-    if (!component) throw new Error("Cannot render, no such component: '" + name + "'.");
-    if (component.isPrimitive) {
-        const node = component.render(render.props);
-        const children = render.children.map(renderAsNode);
-        for (const child of children) {
-            node.appendChild(child.node);
-        }
-        return PrimitiveNode(name, render.props, children, node);
-    } else {
-        const derivative = renderAsNode(component.render(render.props, render.children));
-        return CompoundNode(name, render.props, render.children, derivative);
-    }
-}
+import { Render } from "./component.js"
+import { getUniqueObjectId, nodeIsElement, nodeIsText, nodesOfList, removeAllChildNodes } from "../compound/utils.js";
+import { ComponentNode, ComponentNodes, CompoundNode, computeNodes, printComponentNode, printComponentNodeLocation, renderAsNode } from "./componentNode.js";
+import { getCurrentCursor } from "./cursor.js";
 
 export class Compound {
     #root : HTMLElement
     #render : Render | undefined
-    #topNode! : CompoundNode
+    #nodes! : ComponentNodes
     #mutationObserver : MutationObserver | undefined
     #selectionListener : () => void
     #log : (s : string) => void 
@@ -88,11 +29,12 @@ export class Compound {
     render(r : Render) {
         if (this.#render) throw new Error("Component has already been rendered.");
         this.#render = r;
-        const c = renderAsNode(r);
+        const c = renderAsNode(r, []);
         if (c.primitive) throw new Error("Top component must be compound."); 
-        this.#topNode = c;
+        this.#nodes = new ComponentNodes(c);
+        printComponentNode(this.#nodes.top);
         removeAllChildNodes(this.#root);
-        this.#root.appendChild(this.#topNode.node);
+        this.#root.appendChild(this.#nodes.top.node);
         this.#startMutationObserving();
         this.#startSelectionListening();
     }
@@ -232,11 +174,61 @@ export class Compound {
     }*/
 
     #mutationsObserved(mutations : MutationRecord[]) {
-        //this.log("-------------- mutation");
+        this.log("<<<<<<<<<< " + mutations.length + " mutations");
+        const that = this;
+        function originOfNode(node : Node) : string {
+            const cn = that.#nodes.locateNode(node);
+            const id = "#" + getUniqueObjectId(node);
+            if (cn) return "[" + cn.name + "]" + id;
+            else if (nodeIsElement(node)) {
+                const attr = node.getAttribute("data-origins");
+                if (attr) return "{" + attr + "}" + id;
+                else return "<" + node.tagName + ">" + id;
+            } else if (nodeIsText(node)) {
+                return "text" + id;
+            } else {
+                return "?" + id;
+            }
+        }
+        for (const mutation of mutations) {
+            const cn = this.#nodes.locateNode(mutation.target);
+            const loc = cn ? printComponentNodeLocation(cn) + "#" + getUniqueObjectId(cn.node) : "?";
+            if (mutation.type === "attributes") {
+                // ignore
+            } else if (mutation.type === "characterData") {
+                this.log("mutation: text of " + loc);               
+            } else {
+                this.log("mutation: children of " + loc);
+                for (const child of nodesOfList(mutation.addedNodes)) {
+                    this.log("    added " + originOfNode(child));
+                }
+                for (const child of nodesOfList(mutation.removedNodes)) {
+                    this.log("    removed " + originOfNode(child));
+                }
+            }
+        }
+        this.log(">>>>>>>>>> ");
     }    
 
     #selectionChanged() {
-        //this.log("-------------- selection");
+        const cursor = getCurrentCursor();
+        if (cursor === null) {
+            this.log("no selection");
+            return;
+        }
+        const start = this.#nodes.locateNode(cursor.start.node);
+        const end = this.#nodes.locateNode(cursor.end.node);
+        if (start === undefined || end === undefined) {
+            this.log("no selection in this compound");
+            return;
+        }
+        const lstart = printComponentNodeLocation(start);
+        const lend = printComponentNodeLocation(end);
+        if (lstart === lend) {
+            this.log("selection: " + lstart);
+        } else {
+            this.log("selection: " + lstart + " - " + lend);
+        }
     }
 }
 

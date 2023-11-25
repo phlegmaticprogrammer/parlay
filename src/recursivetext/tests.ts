@@ -1,6 +1,7 @@
 import { Relation, Test, assertEqT, assertT } from "things";
 import { RX, SafeRX, compareDocuments, displayDocument, readDocument, simpleRX, writeDocument } from "./rx.js";
 import { assertCrashT } from "things";
+import { writeFile } from "fs";
 
 export function createExampleDocument<D, B, L>(rx : RX<D, B, L>, index : number = 0) : D {
 
@@ -193,5 +194,11 @@ Test(() => {
     assertEqT(text, text2);
     testReadWrite(simpleRX, doc);
 }, "Empty Text <-> Document");
+
+function callback(err : any) {
+    console.log("File has been written! err = " + err);
+}
+
+//writeFile("/Users/stevenobua/Repositories/parlay/playground/zero.txt", "Hey th\0\0\u0000\u0001\u0002\u001bere!", "utf8", callback);
 
 //examineReadWrite(simpleRX, createExampleDocument(simpleRX, 6));
