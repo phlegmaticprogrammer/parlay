@@ -1,5 +1,6 @@
 import { Test, assertFalseT, assertT, nat } from "things";
 import * as RB from "./RedBlackTree.js";
+import {RedBlackSet} from "./RedBlackSet.js";
 
 function assertRB(tree : RB.RedBlackTree<nat>) {
     //console.log("-------------");
@@ -37,7 +38,7 @@ function printRB(tree : RB.RedBlackTree<nat>) {
     print("", tree);
 }
 
-function assertEqualSets(A : Set<nat>, B : RB.RedBlackTree<nat>) {
+function assertEqualSetTree(A : Set<nat>, B : RB.RedBlackTree<nat>) {
     //console.log("number of elements: " + A.size);
     const sorted = [...RB.iterateElements(B)];
     assertT(A.size === sorted.length);
@@ -53,7 +54,7 @@ function assertEqualSets(A : Set<nat>, B : RB.RedBlackTree<nat>) {
     assertRB(B);
 }
 
-function insertAndDelete(N : nat, MAX : nat) {
+function insertAndDeleteTree(N : nat, MAX : nat) {
     let numbers : number[] = [];
     let t = RB.empty<nat>();
     for (let i = 0; i < N; i++) {
@@ -63,18 +64,56 @@ function insertAndDelete(N : nat, MAX : nat) {
     }
     let s = t;
     let deleted = new Set(numbers);
-    assertEqualSets(deleted, s);
+    assertEqualSetTree(deleted, s);
     for (let i = 0; i < numbers.length; i++) {
         const pos = Math.round(Math.random() * (numbers.length - 1));
         const x = numbers[pos];
         deleted.delete(x);
         s = RB.deleteElement(nat, x, s);
     }
+    assertEqualSetTree(deleted, s);
+}
+
+Test(() => {
+    insertAndDeleteTree(10000, 100000);
+    insertAndDeleteTree(20000, 10000);
+}, "RedBlackTree Insert/Delete");
+
+function assertEqualSets(A : Set<nat>, B : RedBlackSet<nat>) {
+    //console.log("number of elements: " + A.size);
+    assertT(A.size === B.size);
+    let last = -1;
+    for (const e of B) {
+        assertT(last < e);
+        last = e;
+        assertT(A.has(e));    
+    }
+    for (const e of A) {
+        assertT(B.has(e));
+    }
+}
+
+function insertAndDeleteSet(N : nat, MAX : nat) {
+    let numbers : number[] = [];
+    let t = RedBlackSet(nat);
+    for (let i = 0; i < N; i++) {
+        const x = Math.round(Math.random() * MAX);
+        numbers.push(x);
+        t = t.insert(x);
+    }
+    let s = t;
+    let deleted = new Set(numbers);
+    assertEqualSets(deleted, s);
+    for (let i = 0; i < numbers.length; i++) {
+        const pos = Math.round(Math.random() * (numbers.length - 1));
+        const x = numbers[pos];
+        deleted.delete(x);
+        s = s.delete(x);
+    }
     assertEqualSets(deleted, s);
 }
 
 Test(() => {
-    insertAndDelete(10000, 100000);
-    insertAndDelete(20000, 10000);
-    //insertAndDelete(5, 100000);
-}, "RedBlackTree test");
+    insertAndDeleteSet(10000, 100000);
+    insertAndDeleteSet(20000, 10000);
+}, "RedBlackSet Insert/Delete");

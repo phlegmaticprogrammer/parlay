@@ -1,4 +1,4 @@
-import { Order, Relation, assertNever, freeze } from "things";
+import { Order, Relation, assertNever, freeze, nat } from "things";
 
 export type RedBlackTree<E> = Red<E> | Black<E> | null;
 
@@ -308,4 +308,10 @@ export function* iterateElements<E>(tree : RedBlackTree<E>) : Generator<E, void,
         yield tree.elem;
         yield* iterateElements(tree.right);
     }
+}
+
+export function blackHeight<E>(tree : RedBlackTree<E>) : nat {
+    if (isEmpty(tree)) return 1;
+    else if (isRed(tree)) return blackHeight(tree.left);
+    else return blackHeight((tree as Black<E>).left) + 1;
 }

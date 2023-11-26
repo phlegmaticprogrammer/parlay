@@ -1,1 +1,1 @@
-export * from "./RedBlackTree.test.js";
+export * from "./RedBlack.test.js";
