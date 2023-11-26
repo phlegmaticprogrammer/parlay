@@ -1,6 +1,6 @@
 import { configureDebugging, runTests } from "things";
 import "./recursivetext/tests.js";
-import "./crdt/RedBlackTree.test.js";
+import "./crdt/tests.js";
 
 /*console.log("Hey! :-)");
 let called = false;

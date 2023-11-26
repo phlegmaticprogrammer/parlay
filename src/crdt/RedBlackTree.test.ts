@@ -78,5 +78,3 @@ Test(() => {
     insertAndDelete(20000, 10000);
     //insertAndDelete(5, 100000);
 }, "RedBlackTree test");
-
-//insertAndDelete(10, 10000);
