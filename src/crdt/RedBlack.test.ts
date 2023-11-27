@@ -1,6 +1,7 @@
 import { Test, assertFalseT, assertT, nat } from "things";
 import * as RB from "./RedBlackTree.js";
 import {RedBlackSet} from "./RedBlackSet.js";
+import { RedBlackMap } from "./RedBlackMap.js";
 
 function assertRB(tree : RB.RedBlackTree<nat>) {
     //console.log("-------------");
@@ -117,3 +118,45 @@ Test(() => {
     insertAndDeleteSet(10000, 100000);
     insertAndDeleteSet(20000, 10000);
 }, "RedBlackSet Insert/Delete");
+
+function assertEqualMaps(A : Map<nat, string>, B : RedBlackMap<nat, string>) {
+    //console.log("number of elements: " + A.size);
+    assertT(A.size === B.size);
+    let last = -1;
+    for (const [k, v] of B) {
+        assertT(last < k);
+        last = k;
+        assertT(A.has(k));
+        assertT(A.get(k) === B.get(k));    
+    }
+    for (const [k, v] of A) {
+        assertT(B.has(k));
+        assertT(B.get(k) === A.get(k));
+    }
+}
+
+function insertAndDeleteMap(N : nat, MAX : nat) {
+    let numbers : number[] = [];
+    let t = RedBlackMap<nat, string>(nat);
+    for (let i = 0; i < N; i++) {
+        const x = Math.round(Math.random() * MAX);
+        numbers.push(x);
+        t = t.set(x, "" + x);
+    }
+    let s = t;
+    let deleted = new Map(numbers.map(k => [k, "" + k]));
+    assertEqualMaps(deleted, s);
+    for (let i = 0; i < numbers.length; i++) {
+        const pos = Math.round(Math.random() * (numbers.length - 1));
+        const x = numbers[pos];
+        deleted.delete(x);
+        s = s.delete(x);
+    }
+    assertEqualMaps(deleted, s);
+}
+
+Test(() => {
+    insertAndDeleteMap(10000, 100000);
+    insertAndDeleteMap(20000, 10000);
+}, "RedBlackMap Insert/Delete");
+

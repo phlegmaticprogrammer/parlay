@@ -1,7 +1,41 @@
 import { Order, Relation, assertTrue, freeze, nat } from "things";
 import { RedBlackSet } from "./RedBlackSet.js"
 
-export function keyValueOrder<K>(key : Order<K>) : Order<[K, any]> {
+export interface RedBlackMap<K, V> extends Iterable<[K, V]> {
+    
+    keyValues : RedBlackSet<[K, V]>
+
+    size : nat
+
+    has(key : K) : boolean 
+
+    get(elem : K) : V | undefined 
+
+    set(key : K, value : V) : RedBlackMap<K, V> 
+
+    setMultiple(keyValuePairs : Iterable<[K, V]>) : RedBlackMap<K, V> 
+
+    delete(key : K) : RedBlackMap<K, V> 
+
+    deleteMultiple(keys : Iterable<K>) : RedBlackMap<K, V> 
+
+    minimum() : [K, V] | undefined 
+
+    maximum() : [K, V] | undefined 
+
+    filter(predicate : (key : K, value : V) => boolean) : RedBlackMap<K, V> 
+
+}
+
+function promote<K, V>(key : K) : [K, V] {
+    return [key, undefined as V];
+}
+
+function* promoteMultiple<K, V>(keys : Iterable<K>) : Generator<[K, V], void, void> {
+    for (const key of keys) yield promote(key); 
+}
+
+export function promoteOrder<K>(key : Order<K>) : Order<[K, any]> {
     function is(value: any): value is [K, any] {
         if (!Array.isArray(value)) return false;
         if (value.length !== 2) return false;
@@ -26,11 +60,6 @@ export function keyValueOrder<K>(key : Order<K>) : Order<[K, any]> {
     return order;
 }
 
-function promote<K, V>(key : K) : [K, V] {
-    return [key, undefined as V];
-}
-
-/*
 class RedBlackMapImpl<K, V> implements Iterable<[K, V]> {
     
     keyValues : RedBlackSet<[K, V]>
@@ -54,26 +83,42 @@ class RedBlackMapImpl<K, V> implements Iterable<[K, V]> {
         return kv[1];
     } 
 
-    setMultiple(...keyValuePairs : Iterable<[K, V]>) : RedBlackSet<E> {
-        
+    set(key : K, value : V) : RedBlackMapImpl<K, V> {
+        return new RedBlackMapImpl(this.keyValues.insert([key, value]));
+    }
+
+    setMultiple(keyValuePairs : Iterable<[K, V]>) : RedBlackMapImpl<K, V> {
+        return new RedBlackMapImpl(this.keyValues.insertMultiple(keyValuePairs));
     } 
 
-    insertMultiple(elems : Iterable<E>) : RedBlackSet<E> 
+    delete(key : K) : RedBlackMapImpl<K, V> {
+        return new RedBlackMapImpl(this.keyValues.delete(promote(key)));
+    }
 
-    delete(...elems : E[]) : RedBlackSet<E> 
+    deleteMultiple(keys : Iterable<K>) : RedBlackMapImpl<K, V> {
+        return new RedBlackMapImpl(this.keyValues.deleteMultiple(promoteMultiple(keys)));
+    }
 
-    deleteMultiple(elems : Iterable<E>) : RedBlackSet<E> 
+    minimum() : [K, V] | undefined {
+        return this.keyValues.minimum();
+    } 
 
-    minimum() : E | undefined 
+    maximum() : [K, V] | undefined {
+        return this.keyValues.maximum();
+    } 
 
-    maximum() : E | undefined 
+    [Symbol.iterator]() {
+        return this.keyValues[Symbol.iterator]();
+    }
 
-    union(other : RedBlackSet<E>) : RedBlackSet<E>
+    filter(predicate : (key : K, value : V) => boolean) : RedBlackMapImpl<K, V> {
+        return new RedBlackMapImpl(this.keyValues.filter(kv => predicate(kv[0], kv[1])));
+    }
 
-    difference(other : RedBlackSet<E>) : RedBlackSet<E> 
+}
+freeze(RedBlackMapImpl);
 
-    intersection(other : RedBlackSet<E>) : RedBlackSet<E> 
-
-    filter(predicate : (elem : E) => boolean) : RedBlackSet<E>
-
-}*/
+export function RedBlackMap<K, V>(order : Order<K>, keyValuePairs? : Iterable<[K, V]>) : RedBlackMap<K, V> {
+    return new RedBlackMapImpl(RedBlackSet(promoteOrder(order), keyValuePairs));
+}
+freeze(RedBlackMap);
