@@ -60,7 +60,7 @@ function insertAndDeleteTree(N : nat, MAX : nat) {
     for (let i = 0; i < N; i++) {
         const x = Math.round(Math.random() * MAX);
         numbers.push(x);
-        t = RB.insertElement(nat, x, t);
+        t = RB.insertElement(nat, x, t).result;
     }
     let s = t;
     let deleted = new Set(numbers);
@@ -69,7 +69,7 @@ function insertAndDeleteTree(N : nat, MAX : nat) {
         const pos = Math.round(Math.random() * (numbers.length - 1));
         const x = numbers[pos];
         deleted.delete(x);
-        s = RB.deleteElement(nat, x, s);
+        s = RB.deleteElement(nat, x, s).result;
     }
     assertEqualSetTree(deleted, s);
 }

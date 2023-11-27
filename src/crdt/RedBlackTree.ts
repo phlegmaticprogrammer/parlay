@@ -169,24 +169,29 @@ function balance<E>(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) :
 /**
  * Inserts a new element into the tree. Returns undefined if the element is already part of the tree.
  */
-export function insertNewElement<E>(order : Order<E>, x : E, tree : RedBlackTree<E>) : RedBlackTree<E> | undefined {
+export function insertElement<E>(order : Order<E>, x : E, tree : RedBlackTree<E>) : { result : RedBlackTree<E>, previous : E | undefined } {
 
-    function insert(tree : RedBlackTree<E>) : RedBlackTree<E> | undefined {
+    let previous : E | undefined = undefined;
+
+    function insert(tree : RedBlackTree<E>) : RedBlackTree<E>  {
         if (isEmpty(tree)) return mkRed(empty(), x, empty()); 
         const c = order.compare(x, tree.elem);
         switch(c) {
             case Relation.UNRELATED: throw new Error("RedBlackTree: Cannot compare '" + x + "' with '" + tree.elem + "'.");
-            case Relation.EQUAL: return undefined;
+            case Relation.EQUAL: {
+                previous = tree.elem; 
+                if (isRed(tree)) return mkRed(tree.left, x, tree.right);
+                // @ts-ignore
+                else return mkBlack(tree.left, x, tree.right);
+            }
             case Relation.LESS: {
                 const left = insert(tree.left);
-                if (left === undefined) return undefined;
                 if (isRed(tree)) return mkRed(left, tree.elem, tree.right); 
                 tree = tree as Black<E>;
                 return balance(left, tree.elem, tree.right);
             }
             case Relation.GREATER: {
                 const right = insert(tree.right);
-                if (right === undefined) return undefined;
                 if (isRed(tree)) return mkRed(tree.left, tree.elem, right);
                 tree = tree as Black<E>;                
                 return balance(tree.left, tree.elem, right);
@@ -195,21 +200,16 @@ export function insertNewElement<E>(order : Order<E>, x : E, tree : RedBlackTree
         }
     }
 
-    const result = insert(tree);
-    if (result === undefined) return undefined; else return forceBlack(result);
-}
-
-export function insertElement<E>(order : Order<E>, x : E, tree : RedBlackTree<E>) : RedBlackTree<E> {
-    const result = insertNewElement(order, x, tree);
-    return result === undefined ? tree : result;
+    return { result: forceBlack(insert(tree)), previous: previous };
 }
 
 /**
  * Deletes an existing element from the tree. Returns undefined if the element is already part of the tree.
  */
-export function deleteExistingElement<E>(order : Order<E>, x : E, tree : RedBlackTree<E>) : 
-    RedBlackTree<E> | undefined 
+export function deleteElement<E>(order : Order<E>, x : E, tree : RedBlackTree<E>) : { result : RedBlackTree<E>, deleted : E | undefined }
 {
+
+    let deleted : E | undefined = undefined;
 
     function sub1(tree : RedBlackTree<E>) : RedBlackTree<E> {
         if (isBlack(tree)) return mkRed(tree.left, tree.elem, tree.right);
@@ -234,16 +234,14 @@ export function deleteExistingElement<E>(order : Order<E>, x : E, tree : RedBlac
         return mkRed(balance(sub1(a), x, b), y, mkBlack(c, elem, right));
     }
 
-    function delformLeft(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) : RedBlackTree<E> | undefined {
+    function delformLeft(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) : RedBlackTree<E> {
         const l = del(left);
-        if (l === undefined) return undefined;
         if (isBlack(left)) return balleft(l, elem, right);
         else return mkRed(l, elem, right);
     }
 
-    function delformRight(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) : RedBlackTree<E> | undefined {
+    function delformRight(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) : RedBlackTree<E> {
         const r = del(right);
-        if (r === undefined) return undefined;
         if (isBlack(right)) return balright(left, elem, r);
         else return mkRed(left, elem, r);
     }
@@ -280,25 +278,22 @@ export function deleteExistingElement<E>(order : Order<E>, x : E, tree : RedBlac
         throw new Error("RedBlackTree.app: unreachable reached.");
     }
 
-    function del(tree : RedBlackTree<E>) : RedBlackTree<E> | undefined {
-        if (tree === null) return undefined;
+    function del(tree : RedBlackTree<E>) : RedBlackTree<E> {
+        if (isEmpty(tree)) return empty();
         const c = order.compare(x, tree.elem);
         switch(c) {
             case Relation.UNRELATED: throw new Error("RedBlackTree: Cannot compare '" + x + "' with '" + tree.elem + "'.");
             case Relation.LESS: return delformLeft(tree.left, tree.elem, tree.right);       
             case Relation.GREATER: return delformRight(tree.left, tree.elem, tree.right);   
-            case Relation.EQUAL: return app(tree.left, tree.right);
+            case Relation.EQUAL: {
+                deleted = tree.elem;
+                return app(tree.left, tree.right);
+            }
             default: assertNever(c);  
         }
     }
 
-    const result = del(tree);
-    if (result === undefined) return undefined; else return forceBlack(result);
-}
-
-export function deleteElement<E>(order : Order<E>, x : E, tree : RedBlackTree<E>) : RedBlackTree<E> {
-    const result = deleteExistingElement(order, x, tree);
-    return result === undefined ? tree : result;
+    return { result: forceBlack(del(tree)), deleted: deleted };
 }
 
 export function* iterateElements<E>(tree : RedBlackTree<E>) : Generator<E, void, void> {

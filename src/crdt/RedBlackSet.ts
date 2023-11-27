@@ -1,5 +1,6 @@
 import { Order, freeze, nat } from "things"
-import { RedBlackTree, deleteExistingElement, empty, findEqualElement, findMaximumElement, findMinimumElement, insertNewElement, isElementOf, iterateElements } from "./RedBlackTree.js"
+import { RedBlackTree, deleteElement, empty, findEqualElement, findMaximumElement, findMinimumElement, 
+    insertElement, isElementOf, iterateElements } from "./RedBlackTree.js"
 
 export type Defined = Exclude<any, undefined>
 
@@ -71,11 +72,9 @@ class RedBlackSetImpl<E extends Defined> implements RedBlackSet<E> {
         const order = this.order;
         let size = this.size;
         for (const elem of elems) {
-            const t = insertNewElement(order, elem, tree);
-            if (t !== undefined) {
-                size += 1;
-                tree = t;
-            }
+            const t = insertElement(order, elem, tree);
+            tree = t.result;
+            if (t.previous === undefined) size += 1;
         }
         return new RedBlackSetImpl(order, tree, size);
     }
@@ -89,11 +88,9 @@ class RedBlackSetImpl<E extends Defined> implements RedBlackSet<E> {
         const order = this.order;
         let size = this.size;
         for (const elem of elems) {
-            const t = deleteExistingElement(order, elem, tree);
-            if (t !== undefined) {
-                size -= 1;
-                tree = t;
-            }
+            const t = deleteElement(order, elem, tree);
+            tree = t.result;
+            if (t.deleted !== undefined) size -= 1;
         }
         return new RedBlackSetImpl(order, tree, size);
     }
