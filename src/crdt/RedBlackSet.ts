@@ -27,6 +27,14 @@ export interface RedBlackSet<E extends Defined> extends Iterable<E> {
 
     maximum() : E | undefined 
 
+    union(other : RedBlackSet<E>) : RedBlackSet<E>
+
+    difference(other : RedBlackSet<E>) : RedBlackSet<E> 
+
+    intersection(other : RedBlackSet<E>) : RedBlackSet<E> 
+
+    filter(predicate : (elem : E) => boolean) : RedBlackSet<E>
+
 }
 
 class RedBlackSetImpl<E extends Defined> implements RedBlackSet<E> {
@@ -40,6 +48,10 @@ class RedBlackSetImpl<E extends Defined> implements RedBlackSet<E> {
         this.tree = tree;
         this.size = size;
         freeze(this);
+    }
+
+    [Symbol.iterator]() {
+        return iterateElements(this.tree);
     }
 
     has(elem : E) : boolean {
@@ -94,8 +106,26 @@ class RedBlackSetImpl<E extends Defined> implements RedBlackSet<E> {
         return findMaximumElement(this.tree);
     }
 
-    [Symbol.iterator]() {
-        return iterateElements(this.tree);
+    union(other : RedBlackSet<E>) : RedBlackSet<E> {
+        if (this.size >= other.size) return this.insertMultiple(other);
+        else return other.insertMultiple(this);
+    }
+
+    difference(other : RedBlackSet<E>) : RedBlackSet<E> {
+        return this.deleteMultiple(other);
+    }
+
+    filter(predicate : (elem : E) => boolean) : RedBlackSet<E> {
+        const elements : E[] = [];
+        for (const elem of this) {
+            if (predicate(elem)) elements.push(elem);
+        }
+        return RedBlackSet(this.order, elements); 
+    }
+
+    intersection(other : RedBlackSet<E>) : RedBlackSet<E> {
+        if (this.size <= other.size) return this.filter(e => other.has(e));
+        else return other.filter(e => this.has(e));
     }
 
 }

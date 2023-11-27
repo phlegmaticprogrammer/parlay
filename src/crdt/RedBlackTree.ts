@@ -122,7 +122,6 @@ function splitBlack<E>(tree : Black<E>) : [RedBlackTree<E>, E, RedBlackTree<E>] 
     return [tree.left, tree.elem, tree.right];
 }
 
-
 function balance<E>(left : RedBlackTree<E>, elem : E, right : RedBlackTree<E>) : RedBlackTree<E> {
     const leftR = isRed(left);
     const rightR = isRed(right);
