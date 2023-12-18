@@ -6,6 +6,7 @@
         "declaration": true,
         "esModuleInterop": true,
         "inlineSourceMap": false,
+        "jsx": "react",
         "lib": ["esnext", "DOM"],
         "listEmittedFiles": false,
         "listFiles": false,
