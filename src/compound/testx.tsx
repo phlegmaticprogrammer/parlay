@@ -2,7 +2,7 @@
 import { compoundRender, printRender } from "../editor/component.js";
 console.log("testx ----- start");
 
-const s = <div>Hello<br/>World!</div>;
+//const s = <compound-div>Hello<compound-br/>World!</compound-div>;
 
-printRender(s);
+//printRender(s);
 console.log("testx ----- end");

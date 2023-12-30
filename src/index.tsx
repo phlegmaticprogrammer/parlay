@@ -5,6 +5,11 @@ import { viewColorScheme } from "./view_colorscheme.js";
 import { BaseTheoryPretty, example } from "./example.js";
 import { ParlaySimpleEditor } from "./parlay_simple_editor.js";
 import { readDocument, simpleRX } from "recursivetext/rx.js";
+import * as d3 from "d3";
+import { SVG } from "@svgdotjs/svg.js";
+import { createRoot } from "react-dom/client";
+import { CRDTDemo, Card } from "positions/card.js";
+import ReactDOM from "react-dom";
 
 function calculateCharacterWidth(character : string, font : string) : number | undefined {
     var canvas = document.createElement('canvas');
@@ -47,9 +52,16 @@ function setupEditor() {
     //compound.render(<div><span editable={false}>Hello</span><span editable={true}>beautiful</span><span editable={false}>World</span></div>);
 }
 
+function setupCRDT() {
+    const elem = document.getElementById("crdt")!;
+    const root = createRoot(elem);
+    root.render(CRDTDemo);
+}
+
 
 
 function run() {
+    setupCRDT();
     setupEditor();
     const root = document.getElementById("parlay-editor") as HTMLDivElement;
     const debugRoot = document.getElementById("parlay-debug") as (HTMLDivElement | null);
@@ -90,7 +102,31 @@ function run() {
     console.log('Width of character ' + character + ' is ' + calculateCharacterWidthCh(character, font) + ' ch.');*/
 }
 
+function makeDemo1() {
+    d3.csv("d3data.csv")
+    .then( function( data ) { d3.select( "svg" )
+    .selectAll( "circle" )
+    .data( data )
+    .enter()
+    .append( "circle" )
+    .attr( "r", 5 ).attr( "fill", "red" )
+    .attr( "cx", function(d) { return d["x"] } ) .attr( "cy", function(d) { return d["y"] } );
+    }); 
+}
+
+function makeDemo2() {
+    const paper = SVG().addTo("#demo2").size(500, 300);
+    paper.rect().size(500, 300).attr({"fill": "green"});
+    const dot = paper.circle(200).attr({
+        fill: "#FF0000",
+        stroke: "#000099",
+        "stroke-width": 3
+    }).center(250, 150);
+}
+    
 window.addEventListener('DOMContentLoaded', () => {
+    makeDemo1();
+    makeDemo2();
     run();
 });
 

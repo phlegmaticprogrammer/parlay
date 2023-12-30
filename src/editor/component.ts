@@ -101,9 +101,9 @@ type elementType = baseType & {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "div": elementType,
-      "span": elementType,
-      "br": baseType,
+      "compound-div": elementType,
+      "compound-span": elementType,
+      "compound-br": baseType,
       "compound-text" : { content? : string }
     }
   }
@@ -126,7 +126,7 @@ class BRComponent implements PrimitiveComponent {
 
   isPrimitive : true = true
   
-  name: string = "br";
+  name: string = "compound-br";
   
   render({}: Properties): HTMLElement {
     const node = document.createElement("br");
@@ -140,7 +140,7 @@ class DivComponent implements PrimitiveComponent {
 
   isPrimitive : true = true
   
-  name: string = "div";
+  name: string = "compound-div";
   
   render({class: className, style, editable} : 
     {class? : string, style? : string, editable? : boolean}): HTMLElement {
@@ -158,7 +158,7 @@ class SpanComponent implements PrimitiveComponent {
 
   isPrimitive : true = true
   
-  name: string = "span";
+  name: string = "compound-span";
   
   render({class: className, style, editable} : 
     {class? : string, style? : string, editable? : boolean}): HTMLElement {

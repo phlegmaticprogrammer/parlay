@@ -1,7 +1,6 @@
 /** @jsx compoundRender */
-import { SimpleBlock, SimpleDocument, simpleRX } from "recursivetext/rx.js";
 import { compoundRender, printRender, registerComponent } from "./component.js";
-
+import { SimpleBlock, SimpleDocument, simpleRX } from "recursivetext/rx.js";
 import { CompoundComponent, Properties, Render } from "./component.js";
 
 declare global {
@@ -22,9 +21,11 @@ class LineComponent implements CompoundComponent {
 
     render({text} : {text : string}, children : Render[]): Render {
         if (text.length === 0)
-            return <div class="parlay-line"/>;
+            // @ts-ignore
+            return <compound-div class="parlay-line"/>;
         else 
-            return <div class="parlay-line">{text}</div>;
+            // @ts-ignore
+            return <compound-div class="parlay-line">{text}</compound-div>;
     }
 
 }
@@ -49,7 +50,8 @@ class BlockComponent implements CompoundComponent {
         const classes : string[] = [];
         if (top) classes.push("parlay-block"); else classes.push("parlay-indented-block");
         if (close) classes.push("parlay-close-block");
-        return <div class={classes.join(" ")}>{rLinesOrBlocks}</div>;
+        // @ts-ignore
+        return <compound-div class={classes.join(" ")}>{rLinesOrBlocks}</compound-div>;
     }
 
 }
@@ -63,9 +65,11 @@ class DocumentComponent implements CompoundComponent {
 
     render({document} : {document : SimpleDocument}, children : Render[]): Render {
         const blocks = [...simpleRX.fromDocument(document)];
+                    // @ts-ignore
         const rblocks : Render[] = [...blocks.entries()] .map(([i, b]) => 
             <rx-block block={b} top={true} close={i === blocks.length - 1}/>);
-        return <div class="parlay-document">{rblocks}</div>;
+                        // @ts-ignore
+        return <compound-div class="parlay-document">{rblocks}</compound-div>;
     }
 
 }
@@ -73,5 +77,6 @@ registerComponent(new DocumentComponent());
 
 
 export function renderSimpleDocument(document : SimpleDocument) : Render {
+                // @ts-ignore
     return <rx-document document={document}/>
 }
