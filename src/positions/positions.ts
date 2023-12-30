@@ -1,4 +1,4 @@
-import { relationAsNumber } from "things"
+import { Compare, relationAsNumber } from "things"
 import { Digraph, KahnTopologicalSortDepthFirstWithCompare, RedBlackMap, Relation, Vertex, assertFalse, assertNever, force, nat, sinkVertices, string, topologicalSort, transitiveClosure, transitiveReductionAndClosureOfDAG, transposeDigraph } from "things"
 import { FMAX, FMIN, Fraction, compareFractions, fractionInBetween } from "./fraction.js"
 
@@ -162,51 +162,20 @@ export function deleteValue<Position, Value>(state : State<Position, Value>, i :
     return [...state.slice(0, index), entry, ...state.slice(index+1)];
 }
 
-export class Replica<Position, Value> {
-
-    id : ReplicaId
-    #env : PositionEnv<Position>
-    #state : State<Position, Value>
-    #order : Digraph
-
-    constructor(id : ReplicaId, env : PositionEnv<Position>) {
-        this.id = id;
-        this.#env = env;
-        this.#state = [];
-        this.#order = new Digraph();
-    }
-
-    #update() {
-        const order = orderOfState(this.#env, this.#state);
-        let state : State<Position, Value> = [];
-        for (const vertex of order.sorted) {
-            state.push(this.#state[vertex]);
+export function mergeStates<Position, Value>(env : PositionEnv<Position>, 
+    states : Iterable<State<Position, Value>>) : State<Position, Value> 
+{
+    let compare : Compare<PositionId> = { compare: comparePositionIds };
+    let entries = RedBlackMap<PositionId, Entry<Position, Value>>(compare);
+    for (const state of states) {
+        for (const entry of state) {
+            const id = env.idOfPosition(entry.position);
+            const e = entries.get(id);
+            if (e === undefined || entry.deleted) {
+                entries.set(id, entry);
+            }
         }
-        this.#state = state;
-        // update Digraph!
     }
-
-    delete(index : nat) {
-        this.#state = deleteValue(this.#state, index);
-        this.#update();
-    }
-
-    insert(index : nat, value : Value) {
-        this.#state = insertValue(this.#env, this.#state, index, value);
-        this.#update();
-    }
-
-    values() : Value[] {
-        const vs : Value[] = [];
-        for (const entry of this.#state) {
-            if (!entry.deleted) vs.push(entry.value);
-        }
-        return vs;
-    }
-
+    return [...entries].map(e => e[1]);
 }
-
-
-
-
 
