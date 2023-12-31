@@ -213,21 +213,21 @@ export class Compound {
     #selectionChanged() {
         const cursor = getCurrentCursor();
         if (cursor === null) {
-            this.log("no selection");
+            //this.log("no selection");
             return;
         }
         const start = this.#nodes.locateNode(cursor.start.node);
         const end = this.#nodes.locateNode(cursor.end.node);
         if (start === undefined || end === undefined) {
-            this.log("no selection in this compound");
+            //this.log("no selection in this compound");
             return;
         }
         const lstart = printComponentNodeLocation(start);
         const lend = printComponentNodeLocation(end);
         if (lstart === lend) {
-            this.log("selection: " + lstart);
+            //this.log("selection: " + lstart);
         } else {
-            this.log("selection: " + lstart + " - " + lend);
+            //this.log("selection: " + lstart + " - " + lend);
         }
     }
 }

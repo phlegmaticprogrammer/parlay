@@ -1,4 +1,4 @@
-import { Compare, relationAsNumber } from "things"
+import { Compare, KahnTopologicalSortDepthFirst, relationAsNumber } from "things"
 import { Digraph, KahnTopologicalSortDepthFirstWithCompare, RedBlackMap, Relation, Vertex, assertFalse, assertNever, force, nat, sinkVertices, string, topologicalSort, transitiveClosure, transitiveReductionAndClosureOfDAG, transposeDigraph } from "things"
 import { FMAX, FMIN, Fraction, compareFractions, fractionInBetween } from "./fraction.js"
 
@@ -107,6 +107,7 @@ export function orderOfState<Position, Value>(
 {
     const graph = new Digraph();
     for (let i = 0; i < state.length; i++) {
+        graph.insert(i);
         for (let j = i + 1; j < state.length; j++) {
             const c = env.comparePositions(state[i].position, state[j].position);
             switch(c) {
@@ -172,7 +173,7 @@ export function mergeStates<Position, Value>(env : PositionEnv<Position>,
             const id = env.idOfPosition(entry.position);
             const e = entries.get(id);
             if (e === undefined || entry.deleted) {
-                entries.set(id, entry);
+                entries = entries.set(id, entry);
             }
         }
     }
