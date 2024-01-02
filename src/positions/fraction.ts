@@ -5,6 +5,10 @@ export type Fraction = number[]
 export const FMIN : Fraction = [];
 export const FMAX : Fraction = [1];
 
+export function displayFraction(fraction : Fraction) {
+    return "[" + fraction.map(n => "" + n).join(", ") + "]";
+}
+
 export function compareFractions(f : Fraction, g : Fraction) : Relation {
     let m = Math.min(f.length, g.length);
     for (let i = 0; i < m; i++) {

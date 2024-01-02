@@ -1,6 +1,6 @@
-import { Compare, KahnTopologicalSortDepthFirst, relationAsNumber } from "things"
+import { Compare, KahnTopologicalSortDepthFirst, printGraph, relationAsNumber, Total } from "things"
 import { Digraph, KahnTopologicalSortDepthFirstWithCompare, RedBlackMap, Relation, Vertex, assertFalse, assertNever, force, nat, sinkVertices, string, topologicalSort, transitiveClosure, transitiveReductionAndClosureOfDAG, transposeDigraph } from "things"
-import { FMAX, FMIN, Fraction, compareFractions, fractionInBetween } from "./fraction.js"
+import { FMAX, FMIN, Fraction, compareFractions, displayFraction, fractionInBetween } from "./fraction.js"
 
 export type ReplicaId = string
 
@@ -20,13 +20,21 @@ export function equalPositionIds(p1 : PositionId, p2 : PositionId | null) : bool
     return comparePositionIds(p1, p2) === Relation.EQUAL;
 }
 
+export function displayPositionId(p : PositionId | null) : string {
+    if (p === null) return "null";
+    else return p.replica + ":" + p.index;
+}
+
+
 export interface PositionEnv<Position> {
 
-    comparePositions(p1 : Position, p2 : Position) : Relation.LESS | Relation.GREATER | Relation.UNRELATED
+    comparePositions(p1 : Position, p2 : Position) : Relation.UNRELATED | Relation.LESS | Relation.GREATER 
 
     newPosition(left : Position | null, right : Position | null) : Position
 
     idOfPosition(position : Position) : PositionId
+
+    displayPosition(position : Position) : string
 
 }
 
@@ -48,12 +56,18 @@ export class Env {
     }
 }
 
+
 export class LeftRightEnv extends Env implements PositionEnv<LeftRightPos> {
+    displayPosition(position: LeftRightPos): string {
+        return displayPositionId(position.id) + "<" + 
+            displayPositionId(position.left) + ", " + 
+            displayPositionId(position.right) + ">";
+    }
     comparePositions(p1: LeftRightPos, p2: LeftRightPos): Relation.UNRELATED | Relation.LESS | Relation.GREATER {
         if (equalPositionIds(p1.id, p2.left)) return Relation.LESS;
         if (equalPositionIds(p1.id, p2.right)) return Relation.GREATER;
         if (equalPositionIds(p2.id, p1.left)) return Relation.GREATER;
-        if (equalPositionIds(p2.id, p1.right)) return Relation.GREATER;
+        if (equalPositionIds(p2.id, p1.right)) return Relation.LESS;
         return Relation.UNRELATED;
     }
     newPosition(left: LeftRightPos | null, right: LeftRightPos | null): LeftRightPos {
@@ -65,6 +79,10 @@ export class LeftRightEnv extends Env implements PositionEnv<LeftRightPos> {
 }
 
 export class LeftEnv extends Env implements PositionEnv<LeftPos> {
+    displayPosition(position: LeftPos): string {
+        return displayPositionId(position.id) + "<" + 
+            displayPositionId(position.left) + ">";
+    }
     comparePositions(p1: LeftPos, p2: LeftPos): Relation.UNRELATED | Relation.LESS | Relation.GREATER {
         if (equalPositionIds(p1.id, p2.left)) return Relation.LESS;
         if (equalPositionIds(p2.id, p1.left)) return Relation.GREATER; 
@@ -79,6 +97,9 @@ export class LeftEnv extends Env implements PositionEnv<LeftPos> {
 }
 
 export class FractionEnv extends Env implements PositionEnv<FractionPos> {
+    displayPosition(position: FractionPos): string {
+        return displayPositionId(position.id) + "<" + displayFraction(position.fraction) + ">";
+    }
     comparePositions(p1: FractionPos, p2: FractionPos): Relation.UNRELATED | Relation.LESS | Relation.GREATER {
         let c = compareFractions(p1.fraction, p2.fraction);
         if (c !== Relation.EQUAL) return c;
@@ -101,6 +122,23 @@ export type Entry<Position, Value> = { position : Position, value : Value, delet
 
 export type State<Position, Value> = Entry<Position, Value>[]
 
+export function printStateGraph<Position, Value>(
+    title : string,
+    env : PositionEnv<Position>,
+    state : State<Position, Value>,
+    graph : Digraph)
+{
+    function label(v : Vertex) : string {
+        return "" + state[v].value;
+    }
+    const values = state.map(s => s.deleted ? "(" + s.value + ")" : s.value).join(" ");
+    const positions = state.map(s => env.displayPosition(s.position)).join(" ");
+    console.log("------------- " + title);
+    console.log("values: " + values);
+    console.log("positions: " + positions);
+    printGraph(graph, label);    
+}
+
 export function orderOfState<Position, Value>(
     env : PositionEnv<Position>, 
     state : State<Position, Value>) : { reduction : Digraph, sorted : Vertex[] } 
@@ -118,6 +156,7 @@ export function orderOfState<Position, Value>(
             }
         }
     }
+    //printStateGraph("full current graph", env, state, graph);
     const reduction = transitiveReductionAndClosureOfDAG(graph).reduction;
     function compare(u : Vertex, v : Vertex) : number {
         const p = env.idOfPosition(state[u].position);
@@ -130,11 +169,11 @@ export function orderOfState<Position, Value>(
 }
 
 function findEntryIndex<Position, Value>(state : State<Position, Value>, i : number) : number | undefined {
-    let before = 0;
+    let j = -1;
     for (const [k, e] of state.entries()) {
         if (!e.deleted) {
-            if (before === i) return k;
-            before += 1;
+            j += 1;
+            if (j === i) return k;
         }
     }
     return undefined;
@@ -145,9 +184,13 @@ export function insertValue<Position, Value>(
     State<Position, Value>
 {
     const leftIndex = findEntryIndex(state, i - 1);
+    if (leftIndex === undefined) console.log("leftIndex = null");
+    else console.log("leftIndex = " + leftIndex + ", value = " + state[leftIndex].value);
     const left = (leftIndex !== undefined) ? state[leftIndex].position : null;
     const rightIndex = findEntryIndex(state, i);
     const right = (rightIndex !== undefined) ? state[rightIndex].position : null;
+    if (rightIndex === undefined) console.log("rightIndex = null");
+    else console.log("rightIndex = " + rightIndex + ", value = " + state[rightIndex].value);
     const position = env.newPosition(left, right);
     const entry : Entry<Position, Value> = { position : position, value : value, deleted : false };
     return [...state, entry];

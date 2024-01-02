@@ -1,5 +1,5 @@
-import { Digraph, Vertex, force, mapVertices, nat } from "things";
-import { PositionEnv, ReplicaId, State, deleteValue, insertValue, mergeStates, orderOfState } from "./positions.js";
+import { Digraph, Vertex, force, mapVertices, nat, printGraph } from "things";
+import { PositionEnv, ReplicaId, State, deleteValue, insertValue, mergeStates, orderOfState, printStateGraph } from "./positions.js";
 
 export class Replica<Position, Value> {
 
@@ -32,12 +32,16 @@ export class Replica<Position, Value> {
 
     delete(index : nat) {
         console.log("delete at " + index);
-        this.update(deleteValue(this.#state, index));
+        this.update(deleteValue(this.#state, index));     
+        printStateGraph("state after delete", this.env, this.#state, this.#reduction);
+
     }
 
     insert(index : nat, value : Value) {
         console.log("insert at " + index, value);
-        this.update(insertValue(this.env, this.#state, index, value));
+        this.update(insertValue(this.env, this.#state, index, value));     
+        printStateGraph("state after insert", this.env, this.#state, this.#reduction);
+
     }
 
     values() : Value[] {
