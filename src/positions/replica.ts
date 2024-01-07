@@ -1,24 +1,27 @@
 import { Digraph, Vertex, force, mapVertices, nat, printGraph } from "things";
-import { PositionEnv, ReplicaId, State, deleteValue, insertValue, mergeStates, orderOfState, printStateGraph } from "./positions.js";
+import { LeftRightPos, PositionEnv, ReplicaId, State, deleteValue, insertValue, mergeStates, orderOfState, printStateGraph } from "./positions.js";
+import { orderState } from "./leftright.js";
 
 export class Replica<Position, Value> {
 
     id : ReplicaId
     env : PositionEnv<Position>
     #state : State<Position, Value>
-    #reduction : Digraph
+    //#reduction : Digraph
     #listener : (() => void) | undefined
 
     constructor(id : ReplicaId, env : PositionEnv<Position>) {
         this.id = id;
         this.env = env;
         this.#state = [];
-        this.#reduction = new Digraph();
+        //this.#reduction = new Digraph();
         this.#listener = undefined;
     }
 
     update(state : State<Position, Value>) {
-        const order = orderOfState(this.env, state);
+        // @ts-ignore
+        this.#state = orderState(state);
+/*        const order = orderOfState(this.env, state);
         let newstate : State<Position, Value> = [];
         let sorted : Map<Vertex, Vertex> = new Map();
         for (const [i, vertex] of order.sorted.entries()) {
@@ -26,21 +29,21 @@ export class Replica<Position, Value> {
             sorted.set(vertex, i);
         }
         this.#state = newstate;
-        this.#reduction = mapVertices(order.reduction, v => force(sorted.get(v)));
+        //this.#reduction = mapVertices(order.reduction, v => force(sorted.get(v)));*/
         if (this.#listener) this.#listener();
     }
 
     delete(index : nat) {
         console.log("delete at " + index);
         this.update(deleteValue(this.#state, index));     
-        printStateGraph("state after delete", this.env, this.#state, this.#reduction);
+        //printStateGraph("state after delete", this.env, this.#state, this.#reduction);
 
     }
 
     insert(index : nat, value : Value) {
         console.log("insert at " + index, value);
         this.update(insertValue(this.env, this.#state, index, value));     
-        printStateGraph("state after insert", this.env, this.#state, this.#reduction);
+        //printStateGraph("state after insert", this.env, this.#state, this.#reduction);
 
     }
 
@@ -52,7 +55,7 @@ export class Replica<Position, Value> {
         return vs;
     }
 
-    get reduction() : Digraph { return this.#reduction; }
+    //get reduction() : Digraph { return this.#reduction; }
 
     get state() : State<Position, Value> { return this.#state; }
 
