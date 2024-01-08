@@ -18,7 +18,7 @@ function insertEntry<Value>(state : LRState<Value>, entry : LREntry<Value>) {
         for (let i = 0; i < state.length; i++) {
             if (equalPositionIds(state[i].position.id, id)) return i;
         }
-        return defaultPos;
+        throw new Error("Cannot find id: " + displayPositionId(id));
     }    
     const id = entry.position.id;
     const origin = posOf(entry.position.left, -1);

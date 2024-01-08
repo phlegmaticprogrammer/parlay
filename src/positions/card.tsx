@@ -35,19 +35,29 @@ export function Cards() {
     </>
 }
 
+function transformPosition(characters : string[], pos : number | null) : number | null {
+    if (pos === null) return null;
+    let p = 0;
+    for (const [i, c] of characters.entries()) {
+        p += c.length;
+        if (pos < p) return i;
+    }
+    return characters.length;
+}
+
 export function Card({replicaIndex} : {replicaIndex: nat}) {
     const r = replicas[replicaIndex];
     const [value, setValue] = useState(r.replica.values().join(""));
     const [sync, setSync] = useState(r.sync);
     useEffect(() => {
-        console.log("install effect");
+        //console.log("install effect");
         const listener = () => {
-            console.log("listener at " + r.replica.id + " called");
+            //console.log("listener at " + r.replica.id + " called");
             setValue(r.replica.values().join(""));
         };
         r.replica.onChange(listener);
         return () => {
-            console.log("uninstall effect");
+            //console.log("uninstall effect");
             r.replica.onChange(undefined);
         };
     });
@@ -56,14 +66,17 @@ export function Card({replicaIndex} : {replicaIndex: nat}) {
         r.sync = checked;
         merge();
     }
-    function updateValue(value : string) {
+    function updateValue(value : string, selectionStart : number | null, selectionEnd : number | null) {
         setValue(value);
-        editReplica(r.replica, [...value]);
+        const characters = [...value];
+        const cursor = transformPosition(characters, selectionStart);
+        editReplica(r.replica, [...value], cursor);
         merge();
     }
     return <>
         <span>Card {r.replica.id}: </span>
-        <input value={value} onChange={e => updateValue(e.target.value)} width="300px" height="200px"/>
+        <input value={value} onChange={e => updateValue(e.target.value, 
+            e.target.selectionStart, e.target.selectionEnd)} width="300px" height="200px"/>
         <span> sync:</span>
         <input type="checkbox" checked={sync} onChange={e => updateSync(e.target.checked)}/>
         <hr/>

@@ -1,4 +1,4 @@
-import { Digraph, Vertex, force, mapVertices, nat, printGraph } from "things";
+import { Digraph, Vertex, assertTrue, force, internalError, mapVertices, nat, printGraph } from "things";
 import { LeftRightPos, PositionEnv, ReplicaId, State, deleteValue, insertValue, mergeStates, orderOfState, printStateGraph } from "./positions.js";
 import { orderState } from "./leftright.js";
 
@@ -34,14 +34,14 @@ export class Replica<Position, Value> {
     }
 
     delete(index : nat) {
-        console.log("delete at " + index);
+        console.log(this.id + ": delete at " + index);
         this.update(deleteValue(this.#state, index));     
         //printStateGraph("state after delete", this.env, this.#state, this.#reduction);
 
     }
 
     insert(index : nat, value : Value) {
-        console.log("insert at " + index, value);
+        console.log(this.id + ": insert at " + index, value);
         this.update(insertValue(this.env, this.#state, index, value));     
         //printStateGraph("state after insert", this.env, this.#state, this.#reduction);
 
@@ -74,7 +74,17 @@ export function syncReplicas<Position, Value>(replicas : Replica<Position, Value
     }
 }
 
-export function editReplica<Position, Value>(replica : Replica<Position, Value>, values : Value[]) 
+function sameTail<Value>(oldValues : Value[], values : Value[], from : nat) : boolean {
+    const n = values.length - values.length;
+    assertTrue(n >= 0);
+    if (n > oldValues.length) return false;
+    for (let i = 1; i <= n; i++) {
+        if (oldValues[oldValues.length - i] !== values[values.length - i]) return false;
+    }
+    return true;
+}
+
+export function editReplica<Position, Value>(replica : Replica<Position, Value>, values : Value[], cursor : number | null) 
 {
     //console.log("oldValues: ", oldValues);
     //console.log("newValues: ", newValues);
@@ -97,5 +107,11 @@ export function editReplica<Position, Value>(replica : Replica<Position, Value>,
             edit(i, oldValues.slice(1), newValues);
         }
     }
-    edit(0, replica.values(), values);
+    const oldValues = replica.values();
+    if (cursor !== null && sameTail(oldValues, values, cursor)) {
+        const n = values.length - cursor;
+        edit(0, oldValues.slice(0, oldValues.length - n), values.slice(0, values.length - n)); 
+    } else {
+        edit(0, oldValues, values);
+    }
 }
