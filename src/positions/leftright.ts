@@ -35,9 +35,9 @@ function insertEntry<Value>(state : LRState<Value>, entry : LREntry<Value>) {
             else if (c === Relation.GREATER) {
                 break;
             } else internalError();
-        } else if (currentOrigin < origin) {
+        } else /* currentOrigin < origin */ { 
             break;
-        }
+        } 
     }
     state.splice(current, 0, entry);
 }
