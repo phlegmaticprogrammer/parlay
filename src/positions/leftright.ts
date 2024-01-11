@@ -134,7 +134,7 @@ function statesAreEqual<Value>(state1 : LRState<Value>, state2 : LRState<Value>)
     return true;
 }
 
-export function orderState<Value>(state : LRState<Value>) : LRState<Value> {
+export function orderStateTestAll<Value>(state : LRState<Value>) : LRState<Value> {
     const g = new Digraph();
     const indexOfPositions = buildIndexOfPositions(state);
     for (let i = 0; i < state.length; i++) {
@@ -180,4 +180,30 @@ export function orderState<Value>(state : LRState<Value>) : LRState<Value> {
         console.log("Unique state");
     }
     return states[0];
+}
+
+export function orderState<Value>(state : LRState<Value>) : LRState<Value> {
+    const g = new Digraph();
+    const indexOfPositions = buildIndexOfPositions(state);
+    for (let i = 0; i < state.length; i++) {
+        g.insert(i);
+        const p = state[i].position;
+        if (p.left !== null) {
+            const left = force(indexOfPositions.get(p.left));
+            g.connect(i, left);
+        }
+        if (p.right !== null) {
+            const right = force(indexOfPositions.get(p.right));
+            g.connect(i, right);
+        }
+    }
+    const topsort = KahnTopologicalSortDepthFirst(g).sorted;
+    function computeOrder(topsort : Vertex[]) : LRState<Value> {
+        const orderedState : LRState<Value> = [];
+        for (const vertex of topsort.reverse()) {
+            insertEntryWOOT(orderedState, state[vertex]);
+        }
+        return orderedState;
+    }
+    return computeOrder(topsort);
 }
