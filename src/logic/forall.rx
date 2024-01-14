@@ -1,0 +1,2 @@
+forall(x ..x => P[x, ..x]) = forall(x => forall(...x => P[...x]))
+forall(P) = P
